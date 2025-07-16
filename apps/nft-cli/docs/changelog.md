@@ -1,5 +1,23 @@
 # @twin.org/nft-cli - Changelog
 
+## [0.0.2-next.1](https://github.com/twinfoundation/nft/compare/nft-cli-v0.0.2-next.0...nft-cli-v0.0.2-next.1) (2025-07-16)
+
+
+### Features
+
+* add publish workflows ([3f2ae6b](https://github.com/twinfoundation/nft/commit/3f2ae6b5c29da8012e01ef719c2d91a6aa80c2ad))
+* iota rebased release ([8d05d1f](https://github.com/twinfoundation/nft/commit/8d05d1f58c1aacac983c100697ab40a314ad34ea))
+* update dependencies ([8660f76](https://github.com/twinfoundation/nft/commit/8660f76ca324b0f476e45544cac6bee4b3146c3b))
+* update dlt packages ([12c4966](https://github.com/twinfoundation/nft/commit/12c4966bceb926b7cdcf1449165bee09187a426c))
+* use shared store mechanism ([#16](https://github.com/twinfoundation/nft/issues/16)) ([897bc78](https://github.com/twinfoundation/nft/commit/897bc7805248ba1388b2dd03df24c33f1633f344))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-connector-iota bumped from 0.0.2-next.0 to 0.0.2-next.1
+
 ## 0.0.1 (2025-07-09)
 
 
