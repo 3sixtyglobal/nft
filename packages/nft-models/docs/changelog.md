@@ -1,5 +1,13 @@
 # @twin.org/nft-models - Changelog
 
+## [0.0.2-next.1](https://github.com/twinfoundation/nft/compare/nft-models-v0.0.2-next.0...nft-models-v0.0.2-next.1) (2025-07-16)
+
+
+### Features
+
+* update dependencies ([8660f76](https://github.com/twinfoundation/nft/commit/8660f76ca324b0f476e45544cac6bee4b3146c3b))
+* use shared store mechanism ([#16](https://github.com/twinfoundation/nft/issues/16)) ([897bc78](https://github.com/twinfoundation/nft/commit/897bc7805248ba1388b2dd03df24c33f1633f344))
+
 ## 0.0.1 (2025-07-09)
 
 
