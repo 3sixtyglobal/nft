@@ -11,8 +11,9 @@ import type { INftServiceConstructorOptions } from "./models/INftServiceConstruc
 export class NftService implements INftComponent {
 	/**
 	 * The namespace supported by the nft service.
+	 * @internal
 	 */
-	public static readonly NAMESPACE: string = "nft";
+	private static readonly _NAMESPACE: string = "nft";
 
 	/**
 	 * Runtime name for the class.
@@ -172,9 +173,9 @@ export class NftService implements INftComponent {
 	private getConnector(id: string): INftConnector {
 		const idUri = Urn.fromValidString(id);
 
-		if (idUri.namespaceIdentifier() !== NftService.NAMESPACE) {
+		if (idUri.namespaceIdentifier() !== NftService._NAMESPACE) {
 			throw new GeneralError(this.CLASS_NAME, "namespaceMismatch", {
-				namespace: NftService.NAMESPACE,
+				namespace: NftService._NAMESPACE,
 				id
 			});
 		}
