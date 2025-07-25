@@ -9,6 +9,9 @@ coverage
 *.tgz
 **/.tmp
 .env.dev
+devnet.env
+mainnet.env
+testnet.env
 vitest.config.ts.timestamp*
 .DS_Store
 

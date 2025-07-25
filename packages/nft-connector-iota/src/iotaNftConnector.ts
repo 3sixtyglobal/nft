@@ -2,14 +2,19 @@
 // SPDX-License-Identifier: Apache-2.0.
 import type { IotaClient, IotaObjectResponse } from "@iota/iota-sdk/client";
 import { Transaction } from "@iota/iota-sdk/transactions";
-import { BaseError, Converter, GeneralError, Guards, Is, StringHelper, Urn } from "@twin.org/core";
+import { BaseError, GeneralError, Guards, Is, StringHelper, Urn } from "@twin.org/core";
 import { Iota } from "@twin.org/dlt-iota";
 import { LoggingConnectorFactory, type ILoggingConnector } from "@twin.org/logging-models";
+import type {
+	IContractData,
+	ISmartContractDeployments,
+	NetworkTypes
+} from "@twin.org/move-to-json";
 import { nameof } from "@twin.org/nameof";
 import type { INftConnector } from "@twin.org/nft-models";
 import { VaultConnectorFactory, type IVaultConnector } from "@twin.org/vault-models";
 import { WalletConnectorFactory, type IWalletConnector } from "@twin.org/wallet-models";
-import compiledModulesJson from "./contracts/compiledModules/compiled-modules.json";
+import compiledModulesJson from "./contracts/smart-contract-deployments/smart-contract-deployments.json";
 import { IotaNftUtils } from "./iotaNftUtils";
 import type { IIotaNftConnectorConfig } from "./models/IIotaNftConnectorConfig";
 import type { IIotaNftConnectorConstructorOptions } from "./models/IIotaNftConnectorConstructorOptions";
@@ -113,133 +118,61 @@ export class IotaNftConnector implements INftConnector {
 	 * Bootstrap the NFT contract.
 	 * @param nodeIdentity The identity of the node.
 	 * @param nodeLoggingConnectorType The node logging connector type, defaults to "node-logging".
-	 * @param componentState The component state.
-	 * @param componentState.contractDeployments The contract deployments.
 	 * @returns void.
 	 */
-	public async start(
-		nodeIdentity: string,
-		nodeLoggingConnectorType?: string,
-		componentState?: { contractDeployments?: { [id: string]: string } }
-	): Promise<void> {
+	public async start(nodeIdentity: string, nodeLoggingConnectorType?: string): Promise<void> {
 		const nodeLogging = LoggingConnectorFactory.getIfExists(
 			nodeLoggingConnectorType ?? "node-logging"
 		);
 
 		try {
-			const contractData =
-				compiledModulesJson[this._contractName as keyof typeof compiledModulesJson];
+			const typedCompiledModules = compiledModulesJson as unknown as ISmartContractDeployments;
+			const contractData = typedCompiledModules[this._config.network as NetworkTypes];
 
-			if (!contractData) {
+			if (!Is.objectValue<IContractData>(contractData)) {
 				throw new GeneralError(this.CLASS_NAME, "contractDataNotFound", {
-					contractName: this._contractName
+					network: this._config.network,
+					availableNetworks: Object.keys(typedCompiledModules)
 				});
 			}
 
-			// Convert base64 package(s) to bytes
-			let compiledModules: number[][];
-
-			if (Is.arrayValue<string>(contractData.package)) {
-				compiledModules = contractData.package.map((pkg: string) =>
-					Array.from(Converter.base64ToBytes(pkg))
-				);
-			} else {
-				compiledModules = [Array.from(Converter.base64ToBytes(contractData.package))];
+			if (!Is.stringValue(contractData.deployedPackageId)) {
+				throw new GeneralError(this.CLASS_NAME, "deployedPackageIdRequired", {
+					network: this._config.network
+				});
 			}
 
-			const contractDeployments: { [id: string]: string } =
-				(componentState?.contractDeployments as { [id: string]: string }) ?? {};
+			this._deployedPackageId = contractData.deployedPackageId;
 
-			if (Is.stringValue(contractDeployments[contractData.packageId])) {
-				this._deployedPackageId = contractDeployments[contractData.packageId];
-
-				// Check if package exists on the network with a deployed package id
-				const packageExists = await Iota.packageExistsOnNetwork(
-					this._client,
-					contractDeployments[contractData.packageId]
-				);
-				if (packageExists) {
-					await nodeLogging?.log({
-						level: "info",
-						source: this.CLASS_NAME,
-						ts: Date.now(),
-						message: "contractAlreadyDeployed",
-						data: {
-							network: this._config.network,
-							nodeIdentity,
-							contractId: contractData.packageId,
-							deployedPackageId: contractDeployments[contractData.packageId]
-						}
-					});
-
-					return;
-				}
+			if (!this._deployedPackageId) {
+				throw new GeneralError(this.CLASS_NAME, "packageIdNotFound", {
+					network: this._config.network
+				});
 			}
 
-			// Package does not exist, proceed to deploy
-			await nodeLogging?.log({
-				level: "info",
-				source: this.CLASS_NAME,
-				ts: Date.now(),
-				message: "contractDeploymentStarted",
-				data: { network: this._config.network, nodeIdentity, contractId: contractData.packageId }
-			});
-
-			const txb = new Transaction();
-			txb.setGasBudget(this._gasBudget);
-
-			// Publish the compiled modules
-			const [upgradeCap] = txb.publish({ modules: compiledModules, dependencies: ["0x1", "0x2"] });
-
-			const controllerAddress = await this.getPackageControllerAddress(nodeIdentity);
-
-			// Transfer the upgrade capability to the controller
-			txb.transferObjects([upgradeCap], txb.pure.address(controllerAddress));
-
-			const result = await Iota.prepareAndPostTransaction(
-				this._config,
-				this._vaultConnector,
-				nodeLogging,
-				nodeIdentity,
+			const packageExists = await Iota.packageExistsOnNetwork(
 				this._client,
-				controllerAddress,
-				txb,
-				{
-					dryRunLabel: this._config.enableCostLogging ? "deploy" : undefined
-				}
+				this._deployedPackageId
 			);
 
-			if (result.effects?.status?.status !== "success") {
-				throw new GeneralError(this.CLASS_NAME, "deployTransactionFailed", {
-					error: result.effects?.status?.error
+			if (!packageExists) {
+				throw new GeneralError(this.CLASS_NAME, "packageNotFoundOnNetwork", {
+					network: this._config.network,
+					deployedPackageId: this._deployedPackageId
 				});
-			}
-
-			// Find the package object (owner field will be Immutable)
-			const packageObject = result.effects?.created?.find(obj => obj.owner === "Immutable");
-
-			const deployedPackageId = packageObject?.reference?.objectId;
-			if (!Is.stringValue(deployedPackageId)) {
-				throw new GeneralError(this.CLASS_NAME, "packageIdNotFound", {
-					packageId: deployedPackageId
-				});
-			}
-
-			this._deployedPackageId = deployedPackageId;
-
-			if (componentState) {
-				componentState.contractDeployments ??= {};
-				componentState.contractDeployments[contractData.packageId] = deployedPackageId;
 			}
 
 			await nodeLogging?.log({
 				level: "info",
 				source: this.CLASS_NAME,
 				ts: Date.now(),
-				message: "contractDeploymentCompleted",
+				message: "contractReady",
 				data: {
-					contractId: contractData.packageId,
-					deployedPackageId: contractDeployments[contractData.packageId]
+					network: this._config.network,
+					nodeIdentity,
+					packageId: contractData.packageId,
+					deployedPackageId: this._deployedPackageId,
+					upgradeCap: contractData.upgradeCap
 				}
 			});
 		} catch (error) {
