@@ -2,9 +2,17 @@
 // SPDX-License-Identifier: Apache-2.0.
 import type { IotaClient, IotaObjectResponse } from "@iota/iota-sdk/client";
 import { Transaction } from "@iota/iota-sdk/transactions";
-import { BaseError, GeneralError, Guards, Is, StringHelper, Urn } from "@twin.org/core";
+import {
+	BaseError,
+	ComponentFactory,
+	GeneralError,
+	Guards,
+	Is,
+	StringHelper,
+	Urn
+} from "@twin.org/core";
 import { Iota } from "@twin.org/dlt-iota";
-import { LoggingConnectorFactory, type ILoggingConnector } from "@twin.org/logging-models";
+import type { ILoggingComponent } from "@twin.org/logging-models";
 import type {
 	IContractData,
 	ISmartContractDeployments,
@@ -77,10 +85,10 @@ export class IotaNftConnector implements INftConnector {
 	private _deployedPackageId?: string;
 
 	/**
-	 * The logging connector.
+	 * The logging component.
 	 * @internal
 	 */
-	private readonly _logging?: ILoggingConnector;
+	private readonly _logging?: ILoggingComponent;
 
 	/**
 	 * Create a new instance of IotaNftConnector.
@@ -97,7 +105,7 @@ export class IotaNftConnector implements INftConnector {
 		this._vaultConnector = VaultConnectorFactory.get(options.vaultConnectorType ?? "vault");
 		this._walletConnector = WalletConnectorFactory.get(options.walletConnectorType ?? "wallet");
 
-		this._logging = LoggingConnectorFactory.getIfExists(options?.loggingConnectorType ?? "logging");
+		this._logging = ComponentFactory.getIfExists(options?.loggingComponentType ?? "logging");
 
 		this._config = options.config;
 
@@ -117,13 +125,11 @@ export class IotaNftConnector implements INftConnector {
 	/**
 	 * Bootstrap the NFT contract.
 	 * @param nodeIdentity The identity of the node.
-	 * @param nodeLoggingConnectorType The node logging connector type, defaults to "node-logging".
+	 * @param nodeLoggingComponentType The node logging component type.
 	 * @returns void.
 	 */
-	public async start(nodeIdentity: string, nodeLoggingConnectorType?: string): Promise<void> {
-		const nodeLogging = LoggingConnectorFactory.getIfExists(
-			nodeLoggingConnectorType ?? "node-logging"
-		);
+	public async start(nodeIdentity: string, nodeLoggingComponentType?: string): Promise<void> {
+		const nodeLogging = ComponentFactory.getIfExists<ILoggingComponent>(nodeLoggingComponentType);
 
 		try {
 			const typedCompiledModules = compiledModulesJson as unknown as ISmartContractDeployments;

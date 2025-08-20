@@ -24,8 +24,8 @@ export interface IIotaNftConnectorConstructorOptions {
 	walletConnectorType?: string;
 
 	/**
-	 * The logging connector type.
+	 * The logging component type.
 	 * @default logging
 	 */
-	loggingConnectorType?: string;
+	loggingComponentType?: string;
 }

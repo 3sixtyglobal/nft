@@ -17,7 +17,8 @@
 		".eslintrc.cjs",
 		"**/wordlists/**",
 		"**/scripts/**",
-		"**/contracts/**"
+		"**/contracts/**",
+		"changelog.md"
 	],
 	"words": [
 		"abbrev",

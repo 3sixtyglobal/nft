@@ -40,11 +40,11 @@ The wallet connector type to use.
 
 ***
 
-### loggingConnectorType?
+### loggingComponentType?
 
-> `optional` **loggingConnectorType**: `string`
+> `optional` **loggingComponentType**: `string`
 
-The logging connector type.
+The logging component type.
 
 #### Default
 
