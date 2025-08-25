@@ -2,6 +2,7 @@
 name = "nft"
 version = "0.0.2"
 edition = "2024.beta"
+published-at = "0xafc8be92fc98bf4f1c5a38b94ae29fb41011361337bdb515d63fc9bb250eb36a"
 
 [dependencies]
 Iota = { git = "https://github.com/iotaledger/iota.git", subdir = "crates/iota-framework/packages/iota-framework", rev = "mainnet" }

@@ -65,12 +65,25 @@ if (!Is.stringValue(process.env.TEST_NODE_MNEMONIC)) {
 	);
 }
 
+if (!Is.stringValue(process.env.TEST_DEPLOYER_MNEMONIC)) {
+	// eslint-disable-next-line no-restricted-syntax
+	throw new Error(
+		`Please define TEST_DEPLOYER_MNEMONIC as a 24 word mnemonic either as an environment variable or inside an .env.dev file
+     e.g. TEST_DEPLOYER_MNEMONIC="word0 word1 ... word23"
+     This should be the mnemonic used for contract deployment and AdminCap ownership
+     You can generate one using the following command
+     npx "@twin.org/crypto-cli" mnemonic --env ./tests/.env.dev --env-prefix TEST_DEPLOYER_ --merge-env`
+	);
+}
+
 export const TEST_NODE_IDENTITY = "test-node-identity";
 export const TEST_USER_IDENTITY_ID = "test-user-identity";
 export const TEST_USER_IDENTITY_ID_2 = "test-user-identity-2";
+export const DEPLOYER_IDENTITY = "deployer-identity";
 export const TEST_MNEMONIC_NAME = "test-mnemonic";
 export const TEST_NETWORK = process.env.TEST_NETWORK;
 export const TEST_NODE_MNEMONIC = process.env.TEST_NODE_MNEMONIC;
+export const TEST_DEPLOYER_MNEMONIC = process.env.TEST_DEPLOYER_MNEMONIC;
 export const TEST_FAUCET_ENDPOINT = process.env.TEST_FAUCET_ENDPOINT ?? "";
 export const TEST_EXPLORER_URL = process.env.TEST_EXPLORER_URL;
 export const TEST_GAS_STATION_URL = process.env.TEST_GAS_STATION_URL;
@@ -115,6 +128,12 @@ await TEST_VAULT_CONNECTOR.setSecret(
 	process.env.TEST_2_MNEMONIC
 );
 
+// Store deployer mnemonic (this is the actual AdminCap owner)
+await TEST_VAULT_CONNECTOR.setSecret(
+	`${DEPLOYER_IDENTITY}/${TEST_MNEMONIC_NAME}`,
+	process.env.TEST_DEPLOYER_MNEMONIC
+);
+
 // Setup client options
 export const TEST_CLIENT_OPTIONS = {
 	url: process.env.TEST_NODE_ENDPOINT
@@ -134,12 +153,17 @@ export const TEST_WALLET_CONNECTOR = new IotaWalletConnector({
 WalletConnectorFactory.register("wallet", () => TEST_WALLET_CONNECTOR);
 
 const testAddresses = await TEST_WALLET_CONNECTOR.getAddresses(TEST_USER_IDENTITY_ID, 0, 0, 1);
-const testAddresses2 = await TEST_WALLET_CONNECTOR.getAddresses(TEST_USER_IDENTITY_ID_2, 0, 0, 1);
+// Use address index 1 for TEST_USER_IDENTITY_ID_2 to avoid collision with gas station sponsor (index 0)
+const testAddresses2 = await TEST_WALLET_CONNECTOR.getAddresses(TEST_USER_IDENTITY_ID_2, 0, 1, 1);
 const nodeAddresses = await TEST_WALLET_CONNECTOR.getAddresses(TEST_NODE_IDENTITY, 0, 0, 1);
+
+// DEPLOYER_IDENTITY uses the deployer mnemonic (this is the actual AdminCap owner)
+const deployerAddresses = await TEST_WALLET_CONNECTOR.getAddresses(DEPLOYER_IDENTITY, 0, 0, 1);
 
 export const TEST_ADDRESS = testAddresses[0];
 export const TEST_ADDRESS_2 = testAddresses2[0];
 export const NODE_ADDRESS = nodeAddresses[0];
+export const DEPLOYER_ADDRESS = deployerAddresses[0];
 
 /**
  * Setup the test environment.
@@ -157,19 +181,37 @@ export async function setupTestEnv(): Promise<void> {
 		"Node Address",
 		`${process.env.TEST_EXPLORER_URL}address/${NODE_ADDRESS}?network=${TEST_NETWORK}`
 	);
+
+	// eslint-disable-next-line no-restricted-syntax
+	console.log("[setupTestEnv] Starting faucet requests...");
+
 	try {
 		// Request IOTA tokens from the faucet for both test accounts. 10 IOTA per request.
+		// eslint-disable-next-line no-restricted-syntax
+		console.log(`[setupTestEnv] Requesting funds for NODE_ADDRESS: ${NODE_ADDRESS}`);
 		await requestIotaFromFaucetV0({
 			host: TEST_FAUCET_ENDPOINT,
 			recipient: NODE_ADDRESS
 		});
+
+		// eslint-disable-next-line no-restricted-syntax
+		console.log(`[setupTestEnv] Requesting funds for TEST_ADDRESS: ${TEST_ADDRESS}`);
 		await requestIotaFromFaucetV0({
 			host: TEST_FAUCET_ENDPOINT,
 			recipient: TEST_ADDRESS
 		});
+
+		// eslint-disable-next-line no-restricted-syntax
+		console.log(`[setupTestEnv] Requesting funds for TEST_ADDRESS_2: ${TEST_ADDRESS_2}`);
 		await requestIotaFromFaucetV0({
 			host: TEST_FAUCET_ENDPOINT,
 			recipient: TEST_ADDRESS_2
 		});
-	} catch {}
+
+		// eslint-disable-next-line no-restricted-syntax
+		console.log("[setupTestEnv] All faucet requests completed successfully");
+	} catch (error) {
+		// eslint-disable-next-line no-restricted-syntax
+		console.log("[setupTestEnv] Faucet requests failed, continuing anyway:", error);
+	}
 }

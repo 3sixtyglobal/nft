@@ -281,26 +281,56 @@ describe("IotaNftConnector with Gas Station", () => {
 			);
 		}, 30000);
 
-		// test("Can transfer an NFT back to original owner using gas station", async () => {
-		// 	await gasStationNftConnector.transfer(
-		// 		TEST_USER_IDENTITY_ID_2,
-		// 		nftId,
-		// 		TEST_USER_IDENTITY_ID,
-		// 		TEST_ADDRESS
-		// 	);
+		test("Can transfer an NFT back to original owner using gas station", async () => {
+			// Create a new NFT for this test
+			const immutableMetadata = {
+				name: "Gas Station Transfer Back Test NFT",
+				description: "This is a test NFT for transfer back functionality using gas station",
+				uri: "https://example.com/gas-station-transfer-back-nft.png"
+			};
+			const nftId = await gasStationNftConnector.mint(
+				TEST_USER_IDENTITY_ID,
+				"gas_station_transfer_back_test",
+				immutableMetadata,
+				{
+					transferBackTestField: "transferBackTestValue"
+				}
+			);
 
-		// 	const response = await gasStationNftConnector.resolve(nftId);
-		// 	expect(response.issuer).toEqual(TEST_USER_IDENTITY_ID);
-		// 	expect(response.owner).toEqual(TEST_USER_IDENTITY_ID);
+			// First transfer: from USER_1 to USER_2
+			await gasStationNftConnector.transfer(
+				TEST_USER_IDENTITY_ID,
+				nftId,
+				TEST_USER_IDENTITY_ID_2,
+				TEST_ADDRESS_2
+			);
 
-		// 	const urn = Urn.fromValidString(nftId);
-		// 	expect(urn.namespaceIdentifier()).toEqual("nft");
-		// 	const specificParts = urn.namespaceSpecificParts();
-		// 	console.debug(
-		// 		"Transferred back with gas station",
-		// 		`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
-		// 	);
-		// }, 30000);
+			// Verify it's owned by USER_2
+			let response = await gasStationNftConnector.resolve(nftId);
+			expect(response.issuer).toEqual(TEST_USER_IDENTITY_ID);
+			expect(response.owner).toEqual(TEST_USER_IDENTITY_ID_2);
+
+			// Second transfer: back from USER_2 to USER_1
+			await gasStationNftConnector.transfer(
+				TEST_USER_IDENTITY_ID_2,
+				nftId,
+				TEST_USER_IDENTITY_ID,
+				TEST_ADDRESS
+			);
+
+			// Verify it's back to USER_1
+			response = await gasStationNftConnector.resolve(nftId);
+			expect(response.issuer).toEqual(TEST_USER_IDENTITY_ID);
+			expect(response.owner).toEqual(TEST_USER_IDENTITY_ID);
+
+			const urn = Urn.fromValidString(nftId);
+			expect(urn.namespaceIdentifier()).toEqual("nft");
+			const specificParts = urn.namespaceSpecificParts();
+			console.debug(
+				"Transferred back with gas station",
+				`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
+			);
+		}, 30000);
 
 		test("Can transfer an NFT with metadata update using gas station", async () => {
 			// Create a new NFT for this test
@@ -410,20 +440,20 @@ describe("IotaNftConnector with Gas Station", () => {
 			await expect(gasStationNftConnector.resolve(nftId)).rejects.toThrow();
 		}, 30000);
 
-		// test("Can burn an NFT on a transferred address using gas station", async () => {
-		// 	const burnTestNftId = await gasStationNftConnector.mint(
-		// 		TEST_USER_IDENTITY_ID,
-		// 		"gas_station_burn_test"
-		// 	);
+		test("Can burn an NFT on a transferred address using gas station", async () => {
+			const burnTestNftId = await gasStationNftConnector.mint(
+				TEST_USER_IDENTITY_ID,
+				"gas_station_burn_test"
+			);
 
-		// 	await gasStationNftConnector.transfer(
-		// 		TEST_USER_IDENTITY_ID,
-		// 		burnTestNftId,
-		// 		TEST_USER_IDENTITY_ID_2,
-		// 		TEST_ADDRESS_2
-		// 	);
-		// 	await gasStationNftConnector.burn(TEST_USER_IDENTITY_ID_2, burnTestNftId);
-		// }, 60000);
+			await gasStationNftConnector.transfer(
+				TEST_USER_IDENTITY_ID,
+				burnTestNftId,
+				TEST_USER_IDENTITY_ID_2,
+				TEST_ADDRESS_2
+			);
+			await gasStationNftConnector.burn(TEST_USER_IDENTITY_ID_2, burnTestNftId);
+		}, 60000);
 
 		test("Can mint an NFT with complex metadata using gas station", async () => {
 			const immutableMetadata = {

@@ -15,6 +15,10 @@ export interface INftFields {
 		id: string; // UID is an object with an 'id' field
 	};
 	/**
+	 * The version of the NFT contract that created this NFT.
+	 */
+	version: string;
+	/**
 	 * The immutable metadata of the NFT.
 	 */
 	immutable_metadata: string;

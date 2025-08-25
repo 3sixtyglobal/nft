@@ -41,6 +41,7 @@
 		"prepare": "ts-patch install -s"
 	},
 	"dependencies": {
+		"@iota/bcs": "1.2.0",
 		"@iota/iota-sdk": "1.5.0",
 		"@twin.org/core": "next",
 		"@twin.org/crypto": "next",
@@ -55,9 +56,9 @@
 		"@rollup/plugin-json": "6.1.0",
 		"@twin.org/entity": "next",
 		"@twin.org/entity-storage-connector-memory": "next",
+		"@twin.org/move-to-json": "next",
 		"@twin.org/nameof-transformer": "next",
 		"@twin.org/nameof-vitest-plugin": "next",
-		"@twin.org/move-to-json": "next",
 		"@twin.org/vault-connector-entity-storage": "next",
 		"@twin.org/wallet-connector-iota": "next",
 		"@types/node": "24.3.0",

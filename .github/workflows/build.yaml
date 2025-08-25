@@ -22,6 +22,7 @@ jobs:
       TEST_MNEMONIC: ${{ secrets.TEST_MNEMONIC }}
       TEST_2_MNEMONIC: ${{ secrets.TEST_2_MNEMONIC }}
       TEST_NODE_MNEMONIC: ${{ secrets.TEST_NODE_MNEMONIC }}
+      TEST_DEPLOYER_MNEMONIC: ${{ secrets.TEST_DEPLOYER_MNEMONIC }}
 
     steps:
       # Clone the repository to the runner

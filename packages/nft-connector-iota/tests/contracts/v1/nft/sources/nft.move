@@ -4,8 +4,10 @@ module nft::nft {
     use iota::tx_context::TxContext;
     use std::string::String;
 
-    /// Current version of the NFT contract
+    /// Current version of the NFT contract - V1 Test Contract for Upgrade Simulation
     const VERSION: u64 = 1;
+    /// Test marker to differentiate from production contract
+    const TEST_CONTRACT_MARKER: u64 = 999;
 
     /// Error codes
     const E_INCOMPATIBLE_VERSION: u64 = 1;

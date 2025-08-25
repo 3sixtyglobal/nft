@@ -11,13 +11,9 @@ import {
 	StringHelper,
 	Urn
 } from "@twin.org/core";
-import { Iota } from "@twin.org/dlt-iota";
+import { Iota, IotaSmartContractUtils } from "@twin.org/dlt-iota";
+import type { IContractData, ISmartContractDeployments, NetworkTypes } from "@twin.org/dlt-iota";
 import type { ILoggingComponent } from "@twin.org/logging-models";
-import type {
-	IContractData,
-	ISmartContractDeployments,
-	NetworkTypes
-} from "@twin.org/move-to-json";
 import { nameof } from "@twin.org/nameof";
 import type { INftConnector } from "@twin.org/nft-models";
 import { VaultConnectorFactory, type IVaultConnector } from "@twin.org/vault-models";
@@ -91,6 +87,12 @@ export class IotaNftConnector implements INftConnector {
 	private readonly _logging?: ILoggingComponent;
 
 	/**
+	 * The deployment configuration to use for contract interactions.
+	 * @internal
+	 */
+	private readonly _deploymentConfig: ISmartContractDeployments;
+
+	/**
 	 * Create a new instance of IotaNftConnector.
 	 * @param options The options for the connector.
 	 */
@@ -108,6 +110,9 @@ export class IotaNftConnector implements INftConnector {
 		this._logging = ComponentFactory.getIfExists(options?.loggingComponentType ?? "logging");
 
 		this._config = options.config;
+
+		this._deploymentConfig =
+			options.deploymentConfig ?? (compiledModulesJson as unknown as ISmartContractDeployments);
 
 		this._contractName = this._config.contractName ?? "nft";
 		Guards.stringValue(this.CLASS_NAME, nameof(this._contractName), this._contractName);
@@ -132,13 +137,12 @@ export class IotaNftConnector implements INftConnector {
 		const nodeLogging = ComponentFactory.getIfExists<ILoggingComponent>(nodeLoggingComponentType);
 
 		try {
-			const typedCompiledModules = compiledModulesJson as unknown as ISmartContractDeployments;
-			const contractData = typedCompiledModules[this._config.network as NetworkTypes];
+			const contractData = this._deploymentConfig[this._config.network as NetworkTypes];
 
 			if (!Is.objectValue<IContractData>(contractData)) {
 				throw new GeneralError(this.CLASS_NAME, "contractDataNotFound", {
 					network: this._config.network,
-					availableNetworks: Object.keys(typedCompiledModules)
+					availableNetworks: Object.keys(this._deploymentConfig)
 				});
 			}
 
@@ -178,7 +182,8 @@ export class IotaNftConnector implements INftConnector {
 					nodeIdentity,
 					packageId: contractData.packageId,
 					deployedPackageId: this._deployedPackageId,
-					upgradeCap: contractData.upgradeCap
+					upgradeCapabilityId: contractData.upgradeCapabilityId,
+					migrationStateId: contractData.migrationStateId
 				}
 			});
 		} catch (error) {
@@ -287,7 +292,13 @@ export class IotaNftConnector implements INftConnector {
 	 */
 	public async resolve<T = unknown, U = unknown>(
 		nftId: string
-	): Promise<{ issuer: string; owner: string; tag: string; immutableMetadata?: T; metadata?: U }> {
+	): Promise<{
+		issuer: string;
+		owner: string;
+		tag: string;
+		immutableMetadata?: T;
+		metadata?: U;
+	}> {
 		Guards.stringValue(this.CLASS_NAME, nameof(nftId), nftId);
 
 		try {
@@ -593,6 +604,212 @@ export class IotaNftConnector implements INftConnector {
 	}
 
 	/**
+	 * Migrate an NFT to the current version using admin privileges.
+	 * @param controllerIdentity The identity of the controller with AdminCap privileges.
+	 * @param nftId The id of the NFT to migrate.
+	 * @returns void.
+	 */
+	public async migrateNft(controllerIdentity: string, nftId: string): Promise<void> {
+		Guards.stringValue(this.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
+		Guards.stringValue(this.CLASS_NAME, nameof(nftId), nftId);
+
+		const urnParsed = Urn.fromValidString(nftId);
+		if (urnParsed.namespaceMethod() !== IotaNftConnector.NAMESPACE) {
+			throw new GeneralError(this.CLASS_NAME, "namespaceMismatch", {
+				namespace: IotaNftConnector.NAMESPACE,
+				id: nftId
+			});
+		}
+
+		try {
+			const objectId = IotaNftUtils.nftIdToObjectId(nftId);
+
+			// Use the utility class for migration with hybrid namespace approach
+			await IotaSmartContractUtils.migrateSmartContract(
+				this._config,
+				this._client,
+				this._vaultConnector,
+				this._walletConnector,
+				this._logging,
+				this._gasBudget,
+				controllerIdentity,
+				objectId,
+				this._contractName,
+				this.getPackageId(),
+				this._deploymentConfig,
+				this._config.packageControllerAddressIndex
+			);
+		} catch (error) {
+			throw new GeneralError(
+				this.CLASS_NAME,
+				"migrateNftFailed",
+				undefined,
+				Iota.extractPayloadError(error)
+			);
+		}
+	}
+
+	/**
+	 * Enable migration operations using admin privileges.
+	 * @param controllerIdentity The identity of the controller with AdminCap privileges.
+	 * @returns void.
+	 */
+	public async enableMigration(controllerIdentity: string): Promise<void> {
+		Guards.stringValue(this.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
+
+		try {
+			// Use the utility class for enabling migration with hybrid namespace approach
+			await IotaSmartContractUtils.enableMigration(
+				this._config,
+				this._client,
+				this._vaultConnector,
+				this._walletConnector,
+				this._logging,
+				this._gasBudget,
+				controllerIdentity,
+				this._contractName,
+				this.getPackageId(),
+				this._deploymentConfig,
+				this._config.packageControllerAddressIndex
+			);
+		} catch (error) {
+			throw new GeneralError(
+				this.CLASS_NAME,
+				"enableMigrationFailed",
+				undefined,
+				Iota.extractPayloadError(error)
+			);
+		}
+	}
+
+	/**
+	 * Disable migration operations using admin privileges.
+	 * @param controllerIdentity The identity of the controller with AdminCap privileges.
+	 * @returns void.
+	 */
+	public async disableMigration(controllerIdentity: string): Promise<void> {
+		Guards.stringValue(this.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
+
+		try {
+			// Use the utility class for disabling migration with hybrid namespace approach
+			await IotaSmartContractUtils.disableMigration(
+				this._config,
+				this._client,
+				this._vaultConnector,
+				this._walletConnector,
+				this._logging,
+				this._gasBudget,
+				controllerIdentity,
+				this._contractName,
+				this.getPackageId(),
+				this._deploymentConfig,
+				this._config.packageControllerAddressIndex
+			);
+		} catch (error) {
+			throw new GeneralError(
+				this.CLASS_NAME,
+				"disableMigrationFailed",
+				undefined,
+				Iota.extractPayloadError(error)
+			);
+		}
+	}
+
+	/**
+	 * Check if migration is currently active.
+	 * @returns True if migration is enabled, false otherwise.
+	 */
+	public async isMigrationActive(): Promise<boolean> {
+		try {
+			// Use the utility class for migration status check with hybrid namespace approach
+			return IotaSmartContractUtils.isMigrationActive(
+				this._config,
+				this._client,
+				this._contractName,
+				this.getPackageId(),
+				this._deploymentConfig,
+				"deployer-identity", // Using deployer identity for admin operations
+				this._walletConnector,
+				this._config.packageControllerAddressIndex
+			);
+		} catch (error) {
+			throw new GeneralError(this.CLASS_NAME, "isMigrationActiveFailed", undefined, error);
+		}
+	}
+
+	/**
+	 * Validate that an NFT version is compatible with the current contract.
+	 * @param nftId The id of the NFT to validate.
+	 * @returns True if the NFT version is compatible, false otherwise.
+	 */
+	public async validateNftVersion(nftId: string): Promise<boolean> {
+		Guards.stringValue(this.CLASS_NAME, nameof(nftId), nftId);
+
+		try {
+			const nftVersion = await this.getNftContractVersion(nftId);
+			const currentVersion = await this.getCurrentContractVersion();
+
+			return nftVersion === currentVersion;
+		} catch (error) {
+			throw new GeneralError(this.CLASS_NAME, "validateNftVersionFailed", undefined, error);
+		}
+	}
+
+	/**
+	 * Get the smart contract version of a specific NFT.
+	 * This version indicates which contract version was used to create/migrate the NFT.
+	 * @param nftId The id of the NFT to get the contract version for.
+	 * @returns The contract version number of the NFT.
+	 */
+	public async getNftContractVersion(nftId: string): Promise<number> {
+		Guards.stringValue(this.CLASS_NAME, nameof(nftId), nftId);
+
+		try {
+			const objectId = IotaNftUtils.nftIdToObjectId(nftId);
+			const object = await this._client.getObject({
+				id: objectId,
+				options: { showContent: true, showType: true, showOwner: true }
+			});
+
+			if (!object.data?.content) {
+				throw new GeneralError(this.CLASS_NAME, "nftNotFound", { nftId });
+			}
+
+			const parsedData = object.data.content as unknown as { fields: INftFields };
+			const content = parsedData.fields;
+
+			if (Is.empty(content.version)) {
+				throw new GeneralError(this.CLASS_NAME, "nftContractVersionNotFound", { nftId });
+			}
+
+			return Number(content.version);
+		} catch (error) {
+			throw new GeneralError(this.CLASS_NAME, "getNftContractVersionFailed", undefined, error);
+		}
+	}
+
+	/**
+	 * Get the current contract version from the deployed smart contract.
+	 * @returns The current version number of the contract.
+	 */
+	public async getCurrentContractVersion(): Promise<number> {
+		try {
+			// Use the utility class for version retrieval with hybrid namespace approach
+			return IotaSmartContractUtils.getCurrentContractVersion(
+				this._config,
+				this._client,
+				this._contractName,
+				this.getPackageId(),
+				"deployer-identity", // Using deployer identity for admin operations
+				this._walletConnector,
+				this._config.packageControllerAddressIndex
+			);
+		} catch (error) {
+			throw new GeneralError(this.CLASS_NAME, "getCurrentContractVersionFailed", undefined, error);
+		}
+	}
+
+	/**
 	 * Get the package controller's address.
 	 * @param identity The identity of the user to access the vault keys.
 	 * @returns The controller's address.
@@ -615,6 +832,19 @@ export class IotaNftConnector implements INftConnector {
 				packageId: this._deployedPackageId
 			});
 		}
+	}
+
+	/**
+	 * Get the package ID for the smart contract.
+	 * @returns The package ID.
+	 * @throws GeneralError if the package ID is not initialized.
+	 * @internal
+	 */
+	private getPackageId(): string {
+		if (!this._deployedPackageId) {
+			throw new GeneralError(this.CLASS_NAME, "packageIdNotInitialized");
+		}
+		return this._deployedPackageId;
 	}
 
 	/**
