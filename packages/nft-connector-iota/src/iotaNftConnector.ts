@@ -8,6 +8,7 @@ import {
 	GeneralError,
 	Guards,
 	Is,
+	NotFoundError,
 	StringHelper,
 	Urn
 } from "@twin.org/core";
@@ -214,11 +215,12 @@ export class IotaNftConnector implements INftConnector {
 		immutableMetadata?: T,
 		metadata?: U
 	): Promise<string> {
-		this.ensureStarted();
 		Guards.stringValue(this.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
 		Guards.stringValue(this.CLASS_NAME, nameof(tag), tag);
 
 		try {
+			const packageId = this.getPackageId();
+
 			const txb = new Transaction();
 			txb.setGasBudget(this._gasBudget);
 
@@ -234,7 +236,6 @@ export class IotaNftConnector implements INftConnector {
 			const metadataString = metadata ? JSON.stringify(metadata) : "";
 			const immutableMetadataString = immutableMetadata ? JSON.stringify(immutableMetadata) : "";
 
-			const packageId = this._deployedPackageId;
 			const moduleName = this.getModuleName();
 
 			// Call the mint function from our Move contract
@@ -309,7 +310,7 @@ export class IotaNftConnector implements INftConnector {
 			});
 
 			if (!object.data?.content) {
-				throw new GeneralError(this.CLASS_NAME, "nftNotFound", { nftId });
+				throw new NotFoundError(this.CLASS_NAME, "nftNotFound", nftId);
 			}
 
 			// Because object.data.content is of type IotaParsedData
@@ -538,7 +539,6 @@ export class IotaNftConnector implements INftConnector {
 		id: string,
 		metadata: U
 	): Promise<void> {
-		this.ensureStarted();
 		Guards.stringValue(this.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
 		Urn.guard(this.CLASS_NAME, nameof(id), id);
 		Guards.object(this.CLASS_NAME, nameof(metadata), metadata);
@@ -552,6 +552,8 @@ export class IotaNftConnector implements INftConnector {
 		}
 
 		try {
+			const packageId = this.getPackageId();
+
 			const txb = new Transaction();
 			txb.setGasBudget(this._gasBudget);
 
@@ -560,7 +562,6 @@ export class IotaNftConnector implements INftConnector {
 			// Convert metadata to string for storage
 			const metadataString = JSON.stringify(metadata);
 
-			const packageId = this._deployedPackageId;
 			const moduleName = this.getModuleName();
 
 			txb.moveCall({
@@ -772,7 +773,7 @@ export class IotaNftConnector implements INftConnector {
 			});
 
 			if (!object.data?.content) {
-				throw new GeneralError(this.CLASS_NAME, "nftNotFound", { nftId });
+				throw new NotFoundError(this.CLASS_NAME, "nftNotFound", nftId);
 			}
 
 			const parsedData = object.data.content as unknown as { fields: INftFields };
@@ -810,39 +811,14 @@ export class IotaNftConnector implements INftConnector {
 	}
 
 	/**
-	 * Get the package controller's address.
-	 * @param identity The identity of the user to access the vault keys.
-	 * @returns The controller's address.
-	 * @internal
-	 */
-	private async getPackageControllerAddress(identity: string): Promise<string> {
-		const addressIndex = this._config.packageControllerAddressIndex ?? 0;
-		const addresses = await this._walletConnector.getAddresses(identity, 0, addressIndex, 1);
-		return addresses[0];
-	}
-
-	/**
-	 * Ensure that the connector is bootstrapped.
-	 * @throws GeneralError if the connector is not started.
-	 * @internal
-	 */
-	private ensureStarted(): void {
-		if (!this._deployedPackageId) {
-			throw new GeneralError(this.CLASS_NAME, "connectorNotStarted", {
-				packageId: this._deployedPackageId
-			});
-		}
-	}
-
-	/**
 	 * Get the package ID for the smart contract.
 	 * @returns The package ID.
 	 * @throws GeneralError if the package ID is not initialized.
 	 * @internal
 	 */
 	private getPackageId(): string {
-		if (!this._deployedPackageId) {
-			throw new GeneralError(this.CLASS_NAME, "packageIdNotInitialized");
+		if (!Is.stringValue(this._deployedPackageId)) {
+			throw new GeneralError(this.CLASS_NAME, "packageIdNotInitialised");
 		}
 		return this._deployedPackageId;
 	}

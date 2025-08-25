@@ -45,7 +45,7 @@ describe("IotaNftConnector", () => {
 			}
 		});
 		await expect(unstartedConnector.mint(TEST_USER_IDENTITY_ID, "test_tag")).rejects.toThrow(
-			"connectorNotStarted"
+			"iotaNftConnector.mintingFailed"
 		);
 	});
 
