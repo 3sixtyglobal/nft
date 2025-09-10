@@ -1,5 +1,24 @@
 # @twin.org/nft-cli - Changelog
 
+## [0.0.2-next.4](https://github.com/twinfoundation/nft/compare/nft-cli-v0.0.2-next.3...nft-cli-v0.0.2-next.4) (2025-09-10)
+
+
+### Features
+
+* eslint migration to flat config ([0e6fc12](https://github.com/twinfoundation/nft/commit/0e6fc128c3c8f6cd34db793787437dd4af2c9994))
+
+
+### Bug Fixes
+
+* contract independent tests ([#35](https://github.com/twinfoundation/nft/issues/35)) ([b54ad6e](https://github.com/twinfoundation/nft/commit/b54ad6e1727284230f21db0032dc8ff437444812))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-connector-iota bumped from 0.0.2-next.3 to 0.0.2-next.4
+
 ## [0.0.2-next.3](https://github.com/twinfoundation/nft/compare/nft-cli-v0.0.2-next.2...nft-cli-v0.0.2-next.3) (2025-08-20)
 
 

@@ -1,5 +1,21 @@
 # @twin.org/nft-service - Changelog
 
+## [0.0.2-next.4](https://github.com/twinfoundation/nft/compare/nft-service-v0.0.2-next.3...nft-service-v0.0.2-next.4) (2025-09-10)
+
+
+### Features
+
+* eslint migration to flat config ([0e6fc12](https://github.com/twinfoundation/nft/commit/0e6fc128c3c8f6cd34db793787437dd4af2c9994))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-models bumped from 0.0.2-next.3 to 0.0.2-next.4
+  * devDependencies
+    * @twin.org/nft-connector-entity-storage bumped from 0.0.2-next.3 to 0.0.2-next.4
+
 ## [0.0.2-next.3](https://github.com/twinfoundation/nft/compare/nft-service-v0.0.2-next.2...nft-service-v0.0.2-next.3) (2025-08-20)
 
 
