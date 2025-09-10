@@ -6,6 +6,8 @@ import {
 	TEST_ADDRESS,
 	TEST_ADDRESS_2,
 	setupTestEnv,
+	getTestDeploymentConfig,
+	cleanupTestEnv,
 	TEST_USER_IDENTITY_ID_2,
 	TEST_USER_IDENTITY_ID,
 	TEST_NODE_IDENTITY,
@@ -31,6 +33,9 @@ describe("IotaNftConnector with Gas Station", () => {
 	beforeAll(async () => {
 		await setupTestEnv();
 
+		// Get the dynamically deployed test contracts
+		const deploymentConfig = getTestDeploymentConfig();
+
 		// Gas station configuration
 		gasStationConfig = {
 			clientOptions: TEST_CLIENT_OPTIONS,
@@ -54,22 +59,30 @@ describe("IotaNftConnector with Gas Station", () => {
 
 		// Connector for deployment with gas station (using node/deployer mnemonic)
 		gasStationNftConnector = new IotaNftConnector({
-			config: gasStationConfig
+			config: gasStationConfig,
+			deploymentConfig
 		});
 
 		// Regular connector for comparison
 		regularNftConnector = new IotaNftConnector({
-			config: regularConfig
+			config: regularConfig,
+			deploymentConfig
 		});
 
-		// Start the connector with gas station - no component state needed with move-to-json pre-deployed packages
+		// Start the connector with gas station using test-deployed packages
 		await gasStationNftConnector.start(TEST_NODE_IDENTITY);
+	});
+
+	afterAll(async () => {
+		await cleanupTestEnv();
 	});
 
 	describe("Configuration", () => {
 		test("Should create NFT connector with gas station configuration", () => {
+			const deploymentConfig = getTestDeploymentConfig();
 			const connector = new IotaNftConnector({
-				config: gasStationConfig
+				config: gasStationConfig,
+				deploymentConfig
 			});
 
 			expect(connector).toBeDefined();
@@ -77,8 +90,10 @@ describe("IotaNftConnector with Gas Station", () => {
 		});
 
 		test("Should create NFT connector without gas station configuration", () => {
+			const deploymentConfig = getTestDeploymentConfig();
 			const connector = new IotaNftConnector({
-				config: regularConfig
+				config: regularConfig,
+				deploymentConfig
 			});
 
 			expect(connector).toBeDefined();
@@ -86,6 +101,7 @@ describe("IotaNftConnector with Gas Station", () => {
 		});
 
 		test("Should create NFT connector with custom gas budget", () => {
+			const deploymentConfig = getTestDeploymentConfig();
 			const customGasBudgetConfig: IIotaNftConnectorConfig = {
 				clientOptions: TEST_CLIENT_OPTIONS,
 				vaultMnemonicId: TEST_MNEMONIC_NAME,
@@ -98,7 +114,8 @@ describe("IotaNftConnector with Gas Station", () => {
 			};
 
 			const connector = new IotaNftConnector({
-				config: customGasBudgetConfig
+				config: customGasBudgetConfig,
+				deploymentConfig
 			});
 
 			expect(connector).toBeDefined();
@@ -115,7 +132,8 @@ describe("IotaNftConnector with Gas Station", () => {
 
 		test("Cannot mint an NFT before start (gas station)", async () => {
 			const unstartedConnector = new IotaNftConnector({
-				config: gasStationConfig
+				config: gasStationConfig,
+				deploymentConfig: getTestDeploymentConfig()
 			});
 			await expect(unstartedConnector.mint(TEST_USER_IDENTITY_ID, "test_tag")).rejects.toThrow(
 				"iotaNftConnector.mintingFailed"
@@ -506,7 +524,8 @@ describe("IotaNftConnector with Gas Station", () => {
 			};
 
 			const connector = new IotaNftConnector({
-				config: invalidGasStationConfig
+				config: invalidGasStationConfig,
+				deploymentConfig: getTestDeploymentConfig()
 			});
 
 			// Start the connector (this should succeed since it uses pre-deployed packages)
@@ -530,7 +549,8 @@ describe("IotaNftConnector with Gas Station", () => {
 			};
 
 			const connector = new IotaNftConnector({
-				config: invalidAuthConfig
+				config: invalidAuthConfig,
+				deploymentConfig: getTestDeploymentConfig()
 			});
 
 			// Start the connector (this should succeed since it uses pre-deployed packages)

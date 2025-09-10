@@ -1,21 +1,31 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
+import { exec } from "node:child_process";
 import path from "node:path";
-import { requestIotaFromFaucetV0 } from "@iota/iota-sdk/faucet";
-import { Guards, Is } from "@twin.org/core";
+import { promisify } from "node:util";
+import { Guards } from "@twin.org/core";
+import { Bip39 } from "@twin.org/crypto";
+import type { ISmartContractDeployments } from "@twin.org/dlt-iota";
 import { MemoryEntityStorageConnector } from "@twin.org/entity-storage-connector-memory";
 import { EntityStorageConnectorFactory } from "@twin.org/entity-storage-models";
 import { nameof } from "@twin.org/nameof";
 import {
 	EntityStorageVaultConnector,
+	initSchema,
 	type VaultKey,
-	type VaultSecret,
-	initSchema
+	type VaultSecret
 } from "@twin.org/vault-connector-entity-storage";
 import { VaultConnectorFactory } from "@twin.org/vault-models";
-import { IotaWalletConnector } from "@twin.org/wallet-connector-iota";
-import { WalletConnectorFactory } from "@twin.org/wallet-models";
+import { IotaFaucetConnector, IotaWalletConnector } from "@twin.org/wallet-connector-iota";
+import { FaucetConnectorFactory, WalletConnectorFactory } from "@twin.org/wallet-models";
 import dotenv from "dotenv";
+import {
+	cleanupTestDeployment,
+	deployTestContractsComplete,
+	type ITestDeploymentConfig
+} from "./helpers/testContractDeployment";
+
+const execAsync = promisify(exec);
 
 console.debug("Setting up test environment from .env and .env.dev files");
 
@@ -36,59 +46,27 @@ Guards.stringValue(
 	process.env.TEST_GAS_STATION_AUTH_TOKEN
 );
 
-if (!Is.stringValue(process.env.TEST_MNEMONIC)) {
-	// eslint-disable-next-line no-restricted-syntax
-	throw new Error(
-		`Please define TEST_MNEMONIC as a 24 word mnemonic either as an environment variable or inside an .env.dev file
-     e.g. TEST_MNEMONIC="word0 word1 ... word23"
-     You can generate one using the following command
-     npx "@twin.org/crypto-cli" mnemonic --env ./tests/.env.dev --env-prefix TEST_`
-	);
-}
-if (!Is.stringValue(process.env.TEST_2_MNEMONIC)) {
-	// eslint-disable-next-line no-restricted-syntax
-	throw new Error(
-		`Please define TEST_2_MNEMONIC as a 24 word mnemonic either as an environment variable or inside an .env.dev file
-     e.g. TEST_2_MNEMONIC="word0 word1 ... word23"
-     You can generate one using the following command
-     npx "@twin.org/crypto-cli" mnemonic --env ./tests/.env.dev --env-prefix TEST_2_ --merge-env`
-	);
-}
-
-if (!Is.stringValue(process.env.TEST_NODE_MNEMONIC)) {
-	// eslint-disable-next-line no-restricted-syntax
-	throw new Error(
-		`Please define TEST_NODE_MNEMONIC as a 24 word mnemonic either as an environment variable or inside an .env.dev file
-     e.g. TEST_NODE_MNEMONIC="word0 word1 ... word23"
-     You can generate one using the following command
-     npx "@twin.org/crypto-cli" mnemonic --env ./tests/.env.dev --env-prefix TEST_NODE_ --merge-env`
-	);
-}
-
-if (!Is.stringValue(process.env.TEST_DEPLOYER_MNEMONIC)) {
-	// eslint-disable-next-line no-restricted-syntax
-	throw new Error(
-		`Please define TEST_DEPLOYER_MNEMONIC as a 24 word mnemonic either as an environment variable or inside an .env.dev file
-     e.g. TEST_DEPLOYER_MNEMONIC="word0 word1 ... word23"
-     This should be the mnemonic used for contract deployment and AdminCap ownership
-     You can generate one using the following command
-     npx "@twin.org/crypto-cli" mnemonic --env ./tests/.env.dev --env-prefix TEST_DEPLOYER_ --merge-env`
-	);
-}
-
 export const TEST_NODE_IDENTITY = "test-node-identity";
 export const TEST_USER_IDENTITY_ID = "test-user-identity";
 export const TEST_USER_IDENTITY_ID_2 = "test-user-identity-2";
-export const DEPLOYER_IDENTITY = "deployer-identity";
+export const TEST_DEPLOYER_IDENTITY = "deployer-identity";
 export const TEST_MNEMONIC_NAME = "test-mnemonic";
-export const TEST_NETWORK = process.env.TEST_NETWORK;
-export const TEST_NODE_MNEMONIC = process.env.TEST_NODE_MNEMONIC;
-export const TEST_DEPLOYER_MNEMONIC = process.env.TEST_DEPLOYER_MNEMONIC;
-export const TEST_FAUCET_ENDPOINT = process.env.TEST_FAUCET_ENDPOINT ?? "";
+export const TEST_NETWORK = process.env.TEST_NETWORK ?? "testnet";
+export const TEST_NODE_MNEMONIC = process.env.TEST_NODE_MNEMONIC ?? Bip39.randomMnemonic();
+export const TEST_MNEMONIC = process.env.TEST_MNEMONIC ?? Bip39.randomMnemonic();
+export const TEST_2_MNEMONIC = process.env.TEST_2_MNEMONIC ?? Bip39.randomMnemonic();
+export const TEST_DEPLOYER_MNEMONIC = process.env.TEST_DEPLOYER_MNEMONIC ?? Bip39.randomMnemonic();
+export const TEST_NODE_ENDPOINT = process.env.TEST_NODE_ENDPOINT ?? "https://api.testnet.iota.cafe";
+export const TEST_FAUCET_ENDPOINT =
+	process.env.TEST_FAUCET_ENDPOINT ?? "https://faucet.testnet.iota.cafe/gas";
 export const TEST_EXPLORER_URL = process.env.TEST_EXPLORER_URL;
 export const TEST_GAS_STATION_URL = process.env.TEST_GAS_STATION_URL;
 export const TEST_GAS_STATION_AUTH_TOKEN = process.env.TEST_GAS_STATION_AUTH_TOKEN;
 export const TEST_GAS_BUDGET = Number.parseInt(process.env.TEST_GAS_BUDGET ?? "50000000", 10);
+export const TEST_COIN_TYPE = Number.parseInt(process.env.TEST_COIN_TYPE, 10);
+
+// Minimum balance required for tests (1 IOTA in nano units)
+const MIN_BALANCE_REQUIRED = 1000000000n; // 1 IOTA = 1,000,000,000 nano IOTA
 
 initSchema();
 
@@ -113,33 +91,41 @@ VaultConnectorFactory.register("vault", () => TEST_VAULT_CONNECTOR);
 // Store mnemonics in vault for node identity
 await TEST_VAULT_CONNECTOR.setSecret(
 	`${TEST_NODE_IDENTITY}/${TEST_MNEMONIC_NAME}`,
-	process.env.TEST_NODE_MNEMONIC
+	TEST_NODE_MNEMONIC
 );
 
 // Store mnemonics in vault for user identity
 await TEST_VAULT_CONNECTOR.setSecret(
 	`${TEST_USER_IDENTITY_ID}/${TEST_MNEMONIC_NAME}`,
-	process.env.TEST_MNEMONIC
+	TEST_MNEMONIC
 );
 
 // Store mnemonics in vault for user identity 2
 await TEST_VAULT_CONNECTOR.setSecret(
 	`${TEST_USER_IDENTITY_ID_2}/${TEST_MNEMONIC_NAME}`,
-	process.env.TEST_2_MNEMONIC
+	TEST_2_MNEMONIC
 );
 
 // Store deployer mnemonic (this is the actual AdminCap owner)
 await TEST_VAULT_CONNECTOR.setSecret(
-	`${DEPLOYER_IDENTITY}/${TEST_MNEMONIC_NAME}`,
-	process.env.TEST_DEPLOYER_MNEMONIC
+	`${TEST_DEPLOYER_IDENTITY}/${TEST_MNEMONIC_NAME}`,
+	TEST_DEPLOYER_MNEMONIC
 );
 
 // Setup client options
 export const TEST_CLIENT_OPTIONS = {
-	url: process.env.TEST_NODE_ENDPOINT
+	url: TEST_NODE_ENDPOINT
 };
 
-export const TEST_COIN_TYPE = Number.parseInt(process.env.TEST_COIN_TYPE, 10);
+export const TEST_FAUCET_CONNECTOR = new IotaFaucetConnector({
+	config: {
+		clientOptions: TEST_CLIENT_OPTIONS,
+		endpoint: TEST_FAUCET_ENDPOINT,
+		vaultMnemonicId: TEST_MNEMONIC_NAME,
+		network: TEST_NETWORK
+	}
+});
+FaucetConnectorFactory.register("faucet", () => TEST_FAUCET_CONNECTOR);
 
 export const TEST_WALLET_CONNECTOR = new IotaWalletConnector({
 	config: {
@@ -158,7 +144,7 @@ const testAddresses2 = await TEST_WALLET_CONNECTOR.getAddresses(TEST_USER_IDENTI
 const nodeAddresses = await TEST_WALLET_CONNECTOR.getAddresses(TEST_NODE_IDENTITY, 0, 0, 1);
 
 // DEPLOYER_IDENTITY uses the deployer mnemonic (this is the actual AdminCap owner)
-const deployerAddresses = await TEST_WALLET_CONNECTOR.getAddresses(DEPLOYER_IDENTITY, 0, 0, 1);
+const deployerAddresses = await TEST_WALLET_CONNECTOR.getAddresses(TEST_DEPLOYER_IDENTITY, 0, 0, 1);
 
 export const TEST_ADDRESS = testAddresses[0];
 export const TEST_ADDRESS_2 = testAddresses2[0];
@@ -166,52 +152,134 @@ export const NODE_ADDRESS = nodeAddresses[0];
 export const DEPLOYER_ADDRESS = deployerAddresses[0];
 
 /**
+ * Global variable to store test deployment configuration.
+ * @internal
+ */
+let TEST_DEPLOYMENT_CONFIG: ISmartContractDeployments | undefined;
+
+/**
+ * Get the test deployment configuration.
+ * @returns The test deployment configuration.
+ * @throws When test deployment configuration is not available.
+ */
+export function getTestDeploymentConfig(): ISmartContractDeployments {
+	if (!TEST_DEPLOYMENT_CONFIG) {
+		throw new Error(
+			"Test deployment configuration not available. Ensure setupTestEnv() has been called."
+		);
+	}
+	return TEST_DEPLOYMENT_CONFIG;
+}
+
+/**
+ * Verify that IOTA CLI is installed and available.
+ * @throws GeneralError if IOTA CLI is not installed or version check fails.
+ */
+async function verifyIotaCliInstalled(): Promise<void> {
+	try {
+		console.debug("[setupTestEnv] Verifying IOTA CLI installation");
+		await execAsync("iota --version");
+	} catch (error) {
+		if (
+			(error as { code?: number }).code === 127 ||
+			(error as Error).message.includes("not found")
+		) {
+			throw new Error(
+				"IOTA CLI is not installed. Please install it from: https://github.com/iotaledger/iota/releases/"
+			);
+		}
+		throw new Error("Failed to check IOTA CLI version", { cause: error });
+	}
+}
+
+/**
  * Setup the test environment.
  */
 export async function setupTestEnv(): Promise<void> {
+	// Verify IOTA CLI is available
+	await verifyIotaCliInstalled();
+
 	console.debug(
 		"Test Address",
-		`${process.env.TEST_EXPLORER_URL}address/${TEST_ADDRESS}?network=${TEST_NETWORK}`
+		`${TEST_EXPLORER_URL}address/${TEST_ADDRESS}?network=${TEST_NETWORK}`
 	);
 	console.debug(
 		"Test Address 2",
-		`${process.env.TEST_EXPLORER_URL}address/${TEST_ADDRESS_2}?network=${TEST_NETWORK}`
+		`${TEST_EXPLORER_URL}address/${TEST_ADDRESS_2}?network=${TEST_NETWORK}`
 	);
 	console.debug(
 		"Node Address",
-		`${process.env.TEST_EXPLORER_URL}address/${NODE_ADDRESS}?network=${TEST_NETWORK}`
+		`${TEST_EXPLORER_URL}address/${NODE_ADDRESS}?network=${TEST_NETWORK}`
 	);
 
-	// eslint-disable-next-line no-restricted-syntax
-	console.log("[setupTestEnv] Starting faucet requests...");
+	console.debug("[setupTestEnv] Ensuring test addresses have sufficient funds");
+	await ensureFundsForAddress(TEST_NODE_IDENTITY, NODE_ADDRESS, TEST_WALLET_CONNECTOR);
+	await ensureFundsForAddress(TEST_USER_IDENTITY_ID, TEST_ADDRESS, TEST_WALLET_CONNECTOR);
+	await ensureFundsForAddress(TEST_USER_IDENTITY_ID_2, TEST_ADDRESS_2, TEST_WALLET_CONNECTOR);
+	await ensureFundsForAddress(TEST_DEPLOYER_IDENTITY, DEPLOYER_ADDRESS, TEST_WALLET_CONNECTOR);
 
+	// Deploy test contracts using TEST_DEPLOYER_MNEMONIC
 	try {
-		// Request IOTA tokens from the faucet for both test accounts. 10 IOTA per request.
-		// eslint-disable-next-line no-restricted-syntax
-		console.log(`[setupTestEnv] Requesting funds for NODE_ADDRESS: ${NODE_ADDRESS}`);
-		await requestIotaFromFaucetV0({
-			host: TEST_FAUCET_ENDPOINT,
-			recipient: NODE_ADDRESS
-		});
+		const deploymentConfig: ITestDeploymentConfig = {
+			network: TEST_NETWORK,
+			nodeEndpoint: TEST_NODE_ENDPOINT,
+			faucetEndpoint: TEST_FAUCET_ENDPOINT,
+			deployerMnemonic: TEST_DEPLOYER_MNEMONIC ?? "",
+			gasBudget: TEST_GAS_BUDGET
+		};
 
-		// eslint-disable-next-line no-restricted-syntax
-		console.log(`[setupTestEnv] Requesting funds for TEST_ADDRESS: ${TEST_ADDRESS}`);
-		await requestIotaFromFaucetV0({
-			host: TEST_FAUCET_ENDPOINT,
-			recipient: TEST_ADDRESS
-		});
-
-		// eslint-disable-next-line no-restricted-syntax
-		console.log(`[setupTestEnv] Requesting funds for TEST_ADDRESS_2: ${TEST_ADDRESS_2}`);
-		await requestIotaFromFaucetV0({
-			host: TEST_FAUCET_ENDPOINT,
-			recipient: TEST_ADDRESS_2
-		});
-
-		// eslint-disable-next-line no-restricted-syntax
-		console.log("[setupTestEnv] All faucet requests completed successfully");
+		TEST_DEPLOYMENT_CONFIG = await deployTestContractsComplete(deploymentConfig);
 	} catch (error) {
-		// eslint-disable-next-line no-restricted-syntax
-		console.log("[setupTestEnv] Faucet requests failed, continuing anyway:", error);
+		console.error("[setupTestEnv] Test contract deployment failed:", error);
+		throw error;
+	}
+}
+
+/**
+ * Cleanup test environment and temporary files.
+ */
+export async function cleanupTestEnv(): Promise<void> {
+	try {
+		await cleanupTestDeployment();
+		TEST_DEPLOYMENT_CONFIG = undefined;
+	} catch (error) {
+		console.warn("[cleanupTestEnv] Cleanup failed:", error);
+		// Don't throw - cleanup failures shouldn't break tests
+	}
+}
+
+/**
+ * Ensure an address has sufficient funds for testing.
+ * Only requests from faucet if current balance is below minimum required.
+ * @param identity The identity to use for wallet operations.
+ * @param address The address to ensure funds for.
+ * @param walletConnector The wallet connector to use.
+ * @returns Promise that resolves when funds are ensured.
+ */
+async function ensureFundsForAddress(
+	identity: string,
+	address: string,
+	walletConnector: IotaWalletConnector
+): Promise<void> {
+	try {
+		// Use ensureBalance which will automatically request from faucet if needed
+		const success = await walletConnector.ensureBalance(
+			identity,
+			address,
+			MIN_BALANCE_REQUIRED,
+			30
+		);
+
+		const currentBalance = await walletConnector.getBalance(identity, address);
+		console.debug(`[ensureFundsForAddress] Address ${address} has balance: ${currentBalance}`);
+
+		if (!success) {
+			throw new Error(
+				`Failed to ensure funds from faucet for address ${address}, requiredBalance: ${MIN_BALANCE_REQUIRED}, currentBalance: ${currentBalance}`
+			);
+		}
+	} catch (error) {
+		console.error(error);
+		throw error;
 	}
 }

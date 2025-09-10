@@ -6,6 +6,8 @@ import {
 	TEST_ADDRESS,
 	TEST_ADDRESS_2,
 	setupTestEnv,
+	getTestDeploymentConfig,
+	cleanupTestEnv,
 	TEST_USER_IDENTITY_ID_2,
 	TEST_USER_IDENTITY_ID,
 	TEST_NODE_IDENTITY,
@@ -14,7 +16,7 @@ import {
 	TEST_VAULT_CONNECTOR,
 	TEST_EXPLORER_URL,
 	TEST_NODE_MNEMONIC,
-	DEPLOYER_IDENTITY
+	TEST_DEPLOYER_IDENTITY
 } from "./setupTestEnv";
 import { IotaNftConnector } from "../src/iotaNftConnector";
 
@@ -23,6 +25,9 @@ let nftConnector: IotaNftConnector;
 describe("IotaNftConnector", () => {
 	beforeAll(async () => {
 		await setupTestEnv();
+
+		// Get the dynamically deployed test contracts
+		const deploymentConfig = getTestDeploymentConfig();
 		// Connector for deployment (using node/deployer mnemonic)
 		nftConnector = new IotaNftConnector({
 			config: {
@@ -30,19 +35,26 @@ describe("IotaNftConnector", () => {
 				vaultMnemonicId: TEST_MNEMONIC_NAME,
 				network: TEST_NETWORK,
 				enableCostLogging: true
-			}
+			},
+			deploymentConfig
 		});
-		// Start the connector - no component state needed with move-to-json pre-deployed packages
+		// Start the connector with test-deployed packages
 		await nftConnector.start(TEST_NODE_IDENTITY);
 	});
 
+	afterAll(async () => {
+		await cleanupTestEnv();
+	});
+
 	test("Cannot mint an NFT before start", async () => {
+		const deploymentConfig = getTestDeploymentConfig();
 		const unstartedConnector = new IotaNftConnector({
 			config: {
 				clientOptions: TEST_CLIENT_OPTIONS,
 				vaultMnemonicId: TEST_MNEMONIC_NAME,
 				network: TEST_NETWORK
-			}
+			},
+			deploymentConfig
 		});
 		await expect(unstartedConnector.mint(TEST_USER_IDENTITY_ID, "test_tag")).rejects.toThrow(
 			"iotaNftConnector.mintingFailed"
@@ -454,6 +466,9 @@ describe("IotaNftConnector - Admin Operations", () => {
 	beforeAll(async () => {
 		await setupTestEnv();
 
+		// Get the dynamically deployed test contracts
+		const deploymentConfig = getTestDeploymentConfig();
+
 		// Create connector specifically for admin operations (using node identity as admin)
 		adminNftConnector = new IotaNftConnector({
 			config: {
@@ -461,9 +476,14 @@ describe("IotaNftConnector - Admin Operations", () => {
 				vaultMnemonicId: TEST_MNEMONIC_NAME,
 				network: TEST_NETWORK,
 				enableCostLogging: true
-			}
+			},
+			deploymentConfig
 		});
 		await adminNftConnector.start(TEST_NODE_IDENTITY);
+	});
+
+	afterAll(async () => {
+		await cleanupTestEnv();
 	});
 
 	test("Can get current contract version from blockchain", async () => {
@@ -506,7 +526,8 @@ describe("IotaNftConnector - Admin Operations", () => {
 				clientOptions: TEST_CLIENT_OPTIONS,
 				vaultMnemonicId: TEST_MNEMONIC_NAME,
 				network: TEST_NETWORK
-			}
+			},
+			deploymentConfig: getTestDeploymentConfig()
 		});
 		await noMockConnector.start(TEST_NODE_IDENTITY);
 
@@ -604,11 +625,11 @@ describe("IotaNftConnector - Admin Operations", () => {
 	});
 
 	test("Can enable and disable migration with admin identity", async () => {
-		await expect(adminNftConnector.enableMigration(DEPLOYER_IDENTITY)).resolves.not.toThrow();
-		await expect(adminNftConnector.disableMigration(DEPLOYER_IDENTITY)).resolves.not.toThrow();
+		await expect(adminNftConnector.enableMigration(TEST_DEPLOYER_IDENTITY)).resolves.not.toThrow();
+		await expect(adminNftConnector.disableMigration(TEST_DEPLOYER_IDENTITY)).resolves.not.toThrow();
 
 		// Enable again for other tests
-		await expect(adminNftConnector.enableMigration(DEPLOYER_IDENTITY)).resolves.not.toThrow();
+		await expect(adminNftConnector.enableMigration(TEST_DEPLOYER_IDENTITY)).resolves.not.toThrow();
 	});
 
 	test("Cannot enable migration without admin identity (should fail)", async () => {
@@ -636,11 +657,11 @@ describe("IotaNftConnector - Admin Operations", () => {
 		expect(contractVersion).toBe(1);
 
 		// Enable migration first (using DEPLOYER_IDENTITY which owns AdminCap)
-		await adminNftConnector.enableMigration(DEPLOYER_IDENTITY);
+		await adminNftConnector.enableMigration(TEST_DEPLOYER_IDENTITY);
 
 		// Migration should fail because NFT is already at current version
 		// This demonstrates correct admin access but logical failure for same-version migration
-		await expect(adminNftConnector.migrateNft(DEPLOYER_IDENTITY, nftId)).rejects.toThrow();
+		await expect(adminNftConnector.migrateNft(TEST_DEPLOYER_IDENTITY, nftId)).rejects.toThrow();
 	});
 
 	test("Cannot migrate NFT without admin capabilities", async () => {
@@ -649,7 +670,7 @@ describe("IotaNftConnector - Admin Operations", () => {
 			name: "No Admin Migration Test NFT"
 		});
 
-		await adminNftConnector.enableMigration(DEPLOYER_IDENTITY);
+		await adminNftConnector.enableMigration(TEST_DEPLOYER_IDENTITY);
 
 		// This should fail because TEST_USER_IDENTITY_ID is not an admin
 		await expect(adminNftConnector.migrateNft(TEST_USER_IDENTITY_ID, nftId)).rejects.toThrow();
@@ -663,7 +684,7 @@ describe("IotaNftConnector - Admin Operations", () => {
 			});
 
 			// Enable migration first (using DEPLOYER_IDENTITY which owns AdminCap)
-			await adminNftConnector.enableMigration(DEPLOYER_IDENTITY);
+			await adminNftConnector.enableMigration(TEST_DEPLOYER_IDENTITY);
 
 			// Regular user tries to migrate NFT (should fail - no AdminCap)
 			await expect(adminNftConnector.migrateNft(TEST_USER_IDENTITY_ID, nftId)).rejects.toThrow(
@@ -694,19 +715,19 @@ describe("IotaNftConnector - Admin Operations", () => {
 			});
 
 			// Ensure migration is disabled (using DEPLOYER_IDENTITY which owns AdminCap)
-			await adminNftConnector.disableMigration(DEPLOYER_IDENTITY);
+			await adminNftConnector.disableMigration(TEST_DEPLOYER_IDENTITY);
 
 			// Admin tries to migrate NFT while migration is disabled (should fail)
-			await expect(adminNftConnector.migrateNft(DEPLOYER_IDENTITY, nftId)).rejects.toThrow();
+			await expect(adminNftConnector.migrateNft(TEST_DEPLOYER_IDENTITY, nftId)).rejects.toThrow();
 
 			// Verify migration status is actually disabled
 			const isActive = await adminNftConnector.isMigrationActive();
 			expect(isActive).toBe(false);
 
 			// Enable migration, then disable it, then try to migrate (should fail)
-			await adminNftConnector.enableMigration(DEPLOYER_IDENTITY);
-			await adminNftConnector.disableMigration(DEPLOYER_IDENTITY);
-			await expect(adminNftConnector.migrateNft(DEPLOYER_IDENTITY, nftId)).rejects.toThrow();
+			await adminNftConnector.enableMigration(TEST_DEPLOYER_IDENTITY);
+			await adminNftConnector.disableMigration(TEST_DEPLOYER_IDENTITY);
+			await expect(adminNftConnector.migrateNft(TEST_DEPLOYER_IDENTITY, nftId)).rejects.toThrow();
 
 			// Verify NFT remains unchanged after disabled migration attempts
 			const versionAfterFailures2 = await adminNftConnector.getNftContractVersion(nftId);
@@ -735,11 +756,11 @@ describe("IotaNftConnector - Admin Operations", () => {
 			}
 
 			// Enable migration for attack testing
-			await adminNftConnector.enableMigration(DEPLOYER_IDENTITY);
+			await adminNftConnector.enableMigration(TEST_DEPLOYER_IDENTITY);
 
 			// Try to migrate NFTs that are already current version (should fail)
 			for (const nftId of nftIds) {
-				await expect(adminNftConnector.migrateNft(DEPLOYER_IDENTITY, nftId)).rejects.toThrow();
+				await expect(adminNftConnector.migrateNft(TEST_DEPLOYER_IDENTITY, nftId)).rejects.toThrow();
 			}
 
 			// Verify version validation prevents operations on mismatched versions
@@ -773,8 +794,12 @@ describe("IotaNftConnector - Admin Operations", () => {
 			await expect(adminNftConnector.disableMigration(TEST_NODE_IDENTITY)).rejects.toThrow();
 
 			// Only DEPLOYER_IDENTITY (AdminCap owner) can perform admin operations
-			await expect(adminNftConnector.enableMigration(DEPLOYER_IDENTITY)).resolves.not.toThrow();
-			await expect(adminNftConnector.disableMigration(DEPLOYER_IDENTITY)).resolves.not.toThrow();
+			await expect(
+				adminNftConnector.enableMigration(TEST_DEPLOYER_IDENTITY)
+			).resolves.not.toThrow();
+			await expect(
+				adminNftConnector.disableMigration(TEST_DEPLOYER_IDENTITY)
+			).resolves.not.toThrow();
 
 			// Create NFT and test migration requires AdminCap
 			const nftId = await adminNftConnector.mint(TEST_USER_IDENTITY_ID, "admincap_test", {
@@ -782,7 +807,7 @@ describe("IotaNftConnector - Admin Operations", () => {
 			});
 
 			// Enable migration for this test
-			await adminNftConnector.enableMigration(DEPLOYER_IDENTITY);
+			await adminNftConnector.enableMigration(TEST_DEPLOYER_IDENTITY);
 
 			// Migration attempts without AdminCap should fail
 			await expect(adminNftConnector.migrateNft(TEST_USER_IDENTITY_ID, nftId)).rejects.toThrow();
@@ -790,7 +815,7 @@ describe("IotaNftConnector - Admin Operations", () => {
 			await expect(adminNftConnector.migrateNft(TEST_NODE_IDENTITY, nftId)).rejects.toThrow();
 
 			// Migration with AdminCap should have access but fail due to version logic (expected)
-			await expect(adminNftConnector.migrateNft(DEPLOYER_IDENTITY, nftId)).rejects.toThrow();
+			await expect(adminNftConnector.migrateNft(TEST_DEPLOYER_IDENTITY, nftId)).rejects.toThrow();
 
 			// Verify AdminCap boundary: no identity can perform admin operations except AdminCap owner
 			const unauthorizedIdentities = [
@@ -814,7 +839,8 @@ describe("IotaNftConnector - Admin Operations", () => {
 					clientOptions: TEST_CLIENT_OPTIONS,
 					vaultMnemonicId: TEST_MNEMONIC_NAME,
 					network: TEST_NETWORK
-				}
+				},
+				deploymentConfig: getTestDeploymentConfig()
 			});
 			await connectorWithoutObjects.start(TEST_NODE_IDENTITY);
 
@@ -825,12 +851,12 @@ describe("IotaNftConnector - Admin Operations", () => {
 
 			// Invalid NFT IDs produce clear errors
 			await expect(
-				adminNftConnector.migrateNft(DEPLOYER_IDENTITY, "invalid-nft-id")
+				adminNftConnector.migrateNft(TEST_DEPLOYER_IDENTITY, "invalid-nft-id")
 			).rejects.toThrow();
 
 			// Malformed URN produces namespace mismatch error
 			await expect(
-				adminNftConnector.migrateNft(DEPLOYER_IDENTITY, "urn:test:invalid:format")
+				adminNftConnector.migrateNft(TEST_DEPLOYER_IDENTITY, "urn:test:invalid:format")
 			).rejects.toThrow("namespaceMismatch");
 		});
 	});

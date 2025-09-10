@@ -1,0 +1,3 @@
+# Test deployment temporary files - auto-generated during tests
+tests/temp-test.env
+tests/temp-deployments.json

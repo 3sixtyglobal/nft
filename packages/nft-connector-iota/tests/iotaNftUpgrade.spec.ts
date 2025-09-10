@@ -16,7 +16,8 @@ import {
 	TEST_NODE_IDENTITY,
 	TEST_NETWORK,
 	TEST_MNEMONIC_NAME,
-	setupTestEnv
+	setupTestEnv,
+	cleanupTestEnv
 } from "./setupTestEnv";
 
 describe("Real NFT Contract Upgrade", () => {
@@ -26,31 +27,16 @@ describe("Real NFT Contract Upgrade", () => {
 	let deployment: IContractData;
 
 	beforeAll(async () => {
-		// eslint-disable-next-line no-restricted-syntax
-		console.log("[beforeAll] Starting setup process...");
-
-		// Setup test environment and build/deploy V1 contract
-		// eslint-disable-next-line no-restricted-syntax
-		console.log("[beforeAll] Step 1: Setting up test environment");
 		await setupTestEnv();
 
-		// eslint-disable-next-line no-restricted-syntax
-		console.log("[beforeAll] Step 2: Cleaning up deployment JSON");
 		await cleanupDeploymentJson();
 
-		// eslint-disable-next-line no-restricted-syntax
-		console.log("[beforeAll] Step 3: Building V1 contract");
 		await buildV1Contract();
 
-		// eslint-disable-next-line no-restricted-syntax
-		console.log("[beforeAll] Step 4: Deploying V1 contract");
 		deployment = await deployV1Contract();
 
-		// eslint-disable-next-line no-restricted-syntax
-		console.log("[beforeAll] Step 5: Initializing V1 connector");
-
-		// Initialize V1 connector
-		const dynamicConfig: ISmartContractDeployments = {
+		// Initialize V1 connector with deployed V1 contracts
+		const v1Config: ISmartContractDeployments = {
 			[TEST_NETWORK]: {
 				packageId: deployment.packageId,
 				packageBytecode: deployment.packageBytecode,
@@ -67,12 +53,13 @@ describe("Real NFT Contract Upgrade", () => {
 				network: TEST_NETWORK,
 				enableCostLogging: true
 			},
-			deploymentConfig: dynamicConfig
+			deploymentConfig: v1Config
 		});
 		await v1Connector.start(TEST_NODE_IDENTITY);
 	});
 
-	afterAll(() => {
+	afterAll(async () => {
+		await cleanupTestEnv();
 		deployment = null as unknown as IContractData;
 	});
 

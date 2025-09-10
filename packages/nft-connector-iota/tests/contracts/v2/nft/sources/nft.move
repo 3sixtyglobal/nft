@@ -1,8 +1,5 @@
 module nft::nft;
 
-use iota::object::{Self, UID};
-use iota::transfer;
-use iota::tx_context::TxContext;
 use std::string::String;
 
 /// Current version of the NFT contract - V2 with enhanced features

@@ -36,16 +36,6 @@
 			"getNftContractVersionFailed": "Failed to retrieve contract version for NFT \"{nftId}\"",
 			"getCurrentContractVersionFailed": "Failed to retrieve current contract version from blockchain"
 		},
-		"upgradeTestHelpers": {
-			"buildV1ContractFailed": "Failed to build V1 contract",
-			"deployV1ContractFailed": "Failed to deploy V1 contract",
-			"incompleteDeploymentData": "Deployment completed but required data is missing",
-			"upgradeToV2Failed": "Failed to upgrade contract to V2",
-			"v2RebuildFailed": "Failed to rebuild V2 contract with updated configuration",
-			"newPackageIdNotFound": "New package ID not found in upgrade result",
-			"loadDeploymentConfigFailed": "Failed to load deployment configuration",
-			"cleanDeploymentJsonFailed": "Failed to clean deployment JSON file"
-		},
 		"iotaNftUtils": { "invalidNftIdFormat": "The NFT ID \"{id}\" has an invalid format" }
 	}
 }

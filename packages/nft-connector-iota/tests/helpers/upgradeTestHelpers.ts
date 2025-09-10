@@ -5,7 +5,14 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import { GeneralError } from "@twin.org/core";
-import { TEST_NETWORK } from "../setupTestEnv";
+import {
+	TEST_NETWORK,
+	TEST_NODE_ENDPOINT,
+	TEST_DEPLOYER_MNEMONIC,
+	TEST_FAUCET_ENDPOINT,
+	TEST_GAS_BUDGET
+} from "../setupTestEnv";
+import { createTestEnvConfig, type ITestDeploymentConfig } from "./testContractDeployment";
 
 // Temporary types until @twin.org/move-to-json exports are fixed
 /**
@@ -48,14 +55,20 @@ const execAsync = promisify(exec);
  * @returns Promise that resolves when build is complete.
  */
 export async function buildV1Contract(): Promise<void> {
+	let tempConfigPath: string | undefined;
 	try {
-		const workingDir = process.cwd();
-		// eslint-disable-next-line no-console
-		console.log(`[buildV1Contract] Working directory: ${workingDir}`);
+		// Create test-specific configuration for V1 build
+		const deploymentConfig: ITestDeploymentConfig = {
+			network: TEST_NETWORK,
+			nodeEndpoint: TEST_NODE_ENDPOINT,
+			faucetEndpoint: TEST_FAUCET_ENDPOINT,
+			deployerMnemonic: TEST_DEPLOYER_MNEMONIC ?? "",
+			gasBudget: TEST_GAS_BUDGET
+		};
 
-		const buildCommand = `npx move-to-json build "tests/contracts/v1/nft/sources/**/*.move" --network ${TEST_NETWORK} --output tests/contracts/v1/v1-smart-contract-deployments.json`;
-		// eslint-disable-next-line no-console
-		console.log(`[buildV1Contract] Executing command: ${buildCommand}`);
+		tempConfigPath = await createTestEnvConfig(deploymentConfig);
+
+		const buildCommand = `npx move-to-json build "tests/contracts/v1/nft/sources/**/*.move" --network ${TEST_NETWORK} --output tests/contracts/v1/v1-smart-contract-deployments.json --load-env ${tempConfigPath}`;
 
 		// Add timeout of 120 seconds for the build command
 		const timeoutPromise = new Promise<never>((resolve, reject) => {
@@ -76,12 +89,25 @@ export async function buildV1Contract(): Promise<void> {
 		const buildPromise = execAsync(buildCommand);
 		await Promise.race([buildPromise, timeoutPromise]);
 
-		// eslint-disable-next-line no-console
-		console.log("[buildV1Contract] Build completed successfully");
+		// Clean up temporary config file
+		if (tempConfigPath) {
+			try {
+				await fs.unlink(tempConfigPath);
+			} catch {
+				console.warn("[buildV1Contract] Failed to clean up temporary config file");
+			}
+		}
 	} catch (error) {
-		// eslint-disable-next-line no-console
+		// Clean up temporary config file on error
+		if (tempConfigPath) {
+			try {
+				await fs.unlink(tempConfigPath);
+			} catch {
+				console.warn("[buildV1Contract] Failed to clean up temporary config file after error");
+			}
+		}
 		console.error("[buildV1Contract] Error:", error);
-		throw new GeneralError("upgradeTestHelpers", "buildV1ContractFailed", undefined, error);
+		throw new Error("Building V1 contract failed", { cause: error });
 	}
 }
 
@@ -91,27 +117,25 @@ export async function buildV1Contract(): Promise<void> {
  * @returns Promise that resolves to deployment result data.
  */
 export async function deployV1Contract(): Promise<IContractData> {
+	let tempConfigPath: string | undefined;
 	try {
-		// eslint-disable-next-line no-console
-		console.log("[deployV1Contract] Starting deployment process");
-
 		// Clean V1 build artifacts before deployment to avoid conflicts
 		await cleanV1BuildArtifacts();
 
-		const workingDir = process.cwd();
+		// Create test-specific configuration for V1 deployment
+		const deploymentConfig: ITestDeploymentConfig = {
+			network: TEST_NETWORK,
+			nodeEndpoint: TEST_NODE_ENDPOINT,
+			faucetEndpoint: TEST_FAUCET_ENDPOINT,
+			deployerMnemonic: TEST_DEPLOYER_MNEMONIC ?? "",
+			gasBudget: TEST_GAS_BUDGET
+		};
+
+		tempConfigPath = await createTestEnvConfig(deploymentConfig);
+
 		const contractsPath = "tests/contracts/v1/v1-smart-contract-deployments.json";
-		const configPath = `configs/${TEST_NETWORK}.env`;
 
-		// eslint-disable-next-line no-console
-		console.log(`[deployV1Contract] Working directory: ${workingDir}`);
-		// eslint-disable-next-line no-console
-		console.log(`[deployV1Contract] Contracts path: ${contractsPath}`);
-		// eslint-disable-next-line no-console
-		console.log(`[deployV1Contract] Config path: ${configPath}`);
-
-		const deployCommand = `npx move-to-json deploy --network ${TEST_NETWORK} --contracts ${contractsPath} --load-env ${configPath}`;
-		// eslint-disable-next-line no-console
-		console.log(`[deployV1Contract] Executing command: ${deployCommand}`);
+		const deployCommand = `npx move-to-json deploy --network ${TEST_NETWORK} --contracts ${contractsPath} --load-env ${tempConfigPath}`;
 
 		// Add timeout of 180 seconds for the deploy command (longer than build)
 		const timeoutPromise = new Promise<never>((resolve, reject) => {
@@ -132,9 +156,6 @@ export async function deployV1Contract(): Promise<IContractData> {
 		const deployPromise = execAsync(deployCommand);
 		await Promise.race([deployPromise, timeoutPromise]);
 
-		// eslint-disable-next-line no-console
-		console.log("[deployV1Contract] Deploy completed successfully");
-
 		// Load and return populated deployment data
 		const deploymentData = await loadDeploymentConfig();
 		const contractData = deploymentData[TEST_NETWORK as keyof ISmartContractDeployments];
@@ -144,22 +165,39 @@ export async function deployV1Contract(): Promise<IContractData> {
 			!contractData?.upgradeCapabilityId ||
 			!contractData?.migrationStateId
 		) {
-			throw new GeneralError("upgradeTestHelpers", "incompleteDeploymentData", {
-				deployedPackageId: contractData?.deployedPackageId,
-				upgradeCapabilityId: contractData?.upgradeCapabilityId,
-				migrationStateId: contractData?.migrationStateId
-			});
+			throw new Error(
+				`Deployment completed but required data is missing, deployedPackageId: ${contractData?.deployedPackageId}, upgradeCapabilityId: ${contractData?.upgradeCapabilityId}, migrationStateId: ${contractData?.migrationStateId}`
+			);
 		}
 
-		return {
+		const result = {
 			packageId: contractData.packageId,
 			packageBytecode: contractData.packageBytecode,
 			deployedPackageId: contractData.deployedPackageId,
 			upgradeCapabilityId: contractData.upgradeCapabilityId,
 			migrationStateId: contractData.migrationStateId
 		};
+
+		// Clean up temporary config file
+		if (tempConfigPath) {
+			try {
+				await fs.unlink(tempConfigPath);
+			} catch {
+				console.warn("[deployV1Contract] Failed to clean up temporary config file");
+			}
+		}
+
+		return result;
 	} catch (error) {
-		throw new GeneralError("upgradeTestHelpers", "deployV1ContractFailed", undefined, error);
+		// Clean up temporary config file on error
+		if (tempConfigPath) {
+			try {
+				await fs.unlink(tempConfigPath);
+			} catch {
+				console.warn("[deployV1Contract] Failed to clean up temporary config file after error");
+			}
+		}
+		throw new Error("Deploying V1 contract failed", { cause: error });
 	}
 }
 
@@ -172,17 +210,17 @@ export async function deployV1Contract(): Promise<IContractData> {
 async function updateV2MoveToml(packageId: string, v2Path: string): Promise<void> {
 	const moveTomlPath = path.join(v2Path, "Move.toml");
 	const moveTomlContent = `[package]
-name = "nft"
-version = "0.0.2"
-edition = "2024.beta"
-published-at = "${packageId}"
+							name = "nft"
+							version = "0.0.2"
+							edition = "2024.beta"
+							published-at = "${packageId}"
 
-[dependencies]
-Iota = { git = "https://github.com/iotaledger/iota.git", subdir = "crates/iota-framework/packages/iota-framework", rev = "mainnet" }
+							[dependencies]
+							Iota = { git = "https://github.com/iotaledger/iota.git", subdir = "crates/iota-framework/packages/iota-framework", rev = "mainnet" }
 
-[addresses]
-nft = "0x0"
-`;
+							[addresses]
+							nft = "0x0"
+							`;
 
 	await fs.writeFile(moveTomlPath, moveTomlContent, "utf8");
 }
@@ -256,7 +294,7 @@ async function rebuildV2Contract(v2Path: string): Promise<void> {
 	try {
 		await execAsync("iota move build", { cwd: v2Path });
 	} catch (error) {
-		throw new GeneralError("upgradeTestHelpers", "v2RebuildFailed", undefined, error);
+		throw new Error("Failed to rebuild V2 contract with updated configuration", { cause: error });
 	}
 }
 
@@ -277,10 +315,7 @@ async function executeUpgrade(upgradeCap: string, v2Path: string): Promise<strin
 	)?.packageId;
 
 	if (!newPackageId) {
-		throw new GeneralError("upgradeTestHelpers", "newPackageIdNotFound", {
-			result,
-			stdout
-		});
+		throw new Error(`New package ID not found result: ${result}, stdout: ${stdout}`);
 	}
 
 	return newPackageId;
@@ -301,11 +336,9 @@ export async function upgradeToV2(packageId: string, upgradeCap: string): Promis
 		await rebuildV2Contract(v2Path);
 		return await executeUpgrade(upgradeCap, v2Path);
 	} catch (error) {
-		throw new GeneralError(
-			"upgradeTestHelpers",
-			"upgradeToV2Failed",
-			{ packageId, upgradeCap },
-			error
+		throw new Error(
+			`Failed to upgrade contract to V2, packageId: ${packageId}, upgradeCap: ${upgradeCap}`,
+			{ cause: error }
 		);
 	}
 }
@@ -320,7 +353,7 @@ export async function loadDeploymentConfig(): Promise<ISmartContractDeployments>
 		const content = await fs.readFile(jsonPath, "utf8");
 		return JSON.parse(content) as ISmartContractDeployments;
 	} catch (error) {
-		throw new GeneralError("upgradeTestHelpers", "loadDeploymentConfigFailed", undefined, error);
+		throw new Error("Loading deployment configuration failed", { cause: error });
 	}
 }
 
@@ -342,6 +375,6 @@ export async function cleanupDeploymentJson(): Promise<void> {
 		};
 		await fs.writeFile(jsonPath, JSON.stringify(cleanConfig, null, "\t"));
 	} catch (error) {
-		throw new GeneralError("upgradeTestHelpers", "cleanDeploymentJsonFailed", undefined, error);
+		throw new Error("Cleaning deployment JSON failed", { cause: error });
 	}
 }
