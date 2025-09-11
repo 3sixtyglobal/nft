@@ -55,7 +55,7 @@ export class IotaNftConnector implements INftConnector {
 	 * Connector for wallet operations.
 	 * @internal
 	 */
-	private readonly _walletConnector: IWalletConnector;
+	private readonly _walletConnector?: IWalletConnector;
 
 	/**
 	 * The configuration for the connector.
@@ -106,7 +106,9 @@ export class IotaNftConnector implements INftConnector {
 			options.config.clientOptions
 		);
 		this._vaultConnector = VaultConnectorFactory.get(options.vaultConnectorType ?? "vault");
-		this._walletConnector = WalletConnectorFactory.get(options.walletConnectorType ?? "wallet");
+		this._walletConnector = WalletConnectorFactory.getIfExists(
+			options.walletConnectorType ?? "wallet"
+		);
 
 		this._logging = ComponentFactory.getIfExists(options?.loggingComponentType ?? "logging");
 
@@ -217,6 +219,10 @@ export class IotaNftConnector implements INftConnector {
 	): Promise<string> {
 		Guards.stringValue(this.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
 		Guards.stringValue(this.CLASS_NAME, nameof(tag), tag);
+
+		if (Is.empty(this._walletConnector)) {
+			throw new GeneralError(this.CLASS_NAME, "noWalletConfigured");
+		}
 
 		try {
 			const packageId = this.getPackageId();
@@ -614,6 +620,10 @@ export class IotaNftConnector implements INftConnector {
 		Guards.stringValue(this.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
 		Guards.stringValue(this.CLASS_NAME, nameof(nftId), nftId);
 
+		if (Is.empty(this._walletConnector)) {
+			throw new GeneralError(this.CLASS_NAME, "noWalletConfigured");
+		}
+
 		const urnParsed = Urn.fromValidString(nftId);
 		if (urnParsed.namespaceMethod() !== IotaNftConnector.NAMESPACE) {
 			throw new GeneralError(this.CLASS_NAME, "namespaceMismatch", {
@@ -658,6 +668,10 @@ export class IotaNftConnector implements INftConnector {
 	public async enableMigration(controllerIdentity: string): Promise<void> {
 		Guards.stringValue(this.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
 
+		if (Is.empty(this._walletConnector)) {
+			throw new GeneralError(this.CLASS_NAME, "noWalletConfigured");
+		}
+
 		try {
 			// Use the utility class for enabling migration with hybrid namespace approach
 			await IotaSmartContractUtils.enableMigration(
@@ -691,6 +705,10 @@ export class IotaNftConnector implements INftConnector {
 	public async disableMigration(controllerIdentity: string): Promise<void> {
 		Guards.stringValue(this.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
 
+		if (Is.empty(this._walletConnector)) {
+			throw new GeneralError(this.CLASS_NAME, "noWalletConfigured");
+		}
+
 		try {
 			// Use the utility class for disabling migration with hybrid namespace approach
 			await IotaSmartContractUtils.disableMigration(
@@ -721,6 +739,10 @@ export class IotaNftConnector implements INftConnector {
 	 * @returns True if migration is enabled, false otherwise.
 	 */
 	public async isMigrationActive(): Promise<boolean> {
+		if (Is.empty(this._walletConnector)) {
+			throw new GeneralError(this.CLASS_NAME, "noWalletConfigured");
+		}
+
 		try {
 			// Use the utility class for migration status check with hybrid namespace approach
 			return IotaSmartContractUtils.isMigrationActive(
@@ -794,6 +816,10 @@ export class IotaNftConnector implements INftConnector {
 	 * @returns The current version number of the contract.
 	 */
 	public async getCurrentContractVersion(): Promise<number> {
+		if (Is.empty(this._walletConnector)) {
+			throw new GeneralError(this.CLASS_NAME, "noWalletConfigured");
+		}
+
 		try {
 			// Use the utility class for version retrieval with hybrid namespace approach
 			return IotaSmartContractUtils.getCurrentContractVersion(
