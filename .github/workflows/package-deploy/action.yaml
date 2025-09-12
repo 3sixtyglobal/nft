@@ -15,7 +15,52 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: No action
+    - name: Write deploy-config.json
+      if: inputs.package == 'packages/nft-connector-iota' || inputs.package == 'all'
       shell: bash
       run: |
-        echo "No prerequisites required for this action. It is a placeholder for the publish prerequisites."
+        echo '${{ inputs.deploy-config-json }}' > ./packages/nft-connector-iota/configs/deploy-config.json
+
+    - name: Setup NFT contracts for mainnet
+      shell: bash
+      run: |
+        cd packages/nft-connector-iota
+        export DEPLOYER_MNEMONIC=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.mainnet.mnemonic')
+        export RPC_URL=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.mainnet.nodeUrl')
+        export NETWORK=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.mainnet.network')
+        export ADDRESS_INDEX=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.mainnet.addressIndex // 0')
+        export GAS_BUDGET=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.mainnet.gasBudget // 100000000')
+        export RPC_TIMEOUT=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.mainnet.rpcTimeout // 60000')
+        export CONFIRMATION_TIMEOUT=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.mainnet.confirmationTimeout // 120')
+        ./node_modules/.bin/move-to-json build "src/contracts/**/*.move" --output src/contracts/smart-contract-deployments/smart-contract-deployments.json
+        ./node_modules/.bin/move-to-json deploy --contracts src/contracts/smart-contract-deployments/smart-contract-deployments.json
+
+    - name: Setup NFT contracts for testnet
+      shell: bash
+      run: |
+        cd packages/nft-connector-iota
+        export DEPLOYER_MNEMONIC=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.testnet.mnemonic')
+        export RPC_URL=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.testnet.nodeUrl')
+        export NETWORK=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.testnet.network')
+        export ADDRESS_INDEX=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.testnet.addressIndex // 0')
+        export GAS_BUDGET=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.testnet.gasBudget // 50000000')
+        export RPC_TIMEOUT=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.testnet.rpcTimeout // 60000')
+        export CONFIRMATION_TIMEOUT=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.testnet.confirmationTimeout // 60')
+        export FAUCET_URL=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.testnet.faucetUrl // "https://faucet.testnet.iota.cafe"')
+        ./node_modules/.bin/move-to-json build "src/contracts/**/*.move" --output src/contracts/smart-contract-deployments/smart-contract-deployments.json
+        ./node_modules/.bin/move-to-json deploy --contracts src/contracts/smart-contract-deployments/smart-contract-deployments.json
+
+    - name: Setup NFT contracts for devnet
+      shell: bash
+      run: |
+        cd packages/nft-connector-iota
+        export DEPLOYER_MNEMONIC=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.devnet.mnemonic')
+        export RPC_URL=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.devnet.nodeUrl')
+        export NETWORK=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.devnet.network')
+        export ADDRESS_INDEX=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.devnet.addressIndex // 0')
+        export GAS_BUDGET=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.devnet.gasBudget // 50000000')
+        export RPC_TIMEOUT=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.devnet.rpcTimeout // 60000')
+        export CONFIRMATION_TIMEOUT=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.devnet.confirmationTimeout // 60')
+        export FAUCET_URL=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.devnet.faucetUrl // "https://faucet.devnet.iota.cafe"')
+        ./node_modules/.bin/move-to-json build "src/contracts/**/*.move" --output src/contracts/smart-contract-deployments/smart-contract-deployments.json
+        ./node_modules/.bin/move-to-json deploy --contracts src/contracts/smart-contract-deployments/smart-contract-deployments.json
