@@ -1,5 +1,20 @@
 # @twin.org/nft-connector-iota - Changelog
 
+## [0.0.2-next.5](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.2-next.4...nft-connector-iota-v0.0.2-next.5) (2025-09-22)
+
+
+### Features
+
+* update IOTA CLI version and remove redundant upgrade tests ([#39](https://github.com/twinfoundation/nft/issues/39)) ([e6355a8](https://github.com/twinfoundation/nft/commit/e6355a89038f52df20f24f64727c62e581b71d8a))
+* wallet only required for write operations ([d3f3522](https://github.com/twinfoundation/nft/commit/d3f3522919e205aaeff83c1f13bbea9a68c5bf5c))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-models bumped from 0.0.2-next.4 to 0.0.2-next.5
+
 ## [0.0.2-next.4](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.2-next.3...nft-connector-iota-v0.0.2-next.4) (2025-09-10)
 
 
