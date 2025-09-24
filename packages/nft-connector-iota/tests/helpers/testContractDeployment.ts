@@ -10,7 +10,7 @@ import type { ISmartContractDeployments } from "@twin.org/dlt-iota";
 const execAsync = promisify(exec);
 
 /**
- * Test contract deployment configuration for isolated test environments.
+ * Test contract deployment configuration for isolated test environments instead of using the deployed ones.
  * This interface defines the configuration parameters needed to deploy
  * smart contracts during test execution using test-specific mnemonics.
  */
