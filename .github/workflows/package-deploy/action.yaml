@@ -15,6 +15,17 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Download IOTA CLI
+      shell: bash
+      run: |
+        cd ..
+        wget https://github.com/iotaledger/iota/releases/download/v1.7.0-rc/iota-v1.7.0-rc-linux-x86_64.tgz -O iota-cli.tgz
+        tar xzf iota-cli.tgz
+        rm iota-cli.tgz
+        chmod +x iota
+        sudo mv iota /usr/local/bin/iota
+        iota --version
+
     - name: Write deploy-config.json
       if: inputs.package == 'packages/nft-connector-iota' || inputs.package == 'all'
       shell: bash
@@ -32,8 +43,8 @@ runs:
         export GAS_BUDGET=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.mainnet.gasBudget // 100000000')
         export RPC_TIMEOUT=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.mainnet.rpcTimeout // 60000')
         export CONFIRMATION_TIMEOUT=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.mainnet.confirmationTimeout // 120')
-        ./node_modules/.bin/move-to-json build "src/contracts/**/*.move" --output src/contracts/smart-contract-deployments/smart-contract-deployments.json
-        ./node_modules/.bin/move-to-json deploy --contracts src/contracts/smart-contract-deployments/smart-contract-deployments.json
+        ../../node_modules/.bin/move-to-json build "src/contracts/**/*.move" --output src/contracts/smart-contract-deployments/smart-contract-deployments.json
+        ../../node_modules/.bin/move-to-json deploy --contracts src/contracts/smart-contract-deployments/smart-contract-deployments.json
 
     - name: Setup NFT contracts for testnet
       shell: bash
@@ -47,8 +58,8 @@ runs:
         export RPC_TIMEOUT=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.testnet.rpcTimeout // 60000')
         export CONFIRMATION_TIMEOUT=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.testnet.confirmationTimeout // 60')
         export FAUCET_URL=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.testnet.faucetUrl // "https://faucet.testnet.iota.cafe"')
-        ./node_modules/.bin/move-to-json build "src/contracts/**/*.move" --output src/contracts/smart-contract-deployments/smart-contract-deployments.json
-        ./node_modules/.bin/move-to-json deploy --contracts src/contracts/smart-contract-deployments/smart-contract-deployments.json
+        ../../node_modules/.bin/move-to-json build "src/contracts/**/*.move" --output src/contracts/smart-contract-deployments/smart-contract-deployments.json
+        ../../node_modules/.bin/move-to-json deploy --contracts src/contracts/smart-contract-deployments/smart-contract-deployments.json
 
     - name: Setup NFT contracts for devnet
       shell: bash
@@ -62,5 +73,5 @@ runs:
         export RPC_TIMEOUT=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.devnet.rpcTimeout // 60000')
         export CONFIRMATION_TIMEOUT=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.devnet.confirmationTimeout // 60')
         export FAUCET_URL=$(echo '${{ inputs.deploy-config-json }}' | jq -r '.devnet.faucetUrl // "https://faucet.devnet.iota.cafe"')
-        ./node_modules/.bin/move-to-json build "src/contracts/**/*.move" --output src/contracts/smart-contract-deployments/smart-contract-deployments.json
-        ./node_modules/.bin/move-to-json deploy --contracts src/contracts/smart-contract-deployments/smart-contract-deployments.json
+        ../../node_modules/.bin/move-to-json build "src/contracts/**/*.move" --output src/contracts/smart-contract-deployments/smart-contract-deployments.json
+        ../../node_modules/.bin/move-to-json deploy --contracts src/contracts/smart-contract-deployments/smart-contract-deployments.json
