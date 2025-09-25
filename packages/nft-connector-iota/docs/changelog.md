@@ -1,5 +1,24 @@
 # @twin.org/nft-connector-iota - Changelog
 
+## [0.0.2-next.6](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.2-next.5...nft-connector-iota-v0.0.2-next.6) (2025-09-25)
+
+
+### Features
+
+* update contracts file ([a341feb](https://github.com/twinfoundation/nft/commit/a341feb311063e889553d7ee995ed0d5093718c2))
+
+
+### Bug Fixes
+
+* min change for new version ([#44](https://github.com/twinfoundation/nft/issues/44)) ([8976aae](https://github.com/twinfoundation/nft/commit/8976aae3356b5c1e47305bd45c66288211f2fba7))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-models bumped from 0.0.2-next.5 to 0.0.2-next.6
+
 ## [0.0.2-next.5](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.2-next.4...nft-connector-iota-v0.0.2-next.5) (2025-09-22)
 
 

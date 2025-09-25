@@ -1,5 +1,19 @@
 # @twin.org/nft-connector-entity-storage - Changelog
 
+## [0.0.2-next.6](https://github.com/twinfoundation/nft/compare/nft-connector-entity-storage-v0.0.2-next.5...nft-connector-entity-storage-v0.0.2-next.6) (2025-09-25)
+
+
+### Miscellaneous Chores
+
+* **nft-connector-entity-storage:** Synchronize repo versions
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-models bumped from 0.0.2-next.5 to 0.0.2-next.6
+
 ## [0.0.2-next.5](https://github.com/twinfoundation/nft/compare/nft-connector-entity-storage-v0.0.2-next.4...nft-connector-entity-storage-v0.0.2-next.5) (2025-09-22)
 
 
