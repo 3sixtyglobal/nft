@@ -26,12 +26,6 @@ runs:
         sudo mv iota /usr/local/bin/iota
         iota --version
 
-    - name: Write deploy-config.json
-      if: inputs.package == 'packages/nft-connector-iota' || inputs.package == 'all'
-      shell: bash
-      run: |
-        echo '${{ inputs.deploy-config-json }}' > ./packages/nft-connector-iota/configs/deploy-config.json
-
     - name: Setup NFT contracts for mainnet
       shell: bash
       run: |
