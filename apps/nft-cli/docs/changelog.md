@@ -1,5 +1,19 @@
 # @twin.org/nft-cli - Changelog
 
+## [0.0.2-next.7](https://github.com/twinfoundation/nft/compare/nft-cli-v0.0.2-next.6...nft-cli-v0.0.2-next.7) (2025-09-26)
+
+
+### Miscellaneous Chores
+
+* **nft-cli:** Synchronize repo versions
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-connector-iota bumped from 0.0.2-next.6 to 0.0.2-next.7
+
 ## [0.0.2-next.6](https://github.com/twinfoundation/nft/compare/nft-cli-v0.0.2-next.5...nft-cli-v0.0.2-next.6) (2025-09-25)
 
 

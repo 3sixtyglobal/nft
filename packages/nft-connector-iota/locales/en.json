@@ -27,14 +27,6 @@
 			"deployedPackageIdRequired": "deployedPackageId is required for network operations on \"{network}\".",
 			"packageIdNotFound": "Package ID not found for network \"{network}\"",
 			"invalidGasBudget": "Invalid gas budget: {gasBudget}",
-			"migrateNftFailed": "Failed to migrate NFT \"{nftId}\" to version {version}",
-			"enableMigrationFailed": "Failed to enable migration on the blockchain",
-			"disableMigrationFailed": "Failed to disable migration on the blockchain",
-			"isMigrationActiveFailed": "Failed to check migration status from the blockchain",
-			"validateNftVersionFailed": "Failed to validate NFT version compatibility",
-			"nftContractVersionNotFound": "Contract version field not found for NFT \"{nftId}\"",
-			"getNftContractVersionFailed": "Failed to retrieve contract version for NFT \"{nftId}\"",
-			"getCurrentContractVersionFailed": "Failed to retrieve current contract version from blockchain",
 			"noWalletConfigured": "For write operations a wallet must be configured in the connector options"
 		},
 		"iotaNftUtils": { "invalidNftIdFormat": "The NFT ID \"{id}\" has an invalid format" }

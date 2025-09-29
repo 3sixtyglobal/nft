@@ -1,5 +1,19 @@
 # @twin.org/nft-connector-iota - Changelog
 
+## [0.0.2-next.7](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.2-next.6...nft-connector-iota-v0.0.2-next.7) (2025-09-26)
+
+
+### Features
+
+* remove NFT migration and version validation methods from IotaNftConnector ([#46](https://github.com/twinfoundation/nft/issues/46)) ([2b15d8c](https://github.com/twinfoundation/nft/commit/2b15d8c9b83f461feee03fa5a0f1e90304762461))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-models bumped from 0.0.2-next.6 to 0.0.2-next.7
+
 ## [0.0.2-next.6](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.2-next.5...nft-connector-iota-v0.0.2-next.6) (2025-09-25)
 
 
