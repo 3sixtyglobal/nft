@@ -136,7 +136,7 @@ export class IotaNftConnector implements INftConnector {
 	 * @param nodeLoggingComponentType The node logging component type.
 	 * @returns void.
 	 */
-	public async start(nodeIdentity: string, nodeLoggingComponentType?: string): Promise<void> {
+	public async start(nodeIdentity?: string, nodeLoggingComponentType?: string): Promise<void> {
 		const nodeLogging = ComponentFactory.getIfExists<ILoggingComponent>(nodeLoggingComponentType);
 
 		try {
@@ -182,7 +182,6 @@ export class IotaNftConnector implements INftConnector {
 				message: "contractReady",
 				data: {
 					network: this._config.network,
-					nodeIdentity,
 					packageId: contractData.packageId,
 					deployedPackageId: this._deployedPackageId,
 					upgradeCapabilityId: contractData.upgradeCapabilityId,
@@ -196,7 +195,7 @@ export class IotaNftConnector implements INftConnector {
 				ts: Date.now(),
 				message: "startFailed",
 				error: BaseError.fromError(error),
-				data: { network: this._config.network, nodeIdentity }
+				data: { network: this._config.network }
 			});
 
 			throw error;
