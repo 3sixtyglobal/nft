@@ -70,5 +70,16 @@
 		"dist/types",
 		"locales",
 		"docs"
+	],
+	"keywords": [
+		"twin",
+		"trade",
+		"iota",
+		"framework",
+		"blockchain",
+		"nft",
+		"tokens",
+		"non-fungible",
+		"assets"
 	]
 }

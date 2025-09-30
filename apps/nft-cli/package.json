@@ -83,5 +83,16 @@
 	],
 	"bin": {
 		"twin-nft": "bin/index.js"
-	}
+	},
+	"keywords": [
+		"twin",
+		"trade",
+		"iota",
+		"framework",
+		"blockchain",
+		"nft",
+		"tokens",
+		"non-fungible",
+		"assets"
+	]
 }
