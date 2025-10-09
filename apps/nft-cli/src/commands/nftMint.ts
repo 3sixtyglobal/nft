@@ -11,11 +11,10 @@ import {
 import { Converter, I18n, Is, StringHelper } from "@twin.org/core";
 import { IotaNftUtils } from "@twin.org/nft-connector-iota";
 import { VaultConnectorFactory } from "@twin.org/vault-models";
-import { setupWalletConnector } from "@twin.org/wallet-cli";
+import { setupWalletConnector, WalletConnectorTypes } from "@twin.org/wallet-cli";
 import { WalletConnectorFactory } from "@twin.org/wallet-models";
-import { Command, Option } from "commander";
+import { Command } from "commander";
 import { setupNftConnector, setupVault } from "./setupCommands";
-import { NftConnectorTypes } from "../models/nftConnectorTypes";
 
 /**
  * Build the nft mint command for the CLI.
@@ -62,14 +61,6 @@ export function buildCommandNftMint(): Command {
 	});
 
 	command
-		.addOption(
-			new Option(
-				I18n.formatMessage("commands.common.options.connector.param"),
-				I18n.formatMessage("commands.common.options.connector.description")
-			)
-				.choices(Object.values(NftConnectorTypes))
-				.default(NftConnectorTypes.Iota)
-		)
 		.option(
 			I18n.formatMessage("commands.common.options.network.param"),
 			I18n.formatMessage("commands.common.options.network.description"),
@@ -100,7 +91,6 @@ export function buildCommandNftMint(): Command {
  * @param opts.tag The tag for the NFT.
  * @param opts.immutableJson Filename of the immutable JSON data.
  * @param opts.mutableJson Filename of the mutable JSON data.
- * @param opts.connector The connector to perform the operations with.
  * @param opts.node The node URL.
  * @param opts.network The network to use for connector.
  * @param opts.explorer The explorer URL.
@@ -113,7 +103,6 @@ export async function actionCommandNftMint(
 		tag: string;
 		immutableJson?: string;
 		mutableJson?: string;
-		connector?: NftConnectorTypes;
 		node: string;
 		network?: string;
 		explorer: string;
@@ -132,10 +121,7 @@ export async function actionCommandNftMint(
 		? path.resolve(opts.mutableJson)
 		: undefined;
 	const nodeEndpoint: string = CLIParam.url("node", opts.node);
-	const network: string | undefined =
-		opts.connector === NftConnectorTypes.Iota
-			? CLIParam.stringValue("network", opts.network)
-			: undefined;
+	const network: string = CLIParam.stringValue("network", opts.network);
 	const explorerEndpoint: string = CLIParam.url("explorer", opts.explorer);
 
 	CLIDisplay.value(I18n.formatMessage("commands.nft-mint.labels.issuer"), issuer);
@@ -174,14 +160,16 @@ export async function actionCommandNftMint(
 
 	const walletConnector = setupWalletConnector(
 		{ nodeEndpoint, network, vaultSeedId },
-		opts.connector
+		WalletConnectorTypes.Iota
 	);
 	WalletConnectorFactory.register("wallet", () => walletConnector);
 
-	const nftConnector = setupNftConnector(
-		{ nodeEndpoint, network, vaultSeedId, walletAddressIndex },
-		opts.connector
-	);
+	const nftConnector = setupNftConnector({
+		nodeEndpoint,
+		network,
+		vaultSeedId,
+		walletAddressIndex
+	});
 	if (Is.function(nftConnector.start)) {
 		await nftConnector.start(localIdentity);
 	}

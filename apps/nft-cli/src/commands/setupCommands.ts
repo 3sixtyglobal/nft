@@ -12,7 +12,6 @@ import {
 	initSchema
 } from "@twin.org/vault-connector-entity-storage";
 import { VaultConnectorFactory } from "@twin.org/vault-models";
-import { NftConnectorTypes } from "../models/nftConnectorTypes";
 
 /**
  * Setup the vault for use in the CLI commands.
@@ -46,20 +45,14 @@ export function setupVault(): void {
  * @param options.network The network.
  * @param options.vaultSeedId The vault seed ID.
  * @param options.walletAddressIndex The wallet address index.
- * @param connector The connector to use.
  * @returns The NFT connector.
  */
-export function setupNftConnector(
-	options: {
-		nodeEndpoint: string;
-		network?: string;
-		vaultSeedId?: string;
-		walletAddressIndex?: number;
-	},
-	connector?: NftConnectorTypes
-): INftConnector {
-	connector ??= NftConnectorTypes.Iota;
-
+export function setupNftConnector(options: {
+	nodeEndpoint: string;
+	network?: string;
+	vaultSeedId?: string;
+	walletAddressIndex?: number;
+}): INftConnector {
 	return new IotaNftConnector({
 		config: {
 			clientOptions: {

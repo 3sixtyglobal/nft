@@ -4,11 +4,10 @@ import { CLIDisplay, CLIParam } from "@twin.org/cli-core";
 import { Converter, I18n, Is, StringHelper } from "@twin.org/core";
 import { IotaNftUtils } from "@twin.org/nft-connector-iota";
 import { VaultConnectorFactory } from "@twin.org/vault-models";
-import { setupWalletConnector } from "@twin.org/wallet-cli";
+import { setupWalletConnector, WalletConnectorTypes } from "@twin.org/wallet-cli";
 import { WalletConnectorFactory } from "@twin.org/wallet-models";
-import { Command, Option } from "commander";
+import { Command } from "commander";
 import { setupNftConnector, setupVault } from "./setupCommands";
-import { NftConnectorTypes } from "../models/nftConnectorTypes";
 
 /**
  * Build the nft burn command for the CLI.
@@ -30,14 +29,6 @@ export function buildCommandNftBurn(): Command {
 		);
 
 	command
-		.addOption(
-			new Option(
-				I18n.formatMessage("commands.common.options.connector.param"),
-				I18n.formatMessage("commands.common.options.connector.description")
-			)
-				.choices(Object.values(NftConnectorTypes))
-				.default(NftConnectorTypes.Iota)
-		)
 		.option(
 			I18n.formatMessage("commands.common.options.node.param"),
 			I18n.formatMessage("commands.common.options.node.description"),
@@ -63,7 +54,6 @@ export function buildCommandNftBurn(): Command {
  * @param opts The options for the command.
  * @param opts.seed The seed required for signing by the issuer.
  * @param opts.id The id of the NFT to burn in urn format.
- * @param opts.connector The connector to perform the operations with.
  * @param opts.node The node URL.
  * @param opts.network The network to use for connector.
  * @param opts.explorer The explorer URL.
@@ -71,7 +61,6 @@ export function buildCommandNftBurn(): Command {
 export async function actionCommandNftBurn(opts: {
 	seed: string;
 	id: string;
-	connector?: NftConnectorTypes;
 	node: string;
 	network?: string;
 	explorer: string;
@@ -79,10 +68,7 @@ export async function actionCommandNftBurn(opts: {
 	const seed: Uint8Array = CLIParam.hexBase64("seed", opts.seed);
 	const id: string = CLIParam.stringValue("id", opts.id);
 	const nodeEndpoint: string = CLIParam.url("node", opts.node);
-	const network: string | undefined =
-		opts.connector === NftConnectorTypes.Iota
-			? CLIParam.stringValue("network", opts.network)
-			: undefined;
+	const network: string = CLIParam.stringValue("network", opts.network);
 	const explorerEndpoint: string = CLIParam.url("explorer", opts.explorer);
 
 	CLIDisplay.value(I18n.formatMessage("commands.nft-burn.labels.nftId"), id);
@@ -102,11 +88,11 @@ export async function actionCommandNftBurn(opts: {
 
 	const walletConnector = setupWalletConnector(
 		{ nodeEndpoint, network, vaultSeedId },
-		opts.connector
+		WalletConnectorTypes.Iota
 	);
 	WalletConnectorFactory.register("wallet", () => walletConnector);
 
-	const nftConnector = setupNftConnector({ nodeEndpoint, network, vaultSeedId }, opts.connector);
+	const nftConnector = setupNftConnector({ nodeEndpoint, network, vaultSeedId });
 	if (Is.function(nftConnector.start)) {
 		await nftConnector.start(localIdentity);
 	}

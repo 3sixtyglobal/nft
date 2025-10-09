@@ -112,10 +112,6 @@
 		},
 		"common": {
 			"options": {
-				"connector": {
-					"param": "--connector '<'connector'>'",
-					"description": "The connector to use for the NFT operation."
-				},
 				"network": {
 					"param": "--network '<'network'>'",
 					"description": "The network to use for the NFT operation."

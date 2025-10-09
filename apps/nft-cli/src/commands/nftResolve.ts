@@ -9,11 +9,10 @@ import {
 } from "@twin.org/cli-core";
 import { I18n, Is, StringHelper } from "@twin.org/core";
 import { IotaNftUtils } from "@twin.org/nft-connector-iota";
-import { setupWalletConnector } from "@twin.org/wallet-cli";
+import { setupWalletConnector, WalletConnectorTypes } from "@twin.org/wallet-cli";
 import { WalletConnectorFactory } from "@twin.org/wallet-models";
-import { Command, Option } from "commander";
+import { Command } from "commander";
 import { setupNftConnector, setupVault } from "./setupCommands";
-import { NftConnectorTypes } from "../models/nftConnectorTypes";
 
 /**
  * Build the nft resolve command for the CLI.
@@ -39,14 +38,6 @@ export function buildCommandNftResolve(): Command {
 	});
 
 	command
-		.addOption(
-			new Option(
-				I18n.formatMessage("commands.common.options.connector.param"),
-				I18n.formatMessage("commands.common.options.connector.description")
-			)
-				.choices(Object.values(NftConnectorTypes))
-				.default(NftConnectorTypes.Iota)
-		)
 		.option(
 			I18n.formatMessage("commands.common.options.node.param"),
 			I18n.formatMessage("commands.common.options.node.description"),
@@ -71,7 +62,6 @@ export function buildCommandNftResolve(): Command {
  * Action the nft resolve command.
  * @param opts The options for the command.
  * @param opts.id The id of the NFT to resolve in urn format.
- * @param opts.connector The connector to perform the operations with.
  * @param opts.node The node URL.
  * @param opts.network The network to use for connector.
  * @param opts.explorer The explorer URL.
@@ -79,7 +69,6 @@ export function buildCommandNftResolve(): Command {
 export async function actionCommandNftResolve(
 	opts: {
 		id: string;
-		connector?: NftConnectorTypes;
 		node: string;
 		network?: string;
 		explorer: string;
@@ -87,10 +76,7 @@ export async function actionCommandNftResolve(
 ): Promise<void> {
 	const id: string = CLIParam.stringValue("id", opts.id);
 	const nodeEndpoint: string = CLIParam.url("node", opts.node);
-	const network: string | undefined =
-		opts.connector === NftConnectorTypes.Iota
-			? CLIParam.stringValue("network", opts.network)
-			: undefined;
+	const network: string = CLIParam.stringValue("network", opts.network);
 	const explorerEndpoint: string = CLIParam.url("explorer", opts.explorer);
 
 	CLIDisplay.value(I18n.formatMessage("commands.nft-resolve.labels.nftId"), id);
@@ -102,10 +88,13 @@ export async function actionCommandNftResolve(
 
 	setupVault();
 
-	const walletConnector = setupWalletConnector({ nodeEndpoint, network }, opts.connector);
+	const walletConnector = setupWalletConnector(
+		{ nodeEndpoint, network },
+		WalletConnectorTypes.Iota
+	);
 	WalletConnectorFactory.register("wallet", () => walletConnector);
 
-	const nftConnector = setupNftConnector({ nodeEndpoint, network }, opts.connector);
+	const nftConnector = setupNftConnector({ nodeEndpoint, network });
 
 	CLIDisplay.task(I18n.formatMessage("commands.nft-resolve.progress.resolvingNft"));
 	CLIDisplay.break();
