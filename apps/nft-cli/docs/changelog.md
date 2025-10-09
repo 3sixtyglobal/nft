@@ -1,5 +1,19 @@
 # @twin.org/nft-cli - Changelog
 
+## [0.0.2-next.8](https://github.com/twinfoundation/nft/compare/nft-cli-v0.0.2-next.7...nft-cli-v0.0.2-next.8) (2025-10-09)
+
+
+### Features
+
+* add validate-locales ([0055a56](https://github.com/twinfoundation/nft/commit/0055a56ed166946f1db860aa0725ad53248b3427))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-connector-iota bumped from 0.0.2-next.7 to 0.0.2-next.8
+
 ## [0.0.2-next.7](https://github.com/twinfoundation/nft/compare/nft-cli-v0.0.2-next.6...nft-cli-v0.0.2-next.7) (2025-09-26)
 
 
