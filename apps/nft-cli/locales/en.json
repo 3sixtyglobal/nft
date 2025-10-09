@@ -77,7 +77,6 @@
 				"burningNft": "Burning NFT"
 			},
 			"labels": {
-				"issuer": "Issuer",
 				"nftId": "NFT Id"
 			}
 		},
@@ -124,14 +123,15 @@
 				"node": {
 					"param": "--node '<'url'>'",
 					"description": "The url for the node endpoint, or an environment variable name containing the url."
+				},
+				"explorer": {
+					"param": "--explorer '<'url'>'",
+					"description": "The url for the explorer endpoint, or an environment variable name containing the url."
 				}
 			},
 			"labels": {
-				"did": "DID",
 				"node": "Node",
-				"explorer": "Explorer",
 				"explore": "Explore",
-				"connector": "Connector",
 				"network": "Network"
 			}
 		}

@@ -86,7 +86,7 @@ describe("IotaNftConnector with Gas Station", () => {
 			});
 
 			expect(connector).toBeDefined();
-			expect(connector.CLASS_NAME).toBe("IotaNftConnector");
+			expect(IotaNftConnector.CLASS_NAME).toBe("IotaNftConnector");
 		});
 
 		test("Should create NFT connector without gas station configuration", () => {
@@ -97,7 +97,7 @@ describe("IotaNftConnector with Gas Station", () => {
 			});
 
 			expect(connector).toBeDefined();
-			expect(connector.CLASS_NAME).toBe("IotaNftConnector");
+			expect(IotaNftConnector.CLASS_NAME).toBe("IotaNftConnector");
 		});
 
 		test("Should create NFT connector with custom gas budget", () => {
@@ -119,7 +119,7 @@ describe("IotaNftConnector with Gas Station", () => {
 			});
 
 			expect(connector).toBeDefined();
-			expect(connector.CLASS_NAME).toBe("IotaNftConnector");
+			expect(IotaNftConnector.CLASS_NAME).toBe("IotaNftConnector");
 		});
 	});
 

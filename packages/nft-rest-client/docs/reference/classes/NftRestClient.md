@@ -1,4 +1,4 @@
-# Class: NftClient
+# Class: NftRestClient
 
 Client for performing NFT through to REST endpoints.
 
@@ -14,7 +14,7 @@ Client for performing NFT through to REST endpoints.
 
 ### Constructor
 
-> **new NftClient**(`config`): `NftClient`
+> **new NftRestClient**(`config`): `NftRestClient`
 
 Create a new instance of NftClient.
 
@@ -28,7 +28,7 @@ The configuration for the client.
 
 #### Returns
 
-`NftClient`
+`NftRestClient`
 
 #### Overrides
 
@@ -38,13 +38,9 @@ The configuration for the client.
 
 ### CLASS\_NAME
 
-> `readonly` **CLASS\_NAME**: `string`
+> `readonly` `static` **CLASS\_NAME**: `string`
 
 Runtime name for the class.
-
-#### Implementation of
-
-`INftComponent.CLASS_NAME`
 
 ## Methods
 

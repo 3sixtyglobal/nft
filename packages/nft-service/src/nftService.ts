@@ -10,15 +10,15 @@ import type { INftServiceConstructorOptions } from "./models/INftServiceConstruc
  */
 export class NftService implements INftComponent {
 	/**
+	 * Runtime name for the class.
+	 */
+	public static readonly CLASS_NAME: string = nameof<NftService>();
+
+	/**
 	 * The namespace supported by the nft service.
 	 * @internal
 	 */
 	private static readonly _NAMESPACE: string = "nft";
-
-	/**
-	 * Runtime name for the class.
-	 */
-	public readonly CLASS_NAME: string = nameof<NftService>();
 
 	/**
 	 * The default namespace for the connector to use.
@@ -33,7 +33,7 @@ export class NftService implements INftComponent {
 	constructor(options?: INftServiceConstructorOptions) {
 		const names = NftConnectorFactory.names();
 		if (names.length === 0) {
-			throw new GeneralError(this.CLASS_NAME, "noConnectors");
+			throw new GeneralError(NftService.CLASS_NAME, "noConnectors");
 		}
 
 		this._defaultNamespace = options?.config?.defaultNamespace ?? names[0];
@@ -55,8 +55,8 @@ export class NftService implements INftComponent {
 		namespace?: string,
 		identity?: string
 	): Promise<string> {
-		Guards.stringValue(this.CLASS_NAME, nameof(tag), tag);
-		Guards.stringValue(this.CLASS_NAME, nameof(identity), identity);
+		Guards.stringValue(NftService.CLASS_NAME, nameof(tag), tag);
+		Guards.stringValue(NftService.CLASS_NAME, nameof(identity), identity);
 
 		try {
 			const connectorNamespace = namespace ?? this._defaultNamespace;
@@ -67,7 +67,7 @@ export class NftService implements INftComponent {
 
 			return nftUrn;
 		} catch (error) {
-			throw new GeneralError(this.CLASS_NAME, "mintFailed", undefined, error);
+			throw new GeneralError(NftService.CLASS_NAME, "mintFailed", undefined, error);
 		}
 	}
 
@@ -87,13 +87,13 @@ export class NftService implements INftComponent {
 		immutableMetadata?: T;
 		metadata?: U;
 	}> {
-		Urn.guard(this.CLASS_NAME, nameof(id), id);
+		Urn.guard(NftService.CLASS_NAME, nameof(id), id);
 
 		try {
 			const nftConnector = this.getConnector(id);
 			return nftConnector.resolve(id);
 		} catch (error) {
-			throw new GeneralError(this.CLASS_NAME, "resolveFailed", undefined, error);
+			throw new GeneralError(NftService.CLASS_NAME, "resolveFailed", undefined, error);
 		}
 	}
 
@@ -104,14 +104,14 @@ export class NftService implements INftComponent {
 	 * @returns Nothing.
 	 */
 	public async burn(id: string, identity?: string): Promise<void> {
-		Urn.guard(this.CLASS_NAME, nameof(id), id);
-		Guards.stringValue(this.CLASS_NAME, nameof(identity), identity);
+		Urn.guard(NftService.CLASS_NAME, nameof(id), id);
+		Guards.stringValue(NftService.CLASS_NAME, nameof(identity), identity);
 
 		try {
 			const nftConnector = this.getConnector(id);
 			await nftConnector.burn(identity, id);
 		} catch (error) {
-			throw new GeneralError(this.CLASS_NAME, "burnFailed", undefined, error);
+			throw new GeneralError(NftService.CLASS_NAME, "burnFailed", undefined, error);
 		}
 	}
 
@@ -131,16 +131,16 @@ export class NftService implements INftComponent {
 		metadata?: U,
 		identity?: string
 	): Promise<void> {
-		Urn.guard(this.CLASS_NAME, nameof(id), id);
-		Guards.stringValue(this.CLASS_NAME, nameof(recipientIdentity), recipientIdentity);
-		Guards.stringValue(this.CLASS_NAME, nameof(recipientAddress), recipientAddress);
-		Guards.stringValue(this.CLASS_NAME, nameof(identity), identity);
+		Urn.guard(NftService.CLASS_NAME, nameof(id), id);
+		Guards.stringValue(NftService.CLASS_NAME, nameof(recipientIdentity), recipientIdentity);
+		Guards.stringValue(NftService.CLASS_NAME, nameof(recipientAddress), recipientAddress);
+		Guards.stringValue(NftService.CLASS_NAME, nameof(identity), identity);
 
 		try {
 			const nftConnector = this.getConnector(id);
 			await nftConnector.transfer(identity, id, recipientIdentity, recipientAddress, metadata);
 		} catch (error) {
-			throw new GeneralError(this.CLASS_NAME, "transferFailed", undefined, error);
+			throw new GeneralError(NftService.CLASS_NAME, "transferFailed", undefined, error);
 		}
 	}
 
@@ -152,15 +152,15 @@ export class NftService implements INftComponent {
 	 * @returns Nothing.
 	 */
 	public async update<U = unknown>(id: string, metadata: U, identity?: string): Promise<void> {
-		Urn.guard(this.CLASS_NAME, nameof(id), id);
-		Guards.object(this.CLASS_NAME, nameof(metadata), metadata);
-		Guards.stringValue(this.CLASS_NAME, nameof(identity), identity);
+		Urn.guard(NftService.CLASS_NAME, nameof(id), id);
+		Guards.object(NftService.CLASS_NAME, nameof(metadata), metadata);
+		Guards.stringValue(NftService.CLASS_NAME, nameof(identity), identity);
 
 		try {
 			const nftConnector = this.getConnector(id);
 			await nftConnector.update(identity, id, metadata);
 		} catch (error) {
-			throw new GeneralError(this.CLASS_NAME, "updateFailed", undefined, error);
+			throw new GeneralError(NftService.CLASS_NAME, "updateFailed", undefined, error);
 		}
 	}
 
@@ -174,7 +174,7 @@ export class NftService implements INftComponent {
 		const idUri = Urn.fromValidString(id);
 
 		if (idUri.namespaceIdentifier() !== NftService._NAMESPACE) {
-			throw new GeneralError(this.CLASS_NAME, "namespaceMismatch", {
+			throw new GeneralError(NftService.CLASS_NAME, "namespaceMismatch", {
 				namespace: NftService._NAMESPACE,
 				id
 			});

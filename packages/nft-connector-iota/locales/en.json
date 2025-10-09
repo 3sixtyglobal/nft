@@ -1,9 +1,6 @@
 {
 	"info": {
 		"iotaNftConnector": {
-			"contractAlreadyDeployed": "Contract already deployed",
-			"contractDeploymentStarted": "Contract deployment started",
-			"contractDeploymentCompleted": "Contract deployment completed",
 			"contractReady": "Contract ready for use"
 		}
 	},
