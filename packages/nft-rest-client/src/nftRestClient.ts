@@ -25,7 +25,7 @@ export class NftRestClient extends BaseRestClient implements INftComponent {
 	public static readonly CLASS_NAME: string = nameof<NftRestClient>();
 
 	/**
-	 * Create a new instance of NftRestClient
+	 * Create a new instance of NftRestClient.
 	 * @param config The configuration for the client.
 	 */
 	constructor(config: IBaseRestClientConfig) {
