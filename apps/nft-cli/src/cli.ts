@@ -6,10 +6,10 @@ import { CLIBase } from "@twin.org/cli-core";
 import { buildCommandAddress, buildCommandMnemonic } from "@twin.org/crypto-cli";
 import { buildCommandFaucet } from "@twin.org/wallet-cli";
 import type { Command } from "commander";
-import { buildCommandNftBurn } from "./commands/nftBurn";
-import { buildCommandNftMint } from "./commands/nftMint";
-import { buildCommandNftResolve } from "./commands/nftResolve";
-import { buildCommandNftTransfer } from "./commands/nftTransfer";
+import { buildCommandNftBurn } from "./commands/nftBurn.js";
+import { buildCommandNftMint } from "./commands/nftMint.js";
+import { buildCommandNftResolve } from "./commands/nftResolve.js";
+import { buildCommandNftTransfer } from "./commands/nftTransfer.js";
 
 /**
  * The main entry point for the CLI.
@@ -32,7 +32,7 @@ export class CLI extends CLIBase {
 			{
 				title: "TWIN NFT",
 				appName: "twin-nft",
-				version: "0.0.2-next.8", // x-release-please-version
+				version: "0.0.3-next.0", // x-release-please-version
 				icon: "🌍",
 				supportsEnvFiles: true,
 				overrideOutputWidth: options?.overrideOutputWidth,

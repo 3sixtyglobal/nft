@@ -7,7 +7,7 @@ import { VaultConnectorFactory } from "@twin.org/vault-models";
 import { setupWalletConnector, WalletConnectorTypes } from "@twin.org/wallet-cli";
 import { WalletConnectorFactory } from "@twin.org/wallet-models";
 import { Command } from "commander";
-import { setupNftConnector, setupVault } from "./setupCommands";
+import { setupNftConnector, setupVault } from "./setupCommands.js";
 
 /**
  * Build the nft transfer command for the CLI.
@@ -122,8 +122,9 @@ export async function actionCommandNftTransfer(opts: {
 	await vaultConnector.setSecret(`${localIdentity}/${vaultSeedId}`, Converter.bytesToBase64(seed));
 
 	const nftConnector = setupNftConnector({ nodeEndpoint, network, vaultSeedId });
-	if (Is.function(nftConnector.start)) {
-		await nftConnector.start(localIdentity);
+	const boundStart = nftConnector.start?.bind(nftConnector);
+	if (Is.function(boundStart)) {
+		await boundStart();
 	}
 
 	CLIDisplay.task(I18n.formatMessage("commands.nft-transfer.progress.transferringNft"));

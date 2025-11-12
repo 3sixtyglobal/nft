@@ -19,11 +19,11 @@ import { nameof } from "@twin.org/nameof";
 import type { INftConnector } from "@twin.org/nft-models";
 import { VaultConnectorFactory, type IVaultConnector } from "@twin.org/vault-models";
 import { WalletConnectorFactory, type IWalletConnector } from "@twin.org/wallet-models";
-import compiledModulesJson from "./contracts/smart-contract-deployments/smart-contract-deployments.json";
-import { IotaNftUtils } from "./iotaNftUtils";
-import type { IIotaNftConnectorConfig } from "./models/IIotaNftConnectorConfig";
-import type { IIotaNftConnectorConstructorOptions } from "./models/IIotaNftConnectorConstructorOptions";
-import type { INftFields } from "./models/INftFields";
+import compiledModulesJson from "./contracts/smart-contract-deployments/smart-contract-deployments.json" with { type: "json" };
+import { IotaNftUtils } from "./iotaNftUtils.js";
+import type { IIotaNftConnectorConfig } from "./models/IIotaNftConnectorConfig.js";
+import type { IIotaNftConnectorConstructorOptions } from "./models/IIotaNftConnectorConstructorOptions.js";
+import type { INftFields } from "./models/INftFields.js";
 
 /**
  * Class for performing NFT operations on IOTA.
@@ -137,12 +137,19 @@ export class IotaNftConnector implements INftConnector {
 	}
 
 	/**
+	 * Returns the class name of the component.
+	 * @returns The class name of the component.
+	 */
+	public className(): string {
+		return IotaNftConnector.CLASS_NAME;
+	}
+
+	/**
 	 * Bootstrap the NFT contract.
-	 * @param nodeIdentity The identity of the node.
 	 * @param nodeLoggingComponentType The node logging component type.
 	 * @returns void.
 	 */
-	public async start(nodeIdentity?: string, nodeLoggingComponentType?: string): Promise<void> {
+	public async start(nodeLoggingComponentType?: string): Promise<void> {
 		const nodeLogging = ComponentFactory.getIfExists<ILoggingComponent>(nodeLoggingComponentType);
 
 		try {

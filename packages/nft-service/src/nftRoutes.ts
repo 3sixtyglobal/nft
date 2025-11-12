@@ -7,6 +7,7 @@ import type {
 	IRestRoute,
 	ITag
 } from "@twin.org/api-models";
+import { ContextIdHelper, ContextIdKeys, ContextIdStore } from "@twin.org/context";
 import { ComponentFactory, Guards } from "@twin.org/core";
 import { nameof } from "@twin.org/nameof";
 import type {
@@ -255,13 +256,17 @@ export async function nftMint(
 	Guards.object<INftMintRequest>(ROUTES_SOURCE, nameof(request), request);
 	Guards.object<INftMintRequest["body"]>(ROUTES_SOURCE, nameof(request.body), request.body);
 	Guards.stringValue(ROUTES_SOURCE, nameof(request.body.tag), request.body.tag);
+
+	const contextIds = await ContextIdStore.getContextIds();
+	ContextIdHelper.guard(contextIds, ContextIdKeys.Organization);
+
 	const component = ComponentFactory.get<INftComponent>(componentName);
 	const id = await component.mint(
 		request.body.tag,
 		request.body.immutableMetadata,
 		request.body.metadata,
 		request.body.namespace,
-		httpRequestContext.userIdentity
+		contextIds[ContextIdKeys.Organization]
 	);
 	return {
 		statusCode: HttpStatusCode.created,
@@ -291,8 +296,14 @@ export async function nftResolve(
 	);
 	Guards.stringValue(ROUTES_SOURCE, nameof(request.pathParams.id), request.pathParams.id);
 
+	const contextIds = await ContextIdStore.getContextIds();
+	ContextIdHelper.guard(contextIds, ContextIdKeys.Organization);
+
 	const component = ComponentFactory.get<INftComponent>(componentName);
-	const result = await component.resolve(request.pathParams.id, httpRequestContext.userIdentity);
+	const result = await component.resolve(
+		request.pathParams.id,
+		contextIds[ContextIdKeys.Organization]
+	);
 	return {
 		body: result
 	};
@@ -318,8 +329,11 @@ export async function nftBurn(
 	);
 	Guards.stringValue(ROUTES_SOURCE, nameof(request.pathParams.id), request.pathParams.id);
 
+	const contextIds = await ContextIdStore.getContextIds();
+	ContextIdHelper.guard(contextIds, ContextIdKeys.Organization);
+
 	const component = ComponentFactory.get<INftComponent>(componentName);
-	await component.burn(request.pathParams.id, httpRequestContext.userIdentity);
+	await component.burn(request.pathParams.id, contextIds[ContextIdKeys.Organization]);
 
 	return {
 		statusCode: HttpStatusCode.noContent
@@ -357,13 +371,16 @@ export async function nftTransfer(
 		request.body.recipientIdentity
 	);
 
+	const contextIds = await ContextIdStore.getContextIds();
+	ContextIdHelper.guard(contextIds, ContextIdKeys.Organization);
+
 	const component = ComponentFactory.get<INftComponent>(componentName);
 	await component.transfer(
 		request.pathParams.id,
 		request.body.recipientIdentity,
 		request.body.recipientAddress,
 		request.body.metadata,
-		httpRequestContext.userIdentity
+		contextIds[ContextIdKeys.Organization]
 	);
 
 	return {
@@ -393,11 +410,14 @@ export async function nftUpdate(
 	Guards.object<INftUpdateRequest["body"]>(ROUTES_SOURCE, nameof(request.body), request.body);
 	Guards.object(ROUTES_SOURCE, nameof(request.body.metadata), request.body.metadata);
 
+	const contextIds = await ContextIdStore.getContextIds();
+	ContextIdHelper.guard(contextIds, ContextIdKeys.Organization);
+
 	const component = ComponentFactory.get<INftComponent>(componentName);
 	await component.update(
 		request.pathParams.id,
 		request.body.metadata,
-		httpRequestContext.userIdentity
+		contextIds[ContextIdKeys.Organization]
 	);
 
 	return {

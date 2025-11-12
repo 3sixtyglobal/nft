@@ -15,8 +15,8 @@ import {
 } from "@twin.org/entity-storage-models";
 import { nameof } from "@twin.org/nameof";
 import type { INftConnector } from "@twin.org/nft-models";
-import type { Nft } from "./entities/nft";
-import type { IEntityStorageNftConnectorConstructorOptions } from "./models/IEntityStorageNftConnectorConstructorOptions";
+import type { Nft } from "./entities/nft.js";
+import type { IEntityStorageNftConnectorConstructorOptions } from "./models/IEntityStorageNftConnectorConstructorOptions.js";
 
 /**
  * Class for performing NFT operations on entity storage.
@@ -46,6 +46,14 @@ export class EntityStorageNftConnector implements INftConnector {
 		this._nftEntityStorage = EntityStorageConnectorFactory.get(
 			options?.nftEntityStorageType ?? "nft"
 		);
+	}
+
+	/**
+	 * Returns the class name of the component.
+	 * @returns The class name of the component.
+	 */
+	public className(): string {
+		return EntityStorageNftConnector.CLASS_NAME;
 	}
 
 	/**

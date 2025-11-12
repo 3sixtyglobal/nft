@@ -23,7 +23,7 @@ import {
 	cleanupTestDeployment,
 	deployTestContractsComplete,
 	type ITestDeploymentConfig
-} from "./helpers/testContractDeployment";
+} from "./helpers/testContractDeployment.js";
 
 const execAsync = promisify(exec);
 

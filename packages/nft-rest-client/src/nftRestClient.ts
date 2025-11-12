@@ -33,6 +33,14 @@ export class NftRestClient extends BaseRestClient implements INftComponent {
 	}
 
 	/**
+	 * Returns the class name of the component.
+	 * @returns The class name of the component.
+	 */
+	public className(): string {
+		return NftRestClient.CLASS_NAME;
+	}
+
+	/**
 	 * Mint an NFT.
 	 * @param tag The tag for the NFT.
 	 * @param immutableMetadata The immutable metadata for the NFT.

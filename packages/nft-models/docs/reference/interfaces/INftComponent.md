@@ -6,14 +6,6 @@ Interface describing an NFT component.
 
 - `IComponent`
 
-## Indexable
-
-\[`key`: `string`\]: `any`
-
-All methods are optional, so we introduce an index signature to allow
-any additional properties or methods, which removes the TypeScript error where
-the class has no properties in common with the type.
-
 ## Methods
 
 ### mint()
@@ -62,7 +54,7 @@ The namespace of the connector to use for the NFT, defaults to component configu
 
 `string`
 
-The identity to perform the nft operation on.
+The identity to perform the nft operation with.
 
 #### Returns
 
@@ -100,7 +92,7 @@ The id of the NFT to resolve.
 
 `string`
 
-The identity to perform the nft operation on.
+The identity to perform the nft operation with.
 
 #### Returns
 
@@ -128,7 +120,7 @@ The id of the NFT to burn in urn format.
 
 `string`
 
-The identity to perform the nft operation on.
+The identity to perform the nft operation with.
 
 #### Returns
 
@@ -180,7 +172,7 @@ Optional mutable data to include during the transfer.
 
 `string`
 
-The identity to perform the nft operation on.
+The identity to perform the nft operation with.
 
 #### Returns
 
@@ -220,7 +212,7 @@ The mutable data to update.
 
 `string`
 
-The identity to perform the nft operation on.
+The identity to perform the nft operation with.
 
 #### Returns
 

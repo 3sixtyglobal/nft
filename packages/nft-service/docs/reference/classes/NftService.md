@@ -36,9 +36,27 @@ Runtime name for the class.
 
 ## Methods
 
+### className()
+
+> **className**(): `string`
+
+Returns the class name of the component.
+
+#### Returns
+
+`string`
+
+The class name of the component.
+
+#### Implementation of
+
+`INftComponent.className`
+
+***
+
 ### mint()
 
-> **mint**\<`T`, `U`\>(`tag`, `immutableMetadata?`, `metadata?`, `namespace?`, `identity?`): `Promise`\<`string`\>
+> **mint**\<`T`, `U`\>(`tag`, `immutableMetadata?`, `metadata?`, `namespace?`, `controllerIdentity?`): `Promise`\<`string`\>
 
 Mint an NFT.
 
@@ -78,11 +96,11 @@ The metadata for the NFT.
 
 The namespace of the connector to use for the NFT, defaults to service configured namespace.
 
-##### identity?
+##### controllerIdentity?
 
 `string`
 
-The identity to perform the nft operation on.
+The identity to perform the nft operation with.
 
 #### Returns
 
@@ -98,7 +116,7 @@ The id of the created NFT in urn format.
 
 ### resolve()
 
-> **resolve**\<`T`, `U`\>(`id`, `identity?`): `Promise`\<\{ `issuer`: `string`; `owner`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
+> **resolve**\<`T`, `U`\>(`id`, `controllerIdentity?`): `Promise`\<\{ `issuer`: `string`; `owner`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
 
 Resolve an NFT.
 
@@ -120,11 +138,11 @@ Resolve an NFT.
 
 The id of the NFT to resolve.
 
-##### identity?
+##### controllerIdentity?
 
 `string`
 
-The identity to perform the nft operation on.
+The identity to perform the nft operation with.
 
 #### Returns
 
@@ -140,7 +158,7 @@ The data for the NFT.
 
 ### burn()
 
-> **burn**(`id`, `identity?`): `Promise`\<`void`\>
+> **burn**(`id`, `controllerIdentity?`): `Promise`\<`void`\>
 
 Burn an NFT.
 
@@ -152,11 +170,11 @@ Burn an NFT.
 
 The id of the NFT to burn in urn format.
 
-##### identity?
+##### controllerIdentity?
 
 `string`
 
-The identity to perform the nft operation on.
+The identity to perform the nft operation with.
 
 #### Returns
 
@@ -172,7 +190,7 @@ Nothing.
 
 ### transfer()
 
-> **transfer**\<`U`\>(`id`, `recipientIdentity`, `recipientAddress`, `metadata?`, `identity?`): `Promise`\<`void`\>
+> **transfer**\<`U`\>(`id`, `recipientIdentity`, `recipientAddress`, `metadata?`, `controllerIdentity?`): `Promise`\<`void`\>
 
 Transfer an NFT.
 
@@ -208,11 +226,11 @@ The recipient address for the NFT.
 
 Optional mutable data to include during the transfer.
 
-##### identity?
+##### controllerIdentity?
 
 `string`
 
-The identity to perform the nft operation on.
+The identity to perform the nft operation with.
 
 #### Returns
 
@@ -228,7 +246,7 @@ Nothing.
 
 ### update()
 
-> **update**\<`U`\>(`id`, `metadata`, `identity?`): `Promise`\<`void`\>
+> **update**\<`U`\>(`id`, `metadata`, `controllerIdentity?`): `Promise`\<`void`\>
 
 Update the data of the NFT.
 
@@ -252,11 +270,11 @@ The id of the NFT to update in urn format.
 
 The mutable data to update.
 
-##### identity?
+##### controllerIdentity?
 
 `string`
 
-The identity to perform the nft operation on.
+The identity to perform the nft operation with.
 
 #### Returns
 

@@ -44,19 +44,31 @@ Runtime name for the class.
 
 ## Methods
 
+### className()
+
+> **className**(): `string`
+
+Returns the class name of the component.
+
+#### Returns
+
+`string`
+
+The class name of the component.
+
+#### Implementation of
+
+`INftConnector.className`
+
+***
+
 ### start()
 
-> **start**(`nodeIdentity?`, `nodeLoggingComponentType?`): `Promise`\<`void`\>
+> **start**(`nodeLoggingComponentType?`): `Promise`\<`void`\>
 
 Bootstrap the NFT contract.
 
 #### Parameters
-
-##### nodeIdentity?
-
-`string`
-
-The identity of the node.
 
 ##### nodeLoggingComponentType?
 

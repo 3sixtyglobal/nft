@@ -10,12 +10,11 @@ import {
 	cleanupTestEnv,
 	TEST_USER_IDENTITY_ID_2,
 	TEST_USER_IDENTITY_ID,
-	TEST_NODE_IDENTITY,
 	TEST_NETWORK,
 	TEST_MNEMONIC_NAME,
 	TEST_EXPLORER_URL
-} from "./setupTestEnv";
-import { IotaNftConnector } from "../src/iotaNftConnector";
+} from "./setupTestEnv.js";
+import { IotaNftConnector } from "../src/iotaNftConnector.js";
 
 let nftConnector: IotaNftConnector;
 
@@ -36,7 +35,7 @@ describe("IotaNftConnector", () => {
 			deploymentConfig
 		});
 		// Start the connector with test-deployed packages
-		await nftConnector.start(TEST_NODE_IDENTITY);
+		await nftConnector.start();
 	});
 
 	afterAll(async () => {

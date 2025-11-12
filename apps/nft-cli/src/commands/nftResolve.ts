@@ -12,7 +12,7 @@ import { IotaNftUtils } from "@twin.org/nft-connector-iota";
 import { setupWalletConnector, WalletConnectorTypes } from "@twin.org/wallet-cli";
 import { WalletConnectorFactory } from "@twin.org/wallet-models";
 import { Command } from "commander";
-import { setupNftConnector, setupVault } from "./setupCommands";
+import { setupNftConnector, setupVault } from "./setupCommands.js";
 
 /**
  * Build the nft resolve command for the CLI.

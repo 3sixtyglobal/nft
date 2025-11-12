@@ -16,7 +16,7 @@ Client for performing NFT through to REST endpoints.
 
 > **new NftRestClient**(`config`): `NftRestClient`
 
-Create a new instance of NftClient.
+Create a new instance of NftRestClient.
 
 #### Parameters
 
@@ -43,6 +43,24 @@ The configuration for the client.
 Runtime name for the class.
 
 ## Methods
+
+### className()
+
+> **className**(): `string`
+
+Returns the class name of the component.
+
+#### Returns
+
+`string`
+
+The class name of the component.
+
+#### Implementation of
+
+`INftComponent.className`
+
+***
 
 ### mint()
 

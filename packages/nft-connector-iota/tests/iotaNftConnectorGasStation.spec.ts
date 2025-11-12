@@ -10,7 +10,6 @@ import {
 	cleanupTestEnv,
 	TEST_USER_IDENTITY_ID_2,
 	TEST_USER_IDENTITY_ID,
-	TEST_NODE_IDENTITY,
 	TEST_NETWORK,
 	TEST_MNEMONIC_NAME,
 	TEST_VAULT_CONNECTOR,
@@ -19,9 +18,9 @@ import {
 	TEST_GAS_BUDGET,
 	TEST_GAS_STATION_URL,
 	TEST_GAS_STATION_AUTH_TOKEN
-} from "./setupTestEnv";
-import { IotaNftConnector } from "../src/iotaNftConnector";
-import type { IIotaNftConnectorConfig } from "../src/models/IIotaNftConnectorConfig";
+} from "./setupTestEnv.js";
+import { IotaNftConnector } from "../src/iotaNftConnector.js";
+import type { IIotaNftConnectorConfig } from "../src/models/IIotaNftConnectorConfig.js";
 
 let gasStationNftConnector: IotaNftConnector;
 let regularNftConnector: IotaNftConnector;
@@ -70,7 +69,7 @@ describe("IotaNftConnector with Gas Station", () => {
 		});
 
 		// Start the connector with gas station using test-deployed packages
-		await gasStationNftConnector.start(TEST_NODE_IDENTITY);
+		await gasStationNftConnector.start();
 	});
 
 	afterAll(async () => {
@@ -195,7 +194,7 @@ describe("IotaNftConnector with Gas Station", () => {
 		}, 30000);
 		test("Should compare regular vs gas station minting", async () => {
 			// Start the regular connector first (no deployment needed with move-to-json pre-deployed packages)
-			await regularNftConnector.start(TEST_NODE_IDENTITY);
+			await regularNftConnector.start();
 
 			// Mint with regular connector
 			const regularNftId = await regularNftConnector.mint(
@@ -529,7 +528,7 @@ describe("IotaNftConnector with Gas Station", () => {
 			});
 
 			// Start the connector (this should succeed since it uses pre-deployed packages)
-			await connector.start(TEST_NODE_IDENTITY);
+			await connector.start();
 
 			// The gas station unavailability should be detected during NFT operations
 			await expect(
@@ -554,7 +553,7 @@ describe("IotaNftConnector with Gas Station", () => {
 			});
 
 			// Start the connector (this should succeed since it uses pre-deployed packages)
-			await connector.start(TEST_NODE_IDENTITY);
+			await connector.start();
 
 			// The invalid auth token should be detected during NFT operations
 			await expect(connector.mint(TEST_USER_IDENTITY_ID, "test_invalid_auth")).rejects.toThrow();

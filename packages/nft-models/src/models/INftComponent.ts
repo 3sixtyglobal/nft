@@ -12,7 +12,7 @@ export interface INftComponent extends IComponent {
 	 * @param immutableMetadata The immutable metadata for the NFT.
 	 * @param metadata The metadata for the NFT.
 	 * @param namespace The namespace of the connector to use for the NFT, defaults to component configured namespace.
-	 * @param identity The identity to perform the nft operation on.
+	 * @param identity The identity to perform the nft operation with.
 	 * @returns The id of the created NFT in urn format.
 	 */
 	mint<T = unknown, U = unknown>(
@@ -26,7 +26,7 @@ export interface INftComponent extends IComponent {
 	/**
 	 * Resolve an NFT.
 	 * @param id The id of the NFT to resolve.
-	 * @param controllerIdentity The identity to perform the nft operation on.
+	 * @param controllerIdentity The identity to perform the nft operation with.
 	 * @returns The data for the NFT.
 	 */
 	resolve<T = unknown, U = unknown>(
@@ -43,7 +43,7 @@ export interface INftComponent extends IComponent {
 	/**
 	 * Burn an NFT.
 	 * @param id The id of the NFT to burn in urn format.
-	 * @param controllerIdentity The identity to perform the nft operation on.
+	 * @param controllerIdentity The identity to perform the nft operation with.
 	 * @returns Nothing.
 	 */
 	burn(id: string, controllerIdentity?: string): Promise<void>;
@@ -54,7 +54,7 @@ export interface INftComponent extends IComponent {
 	 * @param recipientIdentity The recipient identity for the NFT.
 	 * @param recipientAddress The recipient address for the NFT.
 	 * @param metadata Optional mutable data to include during the transfer.
-	 * @param controllerIdentity The identity to perform the nft operation on.
+	 * @param controllerIdentity The identity to perform the nft operation with.
 	 * @returns Nothing.
 	 */
 	transfer<U = unknown>(
@@ -69,7 +69,7 @@ export interface INftComponent extends IComponent {
 	 * Update the mutable data of the NFT.
 	 * @param id The id of the NFT to update in urn format.
 	 * @param metadata The mutable data to update.
-	 * @param controllerIdentity The identity to perform the nft operation on.
+	 * @param controllerIdentity The identity to perform the nft operation with.
 	 * @returns Nothing.
 	 */
 	update<U = unknown>(id: string, metadata: U, controllerIdentity?: string): Promise<void>;

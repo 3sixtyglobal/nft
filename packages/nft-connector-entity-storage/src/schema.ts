@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0.
 import { EntitySchemaFactory, EntitySchemaHelper } from "@twin.org/entity";
 import { nameof } from "@twin.org/nameof";
-import { Nft } from "./entities/nft";
+import { Nft } from "./entities/nft.js";
 
 /**
  * Initialize the schema for the NFT entity storage connector.

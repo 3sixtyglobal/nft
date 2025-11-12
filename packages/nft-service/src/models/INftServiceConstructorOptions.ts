@@ -1,6 +1,6 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import type { INftServiceConfig } from "./INftServiceConfig";
+import type { INftServiceConfig } from "./INftServiceConfig.js";
 
 /**
  * Options for the nft service constructor.
