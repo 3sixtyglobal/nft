@@ -1,5 +1,21 @@
 # @twin.org/nft-service - Changelog
 
+## [0.0.3-next.2](https://github.com/twinfoundation/nft/compare/nft-service-v0.0.3-next.1...nft-service-v0.0.3-next.2) (2026-02-25)
+
+
+### Miscellaneous Chores
+
+* **nft-service:** Synchronize repo versions
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-models bumped from 0.0.3-next.1 to 0.0.3-next.2
+  * devDependencies
+    * @twin.org/nft-connector-entity-storage bumped from 0.0.3-next.1 to 0.0.3-next.2
+
 ## [0.0.3-next.1](https://github.com/twinfoundation/nft/compare/nft-service-v0.0.3-next.0...nft-service-v0.0.3-next.1) (2025-11-12)
 
 
