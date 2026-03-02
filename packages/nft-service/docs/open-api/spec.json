@@ -584,7 +584,6 @@
 					"name",
 					"message"
 				],
-				"additionalProperties": false,
 				"description": "Model to describe serialized error."
 			},
 			"NftMintRequest": {
@@ -608,7 +607,6 @@
 				"required": [
 					"tag"
 				],
-				"additionalProperties": false,
 				"description": "The data to be used in the minting."
 			},
 			"NftResolveResponse": {
@@ -638,7 +636,6 @@
 					"owner",
 					"tag"
 				],
-				"additionalProperties": false,
 				"description": "The data that was resolved."
 			},
 			"NftTransferRequest": {
@@ -660,7 +657,6 @@
 					"recipientIdentity",
 					"recipientAddress"
 				],
-				"additionalProperties": false,
 				"description": "The data to be used in the transfer."
 			},
 			"NftUpdateRequest": {
@@ -670,7 +666,6 @@
 						"description": "The metadata for the NFT."
 					}
 				},
-				"additionalProperties": false,
 				"description": "The data to be used in the update."
 			}
 		},
