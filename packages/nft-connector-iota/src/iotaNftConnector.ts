@@ -1,7 +1,6 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import type { IotaClient, IotaObjectResponse } from "@iota/iota-sdk/client";
-import { Transaction } from "@iota/iota-sdk/transactions";
+import type { IotaObjectResponse } from "@iota/iota-sdk/client";
 import {
 	BaseError,
 	ComponentFactory,
@@ -12,8 +11,13 @@ import {
 	StringHelper,
 	Urn
 } from "@twin.org/core";
-import { Iota } from "@twin.org/dlt-iota";
-import type { IContractData, ISmartContractDeployments, NetworkTypes } from "@twin.org/dlt-iota";
+import {
+	type IContractData,
+	type ISmartContractDeployments,
+	type NetworkTypes,
+	Iota,
+	type IIotaClient
+} from "@twin.org/dlt-iota";
 import type { ILoggingComponent } from "@twin.org/logging-models";
 import { nameof } from "@twin.org/nameof";
 import type { INftConnector } from "@twin.org/nft-models";
@@ -67,7 +71,7 @@ export class IotaNftConnector implements INftConnector {
 	 * The IOTA client.
 	 * @internal
 	 */
-	private readonly _client: IotaClient;
+	private readonly _client: IIotaClient;
 
 	/**
 	 * The name of the contract to use.
@@ -239,7 +243,7 @@ export class IotaNftConnector implements INftConnector {
 		try {
 			const packageId = this.getPackageId();
 
-			const txb = new Transaction();
+			const txb = Iota.createTransaction();
 			txb.setGasBudget(this._gasBudget);
 
 			const walletAddressIndex = this._config.walletAddressIndex ?? 0;
@@ -396,7 +400,7 @@ export class IotaNftConnector implements INftConnector {
 		}
 
 		try {
-			const txb = new Transaction();
+			const txb = Iota.createTransaction();
 			txb.setGasBudget(this._gasBudget);
 
 			const objectId = IotaNftUtils.nftIdToObjectId(id);
@@ -485,7 +489,7 @@ export class IotaNftConnector implements INftConnector {
 				});
 			}
 
-			const txb = new Transaction();
+			const txb = Iota.createTransaction();
 			txb.setGasBudget(this._gasBudget);
 
 			const objectId = IotaNftUtils.nftIdToObjectId(nftId);
@@ -577,7 +581,7 @@ export class IotaNftConnector implements INftConnector {
 		try {
 			const packageId = this.getPackageId();
 
-			const txb = new Transaction();
+			const txb = Iota.createTransaction();
 			txb.setGasBudget(this._gasBudget);
 
 			const objectId = IotaNftUtils.nftIdToObjectId(id);
