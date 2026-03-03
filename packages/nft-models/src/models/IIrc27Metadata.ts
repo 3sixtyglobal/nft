@@ -3,7 +3,7 @@
 
 /**
  * Model defining the IRC27 NFT Standards.
- * https://github.com/iotaledger/tips/blob/main/tips/TIP-0027/tip-0027.md
+ * https://docs.iota.org/developer/references/framework/stardust/irc27
  */
 export interface IIrc27Metadata {
 	/**
