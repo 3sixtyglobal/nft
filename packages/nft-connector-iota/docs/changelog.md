@@ -1,5 +1,19 @@
 # @twin.org/nft-connector-iota - Changelog
 
+## [0.0.3-next.3](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.3-next.2...nft-connector-iota-v0.0.3-next.3) (2026-03-03)
+
+
+### Miscellaneous Chores
+
+* **nft-connector-iota:** Synchronize repo versions
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-models bumped from 0.0.3-next.2 to 0.0.3-next.3
+
 ## [0.0.3-next.2](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.3-next.1...nft-connector-iota-v0.0.3-next.2) (2026-02-25)
 
 

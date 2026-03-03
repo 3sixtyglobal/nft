@@ -1,5 +1,12 @@
 # @twin.org/nft-models - Changelog
 
+## [0.0.3-next.3](https://github.com/twinfoundation/nft/compare/nft-models-v0.0.3-next.2...nft-models-v0.0.3-next.3) (2026-03-03)
+
+
+### Features
+
+* update docs ([75dc85e](https://github.com/twinfoundation/nft/commit/75dc85ed0476666d0a1cc5d83ca0a5db29b69992))
+
 ## [0.0.3-next.2](https://github.com/twinfoundation/nft/compare/nft-models-v0.0.3-next.1...nft-models-v0.0.3-next.2) (2026-02-25)
 
 
