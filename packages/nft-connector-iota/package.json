@@ -1,7 +1,7 @@
 {
 	"name": "@twin.org/nft-connector-iota",
 	"version": "0.0.3-next.3",
-	"description": "Implementation of the NFT connector using Iota",
+	"description": "IOTA-backed NFT connector for network operations and on-ledger state.",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/twinfoundation/nft.git",

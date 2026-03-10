@@ -1,7 +1,7 @@
 {
 	"name": "@twin.org/nft-rest-client",
 	"version": "0.0.3-next.3",
-	"description": "NFT contract implementation which can connect to REST endpoints",
+	"description": "HTTP client for calling NFT service endpoints from applications.",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/twinfoundation/nft.git",

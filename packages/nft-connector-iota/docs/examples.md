@@ -1,63 +1,133 @@
-# @twin.org/nft-connector-iota - Examples
+# NFT Connector IOTA Examples
 
-## Note
+These snippets show a practical lifecycle for network-backed NFTs: initialisation, minting, reading, transferring, metadata updates, and burn flows.
 
-The `start()` method must be called after instantiating the connector and before using any storage methods. This method will:
+## IotaNftConnector
 
-- Check for an existing package ID in the component state
-- If found, verify the package exists on the network
-- If not found or verification fails, deploy a new package
-- Initialize the connector for use
+```typescript
+import { IotaNftConnector, type IIotaNftConnectorConfig } from '@twin.org/nft-connector-iota';
 
-## Installing the IOTA CLI Locally
+interface ImmutableProfile {
+  standard: 'IRC27';
+  version: 'v1.0';
+  type: string;
+  uri: string;
+  name: string;
+}
 
-This project uses the "iota" command-line tool to compile and manage its Move contracts. To run "iota move build" or related commands on your own machine, you'll need to install the correct IOTA CLI binary for your operating system and processor architecture.
+interface MutableProfile {
+  status: 'draft' | 'published';
+  likes: number;
+}
 
-1. Visit the IOTA GitHub Releases Page  
-   [IOTA Releases](https://github.com/iotaledger/iota/releases)  
-   Here, you'll see multiple release artifacts (e.g., Linux x86_64, macOS arm64, Windows x86_64, etc.).
+const config: IIotaNftConnectorConfig = {
+  network: 'devnet',
+  clientOptions: {
+    nodes: ['https://api.devnet.iota.cafe']
+  },
+  contractName: 'nft',
+  walletAddressIndex: 0,
+  gasBudget: 1_000_000_000
+};
 
-2. Download the Correct Release  
-   • Linux (x86_64): iota-vX.Y.Z-beta-linux-x86_64.tgz  
-   • macOS (arm64 or x86_64): iota-vX.Y.Z-beta-macos-arm64.tgz (or macos-x86_64)  
-   • Windows (x86_64): iota-vX.Y.Z-beta-windows-x86_64.tgz
+const connector = new IotaNftConnector({ config });
 
-3. Extract the Archive  
-   On Linux/macOS (adjust the file name as needed):  
-   » tar xzf iota-vX.Y.Z-beta-linux-x86_64.tgz  
-   This should produce an executable file named iota (or iota.exe on Windows).
+await connector.start('logging');
 
-4. Mark as Executable (Linux/macOS)  
-   » chmod +x iota
+console.log(connector.className()); // IotaNftConnector
 
-5. (Optional) Move It to a System-Wide Location  
-   » sudo mv iota /usr/local/bin/iota  
-   This allows you to run the iota command from any directory.
+const nftId = await connector.mint<ImmutableProfile, MutableProfile>(
+  'did:example:issuer-1',
+  'music-pass',
+  {
+    standard: 'IRC27',
+    version: 'v1.0',
+    type: 'audio/flac',
+    uri: 'ipfs://bafybeif34...',
+    name: 'Backstage Pass'
+  },
+  {
+    status: 'draft',
+    likes: 0
+  }
+);
 
-6. Confirm Installation  
-   » iota --version
+const resolved = await connector.resolve<ImmutableProfile, MutableProfile>(nftId);
 
-7. Windows Users  
-   • Extract the .tgz using a tool such as 7zip.  
-   • The extracted file will typically be named iota.exe.  
-   • You can either run it from the same folder or move it somewhere in your system's PATH.
-
-Once installed, you can use the iota command to build or manage Move contracts locally.
-
----
-
-## Example GitHub Actions Set Up
-
-In this repository's GitHub Actions, we install the Linux x86_64 binary because the GitHub runner is Ubuntu-based:
-
-```yaml
-name: Download & Install IOTA CLI
-run: |
-  wget https://github.com/iotaledger/iota/releases/download/v1.0.0/iota-v1.0.0-linux-x86_64.tgz -O iota-cli.tgz
-  tar xzf iota-cli.tgz
-  chmod +x iota
-  sudo mv iota /usr/local/bin/iota
-  iota --version
+console.log(resolved.owner); // did:example:issuer-1
+console.log(resolved.metadata?.likes); // 0
 ```
 
-Locally, however, you should choose the appropriate binary for your OS (Windows/Mac/Linux) and follow similar steps to extract and run the CLI.
+```typescript
+import { IotaNftConnector, type IIotaNftConnectorConfig } from '@twin.org/nft-connector-iota';
+
+interface MutableProfile {
+  status: 'draft' | 'published';
+  likes: number;
+}
+
+const config: IIotaNftConnectorConfig = {
+  network: 'devnet',
+  clientOptions: {
+    nodes: ['https://api.devnet.iota.cafe']
+  }
+};
+
+const connector = new IotaNftConnector({ config });
+
+await connector.start();
+
+const controller = 'did:example:issuer-1';
+const recipient = 'did:example:collector-9';
+const recipientAddress = '0x5df99c44d4f6f66d5a7f7298f46a0fdb6a4ac23a';
+
+const nftId = await connector.mint(controller, 'tradeable');
+
+await connector.transfer<MutableProfile>(controller, nftId, recipient, recipientAddress, {
+  status: 'published',
+  likes: 2
+});
+
+await connector.update<MutableProfile>(recipient, nftId, {
+  status: 'published',
+  likes: 9
+});
+
+const updated = await connector.resolve<Record<string, never>, MutableProfile>(nftId);
+
+console.log(updated.owner); // did:example:collector-9
+console.log(updated.metadata?.status); // published
+```
+
+```typescript
+import { IotaNftConnector, type IIotaNftConnectorConfig } from '@twin.org/nft-connector-iota';
+
+const config: IIotaNftConnectorConfig = {
+  network: 'devnet',
+  clientOptions: {
+    nodes: ['https://api.devnet.iota.cafe']
+  }
+};
+
+const connector = new IotaNftConnector({ config });
+await connector.start();
+
+const controller = 'did:example:issuer-1';
+const nftId = await connector.mint(controller, 'to-burn');
+
+await connector.burn(controller, nftId);
+```
+
+## IotaNftUtils
+
+```typescript
+import { IotaNftUtils } from '@twin.org/nft-connector-iota';
+
+const nftId = 'nft:iota:devnet:0xpackage:0xobject';
+
+const packageId = IotaNftUtils.nftIdToPackageId(nftId);
+const objectId = IotaNftUtils.nftIdToObjectId(nftId);
+
+console.log(packageId); // 0xpackage
+console.log(objectId); // 0xobject
+```

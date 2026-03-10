@@ -1,6 +1,6 @@
 # TWIN NFT Models
 
-Contains models and classes for use with NFTs.
+This package defines the shared interfaces, factories, and API models used by NFT connectors, services, and clients in this repository. It provides a stable contract layer that keeps implementations interoperable across different runtime environments.
 
 ## Installation
 

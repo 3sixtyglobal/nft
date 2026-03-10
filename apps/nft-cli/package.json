@@ -1,7 +1,7 @@
 {
 	"name": "@twin.org/nft-cli",
 	"version": "0.0.3-next.3",
-	"description": "A command line interface for interacting with the nft connectors",
+	"description": "Command line application for running end-to-end NFT operations.",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/twinfoundation/nft.git",

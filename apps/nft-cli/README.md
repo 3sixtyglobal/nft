@@ -1,11 +1,11 @@
 # TWIN NFT CLI
 
-A command line interface for interacting with the nft connectors.
+This application provides command line workflows for creating, resolving, transferring, and burning NFTs in local and network-backed environments. It is intended for developer tooling, scripted operations, and operational checks.
 
 ## Installation
 
 ```shell
-npm install @twin.org/nft-cli
+npm install @twin.org/nft-cli -D
 ```
 
 ## Examples

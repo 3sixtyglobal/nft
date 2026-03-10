@@ -1,4 +1,6 @@
-# @twin.org/nft-cli - Examples
+# NFT CLI Usage
+
+Use these commands to run the CLI locally and check available NFT operations before wiring them into scripts or CI pipelines.
 
 ## Running
 

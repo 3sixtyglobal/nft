@@ -1,6 +1,6 @@
 # TWIN NFT Connector Entity Storage
 
-Implementation of the NFT connector using entity storage.
+This package provides an entity-storage-backed NFT connector for mint, resolve, transfer, update, and burn operations. It is useful for local development and integration testing where a storage abstraction is needed without relying on a live network.
 
 ## Installation
 

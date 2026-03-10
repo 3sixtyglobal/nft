@@ -1,6 +1,6 @@
 # TWIN NFT REST Client
 
-NFT contract implementation which can connect to REST endpoints.
+This package provides a REST client for invoking NFT service endpoints from external applications and automation scripts. It offers a consistent HTTP-facing interface for mint, resolve, transfer, update, and burn operations.
 
 ## Installation
 

@@ -1,7 +1,7 @@
 {
 	"name": "@twin.org/nft",
 	"version": "0.0.0",
-	"description": "NFT",
+	"description": "Modular NFT connectors, services, and tooling.",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/twinfoundation/nft.git"

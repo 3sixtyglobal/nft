@@ -1,7 +1,7 @@
 {
 	"name": "@twin.org/nft-service",
 	"version": "0.0.3-next.3",
-	"description": "NFT contract implementation and REST endpoint definitions",
+	"description": "NFT service orchestration with REST route generation.",
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/twinfoundation/nft.git",
