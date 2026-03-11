@@ -1,4 +1,4 @@
-# @twin.org/nft-connector-entity-storage - Changelog
+# Changelog
 
 ## [0.0.3-next.3](https://github.com/twinfoundation/nft/compare/nft-connector-entity-storage-v0.0.3-next.2...nft-connector-entity-storage-v0.0.3-next.3) (2026-03-03)
 

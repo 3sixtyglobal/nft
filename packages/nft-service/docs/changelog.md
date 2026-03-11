@@ -1,4 +1,4 @@
-# @twin.org/nft-service - Changelog
+# Changelog
 
 ## [0.0.3-next.3](https://github.com/twinfoundation/nft/compare/nft-service-v0.0.3-next.2...nft-service-v0.0.3-next.3) (2026-03-03)
 

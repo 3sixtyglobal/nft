@@ -8,9 +8,9 @@ This application provides command line workflows for creating, resolving, transf
 npm install @twin.org/nft-cli -D
 ```
 
-## Examples
+## Usage
 
-Usage of the tool is shown in the examples [docs/examples.md](docs/examples.md)
+Usage of the tool is shown in the examples [docs/usage.md](docs/usage.md)
 
 ## Reference
 
