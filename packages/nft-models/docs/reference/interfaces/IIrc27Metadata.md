@@ -5,7 +5,7 @@ https://docs.iota.org/developer/references/framework/stardust/irc27
 
 ## Properties
 
-### standard
+### standard {#standard}
 
 > **standard**: `"IRC27"`
 
@@ -13,7 +13,7 @@ The standard marker.
 
 ***
 
-### version
+### version {#version}
 
 > **version**: `"v1.0"`
 
@@ -21,7 +21,7 @@ The version
 
 ***
 
-### type
+### type {#type}
 
 > **type**: `string`
 
@@ -29,7 +29,7 @@ A mime type for the content of the NFT.
 
 ***
 
-### uri
+### uri {#uri}
 
 > **uri**: `string`
 
@@ -37,7 +37,7 @@ Url pointing to the NFT file location with MIME type defined in type.
 
 ***
 
-### name
+### name {#name}
 
 > **name**: `string`
 
@@ -45,7 +45,7 @@ Alphanumeric text string defining the human identifiable name for the NFT
 
 ***
 
-### collectionName?
+### collectionName? {#collectionname}
 
 > `optional` **collectionName**: `string`
 
@@ -53,7 +53,7 @@ Alphanumeric text string defining the human identifiable collection name.
 
 ***
 
-### royalties?
+### royalties? {#royalties}
 
 > `optional` **royalties**: `object`
 
@@ -65,7 +65,7 @@ Object containing key value pair where payment address mapped to the payout perc
 
 ***
 
-### issuerName?
+### issuerName? {#issuername}
 
 > `optional` **issuerName**: `string`
 
@@ -73,7 +73,7 @@ Alphanumeric text string to define the human identifiable name of the creator.
 
 ***
 
-### description?
+### description? {#description}
 
 > `optional` **description**: `string`
 
@@ -81,7 +81,7 @@ Alphanumeric text string to define a basic description of the NFT.
 
 ***
 
-### attributes?
+### attributes? {#attributes}
 
 > `optional` **attributes**: `object`[]
 

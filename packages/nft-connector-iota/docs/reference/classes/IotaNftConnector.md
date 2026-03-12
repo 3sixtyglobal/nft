@@ -28,7 +28,7 @@ The options for the connector.
 
 ## Properties
 
-### NAMESPACE
+### NAMESPACE {#namespace}
 
 > `readonly` `static` **NAMESPACE**: `string` = `"iota"`
 
@@ -36,7 +36,7 @@ The namespace supported by the nft connector.
 
 ***
 
-### CLASS\_NAME
+### CLASS\_NAME {#class_name}
 
 > `readonly` `static` **CLASS\_NAME**: `string`
 
@@ -44,7 +44,7 @@ Runtime name for the class.
 
 ## Methods
 
-### className()
+### className() {#classname}
 
 > **className**(): `string`
 
@@ -62,7 +62,7 @@ The class name of the component.
 
 ***
 
-### start()
+### start() {#start}
 
 > **start**(`nodeLoggingComponentType?`): `Promise`\<`void`\>
 
@@ -88,7 +88,7 @@ void.
 
 ***
 
-### mint()
+### mint() {#mint}
 
 > **mint**\<`T`, `U`\>(`controllerIdentity`, `tag`, `immutableMetadata?`, `metadata?`): `Promise`\<`string`\>
 
@@ -142,7 +142,7 @@ The id of the created NFT in urn format.
 
 ***
 
-### resolve()
+### resolve() {#resolve}
 
 > **resolve**\<`T`, `U`\>(`nftId`): `Promise`\<\{ `issuer`: `string`; `owner`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
 
@@ -178,7 +178,7 @@ The NFT details.
 
 ***
 
-### burn()
+### burn() {#burn}
 
 > **burn**(`controllerIdentity`, `id`): `Promise`\<`void`\>
 
@@ -210,7 +210,7 @@ void.
 
 ***
 
-### transfer()
+### transfer() {#transfer}
 
 > **transfer**\<`U`\>(`controller`, `nftId`, `recipientIdentity`, `recipientAddress`, `metadata?`): `Promise`\<`void`\>
 
@@ -266,7 +266,7 @@ void.
 
 ***
 
-### update()
+### update() {#update}
 
 > **update**\<`U`\>(`controllerIdentity`, `id`, `metadata`): `Promise`\<`void`\>
 

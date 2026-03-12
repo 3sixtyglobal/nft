@@ -14,7 +14,7 @@ Utility functions for the iota nfts.
 
 ## Properties
 
-### CLASS\_NAME
+### CLASS\_NAME {#class_name}
 
 > `readonly` `static` **CLASS\_NAME**: `string`
 
@@ -22,7 +22,7 @@ Runtime name for the class.
 
 ## Methods
 
-### nftIdToObjectId()
+### nftIdToObjectId() {#nftidtoobjectid}
 
 > `static` **nftIdToObjectId**(`nftIdUrn`): `string`
 
@@ -48,7 +48,7 @@ GeneralError if the NFT id is invalid.
 
 ***
 
-### nftIdToPackageId()
+### nftIdToPackageId() {#nftidtopackageid}
 
 > `static` **nftIdToPackageId**(`nftIdUrn`): `string`
 

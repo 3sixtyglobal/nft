@@ -4,7 +4,7 @@ Mint the data and return the NFT id.
 
 ## Properties
 
-### body
+### body {#body}
 
 > **body**: `object`
 

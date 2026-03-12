@@ -28,7 +28,7 @@ The options for the service.
 
 ## Properties
 
-### CLASS\_NAME
+### CLASS\_NAME {#class_name}
 
 > `readonly` `static` **CLASS\_NAME**: `string`
 
@@ -36,7 +36,7 @@ Runtime name for the class.
 
 ## Methods
 
-### className()
+### className() {#classname}
 
 > **className**(): `string`
 
@@ -54,7 +54,7 @@ The class name of the component.
 
 ***
 
-### mint()
+### mint() {#mint}
 
 > **mint**\<`T`, `U`\>(`tag`, `immutableMetadata?`, `metadata?`, `namespace?`, `controllerIdentity?`): `Promise`\<`string`\>
 
@@ -114,7 +114,7 @@ The id of the created NFT in urn format.
 
 ***
 
-### resolve()
+### resolve() {#resolve}
 
 > **resolve**\<`T`, `U`\>(`id`, `controllerIdentity?`): `Promise`\<\{ `issuer`: `string`; `owner`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
 
@@ -156,7 +156,7 @@ The data for the NFT.
 
 ***
 
-### burn()
+### burn() {#burn}
 
 > **burn**(`id`, `controllerIdentity?`): `Promise`\<`void`\>
 
@@ -188,7 +188,7 @@ Nothing.
 
 ***
 
-### transfer()
+### transfer() {#transfer}
 
 > **transfer**\<`U`\>(`id`, `recipientIdentity`, `recipientAddress`, `metadata?`, `controllerIdentity?`): `Promise`\<`void`\>
 
@@ -244,7 +244,7 @@ Nothing.
 
 ***
 
-### update()
+### update() {#update}
 
 > **update**\<`U`\>(`id`, `metadata`, `controllerIdentity?`): `Promise`\<`void`\>
 

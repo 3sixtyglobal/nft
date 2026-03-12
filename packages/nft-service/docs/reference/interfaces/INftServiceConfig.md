@@ -4,7 +4,7 @@ Configuration for the NFT Service.
 
 ## Properties
 
-### defaultNamespace?
+### defaultNamespace? {#defaultnamespace}
 
 > `optional` **defaultNamespace**: `string`
 

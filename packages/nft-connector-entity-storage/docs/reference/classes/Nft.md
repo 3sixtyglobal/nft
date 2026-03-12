@@ -14,7 +14,7 @@ Class describing the nft.
 
 ## Properties
 
-### id
+### id {#id}
 
 > **id**: `string`
 
@@ -22,7 +22,7 @@ The identity of the NFT.
 
 ***
 
-### issuer
+### issuer {#issuer}
 
 > **issuer**: `string`
 
@@ -30,7 +30,7 @@ The issuer of the NFT.
 
 ***
 
-### owner
+### owner {#owner}
 
 > **owner**: `string`
 
@@ -38,7 +38,7 @@ The owner of the NFT.
 
 ***
 
-### tag
+### tag {#tag}
 
 > **tag**: `string`
 
@@ -46,7 +46,7 @@ The tag for the nft.
 
 ***
 
-### immutableMetadata?
+### immutableMetadata? {#immutablemetadata}
 
 > `optional` **immutableMetadata**: `unknown`
 
@@ -54,7 +54,7 @@ The immutable metadata.
 
 ***
 
-### metadata?
+### metadata? {#metadata}
 
 > `optional` **metadata**: `unknown`
 

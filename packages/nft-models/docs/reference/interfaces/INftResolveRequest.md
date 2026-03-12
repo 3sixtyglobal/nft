@@ -4,7 +4,7 @@ Resolve the NFT.
 
 ## Properties
 
-### pathParams
+### pathParams {#pathparams}
 
 > **pathParams**: `object`
 

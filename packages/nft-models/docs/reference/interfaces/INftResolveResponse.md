@@ -4,7 +4,7 @@ Response to resolving the NFT.
 
 ## Properties
 
-### body
+### body {#body}
 
 > **body**: `object`
 

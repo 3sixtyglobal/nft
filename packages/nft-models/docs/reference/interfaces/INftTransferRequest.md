@@ -4,7 +4,7 @@ Transfer the NFT and update the metadata.
 
 ## Properties
 
-### pathParams
+### pathParams {#pathparams}
 
 > **pathParams**: `object`
 
@@ -18,7 +18,7 @@ The id of the NFT to transfer in urn format.
 
 ***
 
-### body
+### body {#body}
 
 > **body**: `object`
 

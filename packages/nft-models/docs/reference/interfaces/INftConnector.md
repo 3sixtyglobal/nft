@@ -8,7 +8,7 @@ Interface describing an NFT connector.
 
 ## Methods
 
-### mint()
+### mint() {#mint}
 
 > **mint**\<`T`, `U`\>(`controllerIdentity`, `tag`, `immutableMetadata?`, `metadata?`): `Promise`\<`string`\>
 
@@ -58,7 +58,7 @@ The id of the created NFT in urn format.
 
 ***
 
-### resolve()
+### resolve() {#resolve}
 
 > **resolve**\<`T`, `U`\>(`id`): `Promise`\<\{ `issuer`: `string`; `owner`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
 
@@ -90,7 +90,7 @@ The data for the NFT.
 
 ***
 
-### burn()
+### burn() {#burn}
 
 > **burn**(`controller`, `id`): `Promise`\<`void`\>
 
@@ -118,7 +118,7 @@ Nothing.
 
 ***
 
-### transfer()
+### transfer() {#transfer}
 
 > **transfer**\<`U`\>(`controllerIdentity`, `id`, `recipientIdentity`, `recipientAddress`, `metadata?`): `Promise`\<`void`\>
 
@@ -170,7 +170,7 @@ Nothing.
 
 ***
 
-### update()
+### update() {#update}
 
 > **update**\<`U`\>(`controllerIdentity`, `id`, `metadata`): `Promise`\<`void`\>
 
