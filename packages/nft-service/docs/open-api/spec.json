@@ -553,6 +553,7 @@
 	"components": {
 		"schemas": {
 			"Error": {
+				"description": "Model to describe serialized error.",
 				"type": "object",
 				"properties": {
 					"name": {
@@ -583,8 +584,7 @@
 				"required": [
 					"name",
 					"message"
-				],
-				"description": "Model to describe serialized error."
+				]
 			},
 			"NftMintRequest": {
 				"type": "object",

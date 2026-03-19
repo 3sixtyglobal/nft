@@ -26,6 +26,6 @@ The data to be used in the update.
 
 #### metadata?
 
-> `optional` **metadata**: `unknown`
+> `optional` **metadata?**: `unknown`
 
 The metadata for the NFT.

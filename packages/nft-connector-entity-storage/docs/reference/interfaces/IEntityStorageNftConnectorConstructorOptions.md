@@ -6,6 +6,12 @@ Options for the entity storage nft connector constructor.
 
 ### nftEntityStorageType? {#nftentitystoragetype}
 
-> `optional` **nftEntityStorageType**: `string`
+> `optional` **nftEntityStorageType?**: `string`
 
 The entity storage for nfts.
+
+#### Default
+
+```ts
+nft
+```

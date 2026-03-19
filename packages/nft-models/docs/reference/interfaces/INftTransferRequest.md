@@ -38,6 +38,6 @@ The recipient address for the NFT.
 
 #### metadata?
 
-> `optional` **metadata**: `unknown`
+> `optional` **metadata?**: `unknown`
 
 The metadata for the NFT.

@@ -47,7 +47,7 @@ Alphanumeric text string defining the human identifiable name for the NFT
 
 ### collectionName? {#collectionname}
 
-> `optional` **collectionName**: `string`
+> `optional` **collectionName?**: `string`
 
 Alphanumeric text string defining the human identifiable collection name.
 
@@ -55,7 +55,7 @@ Alphanumeric text string defining the human identifiable collection name.
 
 ### royalties? {#royalties}
 
-> `optional` **royalties**: `object`
+> `optional` **royalties?**: `object`
 
 Object containing key value pair where payment address mapped to the payout percentage.
 
@@ -67,7 +67,7 @@ Object containing key value pair where payment address mapped to the payout perc
 
 ### issuerName? {#issuername}
 
-> `optional` **issuerName**: `string`
+> `optional` **issuerName?**: `string`
 
 Alphanumeric text string to define the human identifiable name of the creator.
 
@@ -75,7 +75,7 @@ Alphanumeric text string to define the human identifiable name of the creator.
 
 ### description? {#description}
 
-> `optional` **description**: `string`
+> `optional` **description?**: `string`
 
 Alphanumeric text string to define a basic description of the NFT.
 
@@ -83,7 +83,7 @@ Alphanumeric text string to define a basic description of the NFT.
 
 ### attributes? {#attributes}
 
-> `optional` **attributes**: `object`[]
+> `optional` **attributes?**: `object`[]
 
 Array objects defining additional attributes of the NFT
 

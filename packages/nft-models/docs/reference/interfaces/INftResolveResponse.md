@@ -30,12 +30,12 @@ The tag data for the NFT.
 
 #### immutableMetadata?
 
-> `optional` **immutableMetadata**: `unknown`
+> `optional` **immutableMetadata?**: `unknown`
 
 The immutable data for the NFT.
 
 #### metadata?
 
-> `optional` **metadata**: `unknown`
+> `optional` **metadata?**: `unknown`
 
 The metadata for the NFT.
