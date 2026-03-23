@@ -23,7 +23,7 @@ import { nameof } from "@twin.org/nameof";
 import type { INftConnector } from "@twin.org/nft-models";
 import { VaultConnectorFactory, type IVaultConnector } from "@twin.org/vault-models";
 import { WalletConnectorFactory, type IWalletConnector } from "@twin.org/wallet-models";
-import compiledModulesJson from "./contracts/smart-contract-deployments/smart-contract-deployments.json" with { type: "json" };
+import compiledModulesJson from "./contracts/smartContractDeployments/smart-contract-deployments.json" with { type: "json" };
 import { IotaNftUtils } from "./iotaNftUtils.js";
 import type { IIotaNftConnectorConfig } from "./models/IIotaNftConnectorConfig.js";
 import type { IIotaNftConnectorConstructorOptions } from "./models/IIotaNftConnectorConstructorOptions.js";
