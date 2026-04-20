@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.0.3-next.4](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.3-next.3...nft-connector-iota-v0.0.3-next.4) (2026-04-20)
+
+
+### Features
+
+* add on-chain identity binding to NFT minting ([#58](https://github.com/twinfoundation/nft/issues/58)) ([730a16d](https://github.com/twinfoundation/nft/commit/730a16d70fc026c920dbede0e4dafc96f37b729a))
+* cleaning the contract deployments and upgrading the iota versions ([#61](https://github.com/twinfoundation/nft/issues/61)) ([7206ff7](https://github.com/twinfoundation/nft/commit/7206ff7a1af5f6aed14cad1a617f140cfe0a0eab))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-models bumped from 0.0.3-next.3 to 0.0.3-next.4
+
 ## [0.0.3-next.3](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.3-next.2...nft-connector-iota-v0.0.3-next.3) (2026-03-03)
 
 

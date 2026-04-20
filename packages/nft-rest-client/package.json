@@ -1,6 +1,6 @@
 {
 	"name": "@twin.org/nft-rest-client",
-	"version": "0.0.3-next.3",
+	"version": "0.0.3-next.4",
 	"description": "HTTP client for calling NFT service endpoints from applications.",
 	"repository": {
 		"type": "git",
@@ -33,7 +33,7 @@
 		"@twin.org/core": "next",
 		"@twin.org/entity": "next",
 		"@twin.org/nameof": "next",
-		"@twin.org/nft-models": "0.0.3-next.3",
+		"@twin.org/nft-models": "0.0.3-next.4",
 		"@twin.org/web": "next"
 	},
 	"devDependencies": {
