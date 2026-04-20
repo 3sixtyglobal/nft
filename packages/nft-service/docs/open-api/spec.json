@@ -167,8 +167,8 @@
 								"examples": {
 									"nftResolveResponseExample": {
 										"value": {
-											"issuer": "did:iota:tst:0x85ef62ea94fc4eeeeeddf6acc3b566e988e613081d0b93cc54ed831ed4c18d44",
-											"owner": "did:iota:tst:0x85ef62ea94fc4eeeeeddf6acc3b566e988e613081d0b93cc54ed831ed4c18d44",
+											"issuer": "0x85ef62ea94fc4eeeeeddf6acc3b566e988e613081d0b93cc54ed831ed4c18d44",
+											"issuerIdentityId": "0xa1d80bee7fdb4fd91ae45c6e539209f73cb743b7da9db3e21322ea75af1878c0",
 											"tag": "MY-NFT",
 											"immutableMetadata": {
 												"docName": "bill-of-lading",
@@ -474,7 +474,6 @@
 							"examples": {
 								"nftTransferExample": {
 									"value": {
-										"recipientIdentity": "did:iota:tst:0x85ef62ea94fc4eeeeeddf6acc3b566e988e613081d0b93cc54ed831ed4c18d44",
 										"recipientAddress": "tst1prctjk5ck0dutnsunnje6u90jk5htx03qznjjmkd6843pzltlgz87srjzzv",
 										"metadata": {
 											"data": "AAAAA"
@@ -616,9 +615,9 @@
 						"type": "string",
 						"description": "The issuer of the NFT."
 					},
-					"owner": {
+					"issuerIdentityId": {
 						"type": "string",
-						"description": "The owner of the NFT."
+						"description": "The on-chain Object ID of the verified IOTA Identity that minted this NFT.\nEmpty string when not minted with identity verification."
 					},
 					"tag": {
 						"type": "string",
@@ -633,7 +632,7 @@
 				},
 				"required": [
 					"issuer",
-					"owner",
+					"issuerIdentityId",
 					"tag"
 				],
 				"description": "The data that was resolved."
@@ -641,10 +640,6 @@
 			"NftTransferRequest": {
 				"type": "object",
 				"properties": {
-					"recipientIdentity": {
-						"type": "string",
-						"description": "The recipient identity for the NFT."
-					},
 					"recipientAddress": {
 						"type": "string",
 						"description": "The recipient address for the NFT."
@@ -654,7 +649,6 @@
 					}
 				},
 				"required": [
-					"recipientIdentity",
 					"recipientAddress"
 				],
 				"description": "The data to be used in the transfer."

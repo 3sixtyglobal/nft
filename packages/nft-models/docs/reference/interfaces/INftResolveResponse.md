@@ -16,11 +16,12 @@ The data that was resolved.
 
 The issuer of the NFT.
 
-#### owner
+#### issuerIdentityId
 
-> **owner**: `string`
+> **issuerIdentityId**: `string`
 
-The owner of the NFT.
+The on-chain Object ID of the verified IOTA Identity that minted this NFT.
+Empty string when not minted with identity verification.
 
 #### tag
 
