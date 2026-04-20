@@ -4,7 +4,7 @@ version = "0.0.2"
 edition = "2024.beta"
 
 [dependencies]
-Iota = { git = "https://github.com/iotaledger/iota.git", subdir = "crates/iota-framework/packages/iota-framework", rev = "mainnet" }
+IotaIdentity = { git = "https://github.com/iotaledger/identity.rs.git", subdir = "identity_iota_core/packages/iota_identity", rev = "v1.9.2-beta.1" }
 
 [addresses]
 nft = "0x0"

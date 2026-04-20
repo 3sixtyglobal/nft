@@ -120,10 +120,9 @@ export function generateRestRoutesNft(baseRouteName: string, componentName: stri
 						id: "nftResolveResponseExample",
 						response: {
 							body: {
-								issuer:
-									"did:iota:tst:0x85ef62ea94fc4eeeeeddf6acc3b566e988e613081d0b93cc54ed831ed4c18d44",
-								owner:
-									"did:iota:tst:0x85ef62ea94fc4eeeeeddf6acc3b566e988e613081d0b93cc54ed831ed4c18d44",
+								issuer: "0x85ef62ea94fc4eeeeeddf6acc3b566e988e613081d0b93cc54ed831ed4c18d44",
+								issuerIdentityId:
+									"0xa1d80bee7fdb4fd91ae45c6e539209f73cb743b7da9db3e21322ea75af1878c0",
 								tag: "MY-NFT",
 								immutableMetadata: {
 									docName: "bill-of-lading",
@@ -187,8 +186,6 @@ export function generateRestRoutesNft(baseRouteName: string, componentName: stri
 							id: "nft:iota:aW90YS1uZnQ6dHN0OjB4NzYyYjljNDllYTg2OWUwZWJkYTliYmZhNzY5Mzk0NDdhNDI4ZGNmMTc4YzVkMTVhYjQ0N2UyZDRmYmJiNGViMg=="
 						},
 						body: {
-							recipientIdentity:
-								"did:iota:tst:0x85ef62ea94fc4eeeeeddf6acc3b566e988e613081d0b93cc54ed831ed4c18d44",
 							recipientAddress: "tst1prctjk5ck0dutnsunnje6u90jk5htx03qznjjmkd6843pzltlgz87srjzzv",
 							metadata: {
 								data: "AAAAA"
@@ -365,19 +362,12 @@ export async function nftTransfer(
 		nameof(request.body.recipientAddress),
 		request.body.recipientAddress
 	);
-	Guards.stringValue(
-		ROUTES_SOURCE,
-		nameof(request.body.recipientIdentity),
-		request.body.recipientIdentity
-	);
-
 	const contextIds = await ContextIdStore.getContextIds();
 	ContextIdHelper.guard(contextIds, ContextIdKeys.Organization);
 
 	const component = ComponentFactory.get<INftComponent>(componentName);
 	await component.transfer(
 		request.pathParams.id,
-		request.body.recipientIdentity,
 		request.body.recipientAddress,
 		request.body.metadata,
 		contextIds[ContextIdKeys.Organization]

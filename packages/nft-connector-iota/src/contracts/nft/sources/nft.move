@@ -1,9 +1,15 @@
 module nft::nft {
     use std::string::String;
+    use iota_identity::identity::Identity;
+    use iota_identity::controller::ControllerCap;
 
     /// Current version of the NFT contract
     const VERSION: u64 = 1;
 
+    /// Identity object is deleted/deactivated — cannot mint with a deleted identity
+    const EIdentityDeleted: u64 = 1;
+    /// ControllerCap does not control the claimed identity
+    const EControllerMismatch: u64 = 2;
 
 
     /// MigrationState tracks whether migration operations are enabled
@@ -41,19 +47,20 @@ module nft::nft {
         tag: String,
         metadata: String, // Mutable metadata
         issuer: address,
-        issuerIdentity: String,
-        ownerIdentity: String
+        /// Stores the on-chain Object ID (as address) of the verified IOTA Identity that minted
+        /// this NFT. Set via mint_with_identity() — @0x0 when minted via the unverified mint().
+        issuerIdentityId: address,
     }
 
 
     /// Mint a new NFT and transfer it to the issuer.
+    /// issuerIdentityId is stored as @0x0 (zero address) — use mint_with_identity() for
+    /// cryptographically verified identity binding.
     public entry fun mint(
         immutable_metadata: String,
         tag: String,
         issuer: address,
         metadata: String,
-        issuerIdentity: String,
-        ownerIdentity: String,
         ctx: &mut TxContext
     ) {
         let nft = NFT {
@@ -63,10 +70,41 @@ module nft::nft {
             tag,
             metadata,
             issuer,
-            issuerIdentity,
-            ownerIdentity
+            issuerIdentityId: @0x0000000000000000000000000000000000000000000000000000000000000000,
         };
         transfer::transfer(nft, issuer);
+    }
+
+    /// Mint a new NFT with cryptographically verified on-chain identity binding.
+    /// Verifies that the caller controls the claimed IOTA Identity before recording it.
+    /// The issuerIdentityId field is set to the Identity's on-chain Object ID (as address).
+    public entry fun mint_with_identity(
+        immutable_metadata: String,
+        tag: String,
+        metadata: String,
+        identity: &Identity,
+        controller_cap: &ControllerCap,
+        ctx: &mut TxContext
+    ) {
+        // Verify the identity has not been deleted/deactivated
+        assert!(!iota_identity::identity::deleted(identity), EIdentityDeleted);
+
+        // Verify the ControllerCap actually controls the claimed identity
+        assert!(
+            iota_identity::controller::controller_of(controller_cap) == object::id(identity),
+            EControllerMismatch
+        );
+
+        let nft = NFT {
+            id: object::new(ctx),
+            version: VERSION,
+            immutable_metadata,
+            tag,
+            metadata,
+            issuer: tx_context::sender(ctx),
+            issuerIdentityId: object::id(identity).to_address(),
+        };
+        transfer::transfer(nft, tx_context::sender(ctx));
     }
 
     /// Update the mutable metadata of the NFT.
@@ -77,27 +115,19 @@ module nft::nft {
     /// Transfer without metadata update
     /// Version-flexible: Works with NFTs of any version for basic ownership transfer
     public entry fun transfer(
-        mut nft: NFT, // Take ownership directly
+        nft: NFT,
         recipient: address,
-        recipientIdentity: String
     ) {
-        // No version assertion - basic transfers should work regardless of NFT version
-        nft.ownerIdentity = recipientIdentity;
-
         transfer::public_transfer(nft, recipient);
     }
 
     /// Transfer with metadata update
     public entry fun transfer_with_metadata(
-        mut nft: NFT, // Take ownership directly
+        mut nft: NFT,
         recipient: address,
-        recipientIdentity: String,
         metadata: String
     ) {
-        nft.ownerIdentity = recipientIdentity;
-
         update_metadata(&mut nft, metadata);
-
         transfer::public_transfer(nft, recipient);
     }
 
@@ -112,8 +142,7 @@ module nft::nft {
             tag: _,
             metadata: _,
             issuer: _,
-            issuerIdentity: _,
-            ownerIdentity: _
+            issuerIdentityId: _,
         } = nft;
         object::delete(id);
     }

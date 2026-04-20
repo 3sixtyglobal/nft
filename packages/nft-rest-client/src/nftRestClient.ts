@@ -77,7 +77,7 @@ export class NftRestClient extends BaseRestClient implements INftComponent {
 		id: string
 	): Promise<{
 		issuer: string;
-		owner: string;
+		issuerIdentityId: string;
 		tag: string;
 		immutableMetadata?: T;
 		metadata?: U;
@@ -92,7 +92,7 @@ export class NftRestClient extends BaseRestClient implements INftComponent {
 
 		return response.body as {
 			issuer: string;
-			owner: string;
+			issuerIdentityId: string;
 			tag: string;
 			immutableMetadata?: T;
 			metadata?: U;
@@ -117,19 +117,16 @@ export class NftRestClient extends BaseRestClient implements INftComponent {
 	/**
 	 * Transfer an NFT.
 	 * @param id The id of the NFT to transfer in urn format.
-	 * @param recipientIdentity The recipient identity for the NFT.
 	 * @param recipientAddress The recipient address for the NFT.
 	 * @param metadata Optional mutable data to include during the transfer.
 	 * @returns Nothing.
 	 */
 	public async transfer<T = unknown>(
 		id: string,
-		recipientIdentity: string,
 		recipientAddress: string,
 		metadata?: T
 	): Promise<void> {
 		Guards.stringValue(NftRestClient.CLASS_NAME, nameof(id), id);
-		Guards.stringValue(NftRestClient.CLASS_NAME, nameof(recipientIdentity), recipientIdentity);
 		Guards.stringValue(NftRestClient.CLASS_NAME, nameof(recipientAddress), recipientAddress);
 
 		await this.fetch<INftTransferRequest, never>("/:id/transfer", "POST", {
@@ -137,7 +134,6 @@ export class NftRestClient extends BaseRestClient implements INftComponent {
 				id
 			},
 			body: {
-				recipientIdentity,
 				recipientAddress,
 				metadata
 			}

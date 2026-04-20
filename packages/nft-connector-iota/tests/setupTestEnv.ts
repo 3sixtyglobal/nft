@@ -8,6 +8,7 @@ import { Bip39 } from "@twin.org/crypto";
 import type { ISmartContractDeployments } from "@twin.org/dlt-iota";
 import { MemoryEntityStorageConnector } from "@twin.org/entity-storage-connector-memory";
 import { EntityStorageConnectorFactory } from "@twin.org/entity-storage-models";
+import { IotaIdentityConnector } from "@twin.org/identity-connector-iota";
 import { nameof } from "@twin.org/nameof";
 import {
 	EntityStorageVaultConnector,
@@ -49,6 +50,13 @@ Guards.stringValue(
 export const TEST_NODE_IDENTITY = "test-node-identity";
 export const TEST_USER_IDENTITY_ID = "test-user-identity";
 export const TEST_USER_IDENTITY_ID_2 = "test-user-identity-2";
+
+/**
+ * On-chain IOTA DIDs created during setupTestEnv() for use as controllerIdentity
+ * in mint() calls. Populated after setupTestEnv() completes.
+ */
+export let TEST_USER_DID: string;
+export let TEST_USER_DID_2: string;
 export const TEST_DEPLOYER_IDENTITY = "deployer-identity";
 export const TEST_MNEMONIC_NAME = "test-mnemonic";
 export const TEST_NETWORK = process.env.TEST_NETWORK ?? "testnet";
@@ -138,9 +146,17 @@ export const TEST_WALLET_CONNECTOR = new IotaWalletConnector({
 
 WalletConnectorFactory.register("wallet", () => TEST_WALLET_CONNECTOR);
 
+export const TEST_IDENTITY_CONNECTOR = new IotaIdentityConnector({
+	config: {
+		clientOptions: TEST_CLIENT_OPTIONS,
+		network: TEST_NETWORK,
+		vaultMnemonicId: TEST_MNEMONIC_NAME
+	},
+	vaultConnectorType: "vault"
+});
+
 const testAddresses = await TEST_WALLET_CONNECTOR.getAddresses(TEST_USER_IDENTITY_ID, 0, 0, 1);
-// Use address index 1 for TEST_USER_IDENTITY_ID_2 to avoid collision with gas station sponsor (index 0)
-const testAddresses2 = await TEST_WALLET_CONNECTOR.getAddresses(TEST_USER_IDENTITY_ID_2, 0, 1, 1);
+const testAddresses2 = await TEST_WALLET_CONNECTOR.getAddresses(TEST_USER_IDENTITY_ID_2, 0, 0, 1);
 const nodeAddresses = await TEST_WALLET_CONNECTOR.getAddresses(TEST_NODE_IDENTITY, 0, 0, 1);
 
 // DEPLOYER_IDENTITY uses the deployer mnemonic (this is the actual AdminCap owner)
@@ -217,6 +233,21 @@ export async function setupTestEnv(): Promise<void> {
 	await ensureFundsForAddress(TEST_USER_IDENTITY_ID, TEST_ADDRESS, TEST_WALLET_CONNECTOR);
 	await ensureFundsForAddress(TEST_USER_IDENTITY_ID_2, TEST_ADDRESS_2, TEST_WALLET_CONNECTOR);
 	await ensureFundsForAddress(TEST_DEPLOYER_IDENTITY, DEPLOYER_ADDRESS, TEST_WALLET_CONNECTOR);
+
+	// Create on-chain IOTA Identities for test users. The vault already has the
+	// mnemonic stored under TEST_USER_IDENTITY_ID, so createDocument() can derive
+	// the signing keypair. We then also store the mnemonic under the DID key so
+	// walletConnector.getAddresses(did, ...) works when mint() is called.
+	console.debug("[setupTestEnv] Creating on-chain IOTA Identities for test users");
+	const userDoc = await TEST_IDENTITY_CONNECTOR.createDocument(TEST_USER_IDENTITY_ID);
+	TEST_USER_DID = userDoc.id;
+	await TEST_VAULT_CONNECTOR.setSecret(`${TEST_USER_DID}/${TEST_MNEMONIC_NAME}`, TEST_MNEMONIC);
+	console.debug("[setupTestEnv] TEST_USER_DID:", TEST_USER_DID);
+
+	const user2Doc = await TEST_IDENTITY_CONNECTOR.createDocument(TEST_USER_IDENTITY_ID_2);
+	TEST_USER_DID_2 = user2Doc.id;
+	await TEST_VAULT_CONNECTOR.setSecret(`${TEST_USER_DID_2}/${TEST_MNEMONIC_NAME}`, TEST_2_MNEMONIC);
+	console.debug("[setupTestEnv] TEST_USER_DID_2:", TEST_USER_DID_2);
 
 	// Deploy test contracts using TEST_DEPLOYER_MNEMONIC
 	try {

@@ -16,6 +16,7 @@ import {
 	type ISmartContractDeployments,
 	type NetworkTypes,
 	Iota,
+	IotaIdentityUtils,
 	type IIotaClient
 } from "@twin.org/dlt-iota";
 import type { ILoggingComponent } from "@twin.org/logging-models";
@@ -260,16 +261,20 @@ export class IotaNftConnector implements INftConnector {
 
 			const moduleName = this.getModuleName();
 
-			// Call the mint function from our Move contract
+			const capInfo = await IotaIdentityUtils.getControllerCapInfo(
+				controllerIdentity,
+				address,
+				this._client
+			);
+
 			txb.moveCall({
-				target: `${packageId}::${moduleName}::mint`,
+				target: `${packageId}::${moduleName}::mint_with_identity`,
 				arguments: [
 					txb.pure.string(immutableMetadataString),
 					txb.pure.string(tag),
-					txb.pure.address(address),
 					txb.pure.string(metadataString),
-					txb.pure.string(controllerIdentity),
-					txb.pure.string(controllerIdentity)
+					txb.object(capInfo.identityObjectId),
+					txb.object(capInfo.controllerCapObjectId)
 				]
 			});
 
@@ -317,7 +322,7 @@ export class IotaNftConnector implements INftConnector {
 		nftId: string
 	): Promise<{
 		issuer: string;
-		owner: string;
+		issuerIdentityId: string;
 		tag: string;
 		immutableMetadata?: T;
 		metadata?: U;
@@ -365,8 +370,8 @@ export class IotaNftConnector implements INftConnector {
 			}
 
 			return {
-				issuer: content.issuerIdentity?.toString(),
-				owner: content.ownerIdentity?.toString(),
+				issuer: content.issuer?.toString(),
+				issuerIdentityId: content.issuerIdentityId?.toString(),
 				tag: content.tag?.toString(),
 				immutableMetadata,
 				metadata
@@ -451,7 +456,6 @@ export class IotaNftConnector implements INftConnector {
 	 * Transfer an NFT to a new owner.
 	 * @param controller The identity of the user to access the vault keys.
 	 * @param nftId The id of the NFT to transfer.
-	 * @param recipientIdentity The recipient identity for the NFT.
 	 * @param recipientAddress The recipient address for the NFT.
 	 * @param metadata Optional metadata to update during transfer.
 	 * @returns void.
@@ -459,16 +463,18 @@ export class IotaNftConnector implements INftConnector {
 	public async transfer<U = unknown>(
 		controller: string,
 		nftId: string,
-		recipientIdentity: string,
 		recipientAddress: string,
 		metadata?: U
 	): Promise<void> {
 		Guards.stringValue(IotaNftConnector.CLASS_NAME, nameof(controller), controller);
 		Guards.stringValue(IotaNftConnector.CLASS_NAME, nameof(nftId), nftId);
-		Guards.stringValue(IotaNftConnector.CLASS_NAME, nameof(recipientIdentity), recipientIdentity);
 		Guards.stringValue(IotaNftConnector.CLASS_NAME, nameof(recipientAddress), recipientAddress);
 		if (!Is.undefined(metadata)) {
 			Guards.object(IotaNftConnector.CLASS_NAME, nameof(metadata), metadata);
+		}
+
+		if (Is.empty(this._walletConnector)) {
+			throw new GeneralError(IotaNftConnector.CLASS_NAME, "noWalletConfigured");
 		}
 
 		const urnParsed = Urn.fromValidString(nftId);
@@ -480,15 +486,6 @@ export class IotaNftConnector implements INftConnector {
 		}
 
 		try {
-			// Verify ownership before attempting transfer
-			const currentNft = await this.resolve(nftId);
-			if (currentNft.owner !== controller) {
-				throw new GeneralError(IotaNftConnector.CLASS_NAME, "transferFailed", {
-					currentOwner: currentNft.owner,
-					controller
-				});
-			}
-
 			const txb = Iota.createTransaction();
 			txb.setGasBudget(this._gasBudget);
 
@@ -503,6 +500,22 @@ export class IotaNftConnector implements INftConnector {
 
 			const ownerAddress = this.getOwnerAddress(nftId, object);
 
+			// Verify ownership — compare on-chain owner address against the controller's wallet address
+			const walletAddressIndex = this._config.walletAddressIndex ?? 0;
+			const controllerAddresses = await this._walletConnector.getAddresses(
+				controller,
+				0,
+				walletAddressIndex,
+				1
+			);
+			const controllerAddress = controllerAddresses[0];
+			if (ownerAddress !== controllerAddress) {
+				throw new GeneralError(IotaNftConnector.CLASS_NAME, "transferFailed", {
+					currentOwner: ownerAddress,
+					controller
+				});
+			}
+
 			if (!Is.undefined(metadata)) {
 				// If metadata is provided, use transfer_with_metadata
 				const metadataString = JSON.stringify(metadata);
@@ -511,18 +524,13 @@ export class IotaNftConnector implements INftConnector {
 					arguments: [
 						txb.object(objectId),
 						txb.pure.address(recipientAddress),
-						txb.pure.string(recipientIdentity),
 						txb.pure.string(metadataString)
 					]
 				});
 			} else {
 				txb.moveCall({
 					target: `${packageId}::${moduleName}::transfer`,
-					arguments: [
-						txb.object(objectId),
-						txb.pure.address(recipientAddress),
-						txb.pure.string(recipientIdentity)
-					]
+					arguments: [txb.object(objectId), txb.pure.address(recipientAddress)]
 				});
 			}
 

@@ -4,7 +4,7 @@ import { Urn } from "@twin.org/core";
 import type { MemoryEntityStorageConnector } from "@twin.org/entity-storage-connector-memory";
 import { EntityStorageConnectorFactory } from "@twin.org/entity-storage-models";
 import type { IIrc27Metadata } from "@twin.org/nft-models";
-import { TEST_ADDRESS_2, TEST_USER_IDENTITY, TEST_USER_IDENTITY_2 } from "./setupTestEnv.js";
+import { TEST_ADDRESS_2, TEST_USER_IDENTITY } from "./setupTestEnv.js";
 import type { Nft } from "../src/entities/nft.js";
 import { EntityStorageNftConnector } from "../src/entityStorageNftConnector.js";
 
@@ -70,7 +70,7 @@ describe("EntityStorageNftConnector", () => {
 		const response = await connector.resolve(nftId);
 
 		expect(response.issuer).toEqual(TEST_USER_IDENTITY);
-		expect(response.owner).toEqual(TEST_USER_IDENTITY);
+		expect(response.issuerIdentityId).toEqual("");
 		expect(response.tag).toEqual("footag");
 		expect(response.metadata).toEqual({ bar: "foo" });
 		expect(response.immutableMetadata).toEqual({
@@ -88,7 +88,7 @@ describe("EntityStorageNftConnector", () => {
 	test("Can transfer an NFT", async () => {
 		const connector = new EntityStorageNftConnector();
 
-		await connector.transfer(TEST_USER_IDENTITY, nftId, TEST_USER_IDENTITY_2, TEST_ADDRESS_2);
+		await connector.transfer(TEST_USER_IDENTITY, nftId, TEST_ADDRESS_2);
 
 		const urn = Urn.fromValidString(nftId);
 
@@ -96,7 +96,7 @@ describe("EntityStorageNftConnector", () => {
 			EntityStorageConnectorFactory.get<MemoryEntityStorageConnector<Nft>>("nft").getStore();
 		expect(store?.[0].id).toEqual(urn.namespaceSpecific(1));
 		expect(store?.[0].issuer).toEqual(TEST_USER_IDENTITY);
-		expect(store?.[0].owner).toEqual(TEST_USER_IDENTITY_2);
+		expect(store?.[0].owner).toEqual(TEST_ADDRESS_2);
 	});
 
 	test("Can burn an NFT", async () => {
