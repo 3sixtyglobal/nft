@@ -90,7 +90,7 @@ export class NftService implements INftComponent {
 		controllerIdentity?: string
 	): Promise<{
 		issuer: string;
-		owner: string;
+		issuerIdentityId: string;
 		tag: string;
 		immutableMetadata?: T;
 		metadata?: U;
@@ -127,7 +127,6 @@ export class NftService implements INftComponent {
 	/**
 	 * Transfer an NFT.
 	 * @param id The id of the NFT to transfer in urn format.
-	 * @param recipientIdentity The recipient identity for the NFT.
 	 * @param recipientAddress The recipient address for the NFT.
 	 * @param metadata Optional mutable data to include during the transfer.
 	 * @param controllerIdentity The identity to perform the nft operation with.
@@ -135,25 +134,17 @@ export class NftService implements INftComponent {
 	 */
 	public async transfer<U = unknown>(
 		id: string,
-		recipientIdentity: string,
 		recipientAddress: string,
 		metadata?: U,
 		controllerIdentity?: string
 	): Promise<void> {
 		Urn.guard(NftService.CLASS_NAME, nameof(id), id);
-		Guards.stringValue(NftService.CLASS_NAME, nameof(recipientIdentity), recipientIdentity);
 		Guards.stringValue(NftService.CLASS_NAME, nameof(recipientAddress), recipientAddress);
 		Guards.stringValue(NftService.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
 
 		try {
 			const nftConnector = this.getConnector(id);
-			await nftConnector.transfer(
-				controllerIdentity,
-				id,
-				recipientIdentity,
-				recipientAddress,
-				metadata
-			);
+			await nftConnector.transfer(controllerIdentity, id, recipientAddress, metadata);
 		} catch (error) {
 			throw new GeneralError(NftService.CLASS_NAME, "transferFailed", undefined, error);
 		}

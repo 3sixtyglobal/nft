@@ -20,11 +20,6 @@ export interface INftTransferRequest {
 	 */
 	body: {
 		/**
-		 * The recipient identity for the NFT.
-		 */
-		recipientIdentity: string;
-
-		/**
 		 * The recipient address for the NFT.
 		 */
 		recipientAddress: string;

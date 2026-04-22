@@ -54,20 +54,13 @@ The metadata of the NFT.
 
 > **issuer**: `string`
 
-The issuer of the NFT.
+The issuer of the NFT — the wallet address that signed the mint transaction.
 
 ***
 
-### issuerIdentity {#issueridentity}
+### issuerIdentityId {#issueridentityid}
 
-> **issuerIdentity**: `string`
+> **issuerIdentityId**: `string`
 
-The issuer identity of the NFT.
-
-***
-
-### ownerIdentity {#owneridentity}
-
-> **ownerIdentity**: `string`
-
-The owner identity of the NFT.
+The on-chain Object ID (as hex address string) of the verified IOTA Identity that minted
+this NFT. "0x0000...0000" when minted via the unverified mint() function.

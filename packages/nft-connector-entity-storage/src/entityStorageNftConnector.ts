@@ -111,7 +111,7 @@ export class EntityStorageNftConnector implements INftConnector {
 		id: string
 	): Promise<{
 		issuer: string;
-		owner: string;
+		issuerIdentityId: string;
 		tag: string;
 		immutableMetadata?: T;
 		metadata?: U;
@@ -135,8 +135,8 @@ export class EntityStorageNftConnector implements INftConnector {
 			}
 
 			return {
-				owner: nft.owner,
 				issuer: nft.issuer,
+				issuerIdentityId: "",
 				tag: nft.tag,
 				immutableMetadata: nft.immutableMetadata as T,
 				metadata: nft.metadata as U
@@ -200,7 +200,6 @@ export class EntityStorageNftConnector implements INftConnector {
 	 * Transfer an NFT.
 	 * @param controllerIdentity The controller of the NFT who can make changes.
 	 * @param id The id of the NFT to transfer in urn format.
-	 * @param recipientIdentity The recipient identity for the NFT.
 	 * @param recipientAddress The recipient address for the NFT.
 	 * @param metadata Optional mutable data to include during the transfer.
 	 * @returns Nothing.
@@ -208,7 +207,6 @@ export class EntityStorageNftConnector implements INftConnector {
 	public async transfer<T = unknown>(
 		controllerIdentity: string,
 		id: string,
-		recipientIdentity: string,
 		recipientAddress: string,
 		metadata?: T
 	): Promise<void> {
@@ -218,11 +216,6 @@ export class EntityStorageNftConnector implements INftConnector {
 			controllerIdentity
 		);
 		Urn.guard(EntityStorageNftConnector.CLASS_NAME, nameof(id), id);
-		Guards.stringValue(
-			EntityStorageNftConnector.CLASS_NAME,
-			nameof(recipientIdentity),
-			recipientIdentity
-		);
 		Guards.stringValue(
 			EntityStorageNftConnector.CLASS_NAME,
 			nameof(recipientAddress),
@@ -252,7 +245,7 @@ export class EntityStorageNftConnector implements INftConnector {
 				throw new GeneralError(EntityStorageNftConnector.CLASS_NAME, "notControllerTransfer");
 			}
 
-			nft.owner = recipientIdentity;
+			nft.owner = recipientAddress;
 			nft.metadata = metadata;
 
 			await this._nftEntityStorage.set(nft);

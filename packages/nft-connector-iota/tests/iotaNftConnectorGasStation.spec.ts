@@ -8,8 +8,8 @@ import {
 	setupTestEnv,
 	getTestDeploymentConfig,
 	cleanupTestEnv,
-	TEST_USER_IDENTITY_ID_2,
-	TEST_USER_IDENTITY_ID,
+	TEST_USER_DID,
+	TEST_USER_DID_2,
 	TEST_NETWORK,
 	TEST_MNEMONIC_NAME,
 	TEST_VAULT_CONNECTOR,
@@ -134,14 +134,14 @@ describe("IotaNftConnector with Gas Station", () => {
 				config: gasStationConfig,
 				deploymentConfig: getTestDeploymentConfig()
 			});
-			await expect(unstartedConnector.mint(TEST_USER_IDENTITY_ID, "test_tag")).rejects.toThrow(
+			await expect(unstartedConnector.mint(TEST_USER_DID, "test_tag")).rejects.toThrow(
 				"iotaNftConnector.mintingFailed"
 			);
 		});
 
 		test("Can mint an NFT with no data using gas station", async () => {
 			const tag = "gas_station_test_tag";
-			const nftId = await gasStationNftConnector.mint(TEST_USER_IDENTITY_ID, tag);
+			const nftId = await gasStationNftConnector.mint(TEST_USER_DID, tag);
 			const urn = Urn.fromValidString(nftId);
 			expect(urn.namespaceIdentifier()).toEqual("nft");
 			const specificParts = urn.namespaceSpecificParts();
@@ -150,8 +150,7 @@ describe("IotaNftConnector with Gas Station", () => {
 			expect(specificParts[2].length).toBeGreaterThan(0);
 			expect(specificParts[3].length).toBeGreaterThan(0);
 			const response = await gasStationNftConnector.resolve(nftId);
-			expect(response.issuer).toEqual(TEST_USER_IDENTITY_ID);
-			expect(response.owner).toEqual(TEST_USER_IDENTITY_ID);
+			expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
 			expect(response.immutableMetadata).toBeUndefined();
 
 			console.debug(
@@ -167,15 +166,10 @@ describe("IotaNftConnector with Gas Station", () => {
 				uri: "https://example.com/gas-station-nft.png"
 			};
 			const tag = "gas_station_full_test";
-			const nftId = await gasStationNftConnector.mint(
-				TEST_USER_IDENTITY_ID,
-				tag,
-				immutableMetadata,
-				{
-					gasStationField: "gasStationValue",
-					sponsoredTransaction: true
-				}
-			);
+			const nftId = await gasStationNftConnector.mint(TEST_USER_DID, tag, immutableMetadata, {
+				gasStationField: "gasStationValue",
+				sponsoredTransaction: true
+			});
 			const urn = Urn.fromValidString(nftId);
 			expect(urn.namespaceIdentifier()).toEqual("nft");
 			const specificParts = urn.namespaceSpecificParts();
@@ -184,8 +178,7 @@ describe("IotaNftConnector with Gas Station", () => {
 			expect(specificParts[2].length).toBeGreaterThan(0);
 			expect(specificParts[3].length).toBeGreaterThan(0);
 			const response = await gasStationNftConnector.resolve(nftId);
-			expect(response.issuer).toEqual(TEST_USER_IDENTITY_ID);
-			expect(response.owner).toEqual(TEST_USER_IDENTITY_ID);
+			expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
 
 			console.debug(
 				"Created with gas station",
@@ -198,7 +191,7 @@ describe("IotaNftConnector with Gas Station", () => {
 
 			// Mint with regular connector
 			const regularNftId = await regularNftConnector.mint(
-				TEST_USER_IDENTITY_ID,
+				TEST_USER_DID,
 				"regular_comparison",
 				{
 					name: "Regular NFT",
@@ -210,7 +203,7 @@ describe("IotaNftConnector with Gas Station", () => {
 
 			// Mint with gas station connector
 			const gasStationNftId = await gasStationNftConnector.mint(
-				TEST_USER_IDENTITY_ID,
+				TEST_USER_DID,
 				"gasstation_comparison",
 				{
 					name: "Gas Station NFT",
@@ -242,7 +235,7 @@ describe("IotaNftConnector with Gas Station", () => {
 				uri: "https://example.com/gas-station-resolve-nft.png"
 			};
 			const nftId = await gasStationNftConnector.mint(
-				TEST_USER_IDENTITY_ID,
+				TEST_USER_DID,
 				"gas_station_resolve_test",
 				immutableMetadata,
 				{
@@ -252,8 +245,7 @@ describe("IotaNftConnector with Gas Station", () => {
 			);
 
 			const response = await gasStationNftConnector.resolve(nftId);
-			expect(response.issuer).toEqual(TEST_USER_IDENTITY_ID);
-			expect(response.owner).toEqual(TEST_USER_IDENTITY_ID);
+			expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
 			expect(response.tag).toEqual("gas_station_resolve_test");
 			expect(response.metadata).toEqual({
 				gasStationField: "gasStationValue",
@@ -270,7 +262,7 @@ describe("IotaNftConnector with Gas Station", () => {
 				uri: "https://example.com/gas-station-transfer-nft.png"
 			};
 			const nftId = await gasStationNftConnector.mint(
-				TEST_USER_IDENTITY_ID,
+				TEST_USER_DID,
 				"gas_station_transfer_test",
 				immutableMetadata,
 				{
@@ -278,16 +270,10 @@ describe("IotaNftConnector with Gas Station", () => {
 				}
 			);
 
-			await gasStationNftConnector.transfer(
-				TEST_USER_IDENTITY_ID,
-				nftId,
-				TEST_USER_IDENTITY_ID_2,
-				TEST_ADDRESS_2
-			);
+			await gasStationNftConnector.transfer(TEST_USER_DID, nftId, TEST_ADDRESS_2);
 
 			const response = await gasStationNftConnector.resolve(nftId);
-			expect(response.issuer).toEqual(TEST_USER_IDENTITY_ID);
-			expect(response.owner).toEqual(TEST_USER_IDENTITY_ID_2);
+			expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
 
 			const urn = Urn.fromValidString(nftId);
 			expect(urn.namespaceIdentifier()).toEqual("nft");
@@ -306,7 +292,7 @@ describe("IotaNftConnector with Gas Station", () => {
 				uri: "https://example.com/gas-station-transfer-back-nft.png"
 			};
 			const nftId = await gasStationNftConnector.mint(
-				TEST_USER_IDENTITY_ID,
+				TEST_USER_DID,
 				"gas_station_transfer_back_test",
 				immutableMetadata,
 				{
@@ -315,30 +301,18 @@ describe("IotaNftConnector with Gas Station", () => {
 			);
 
 			// First transfer: from USER_1 to USER_2
-			await gasStationNftConnector.transfer(
-				TEST_USER_IDENTITY_ID,
-				nftId,
-				TEST_USER_IDENTITY_ID_2,
-				TEST_ADDRESS_2
-			);
+			await gasStationNftConnector.transfer(TEST_USER_DID, nftId, TEST_ADDRESS_2);
 
 			// Verify it's owned by USER_2
 			let response = await gasStationNftConnector.resolve(nftId);
-			expect(response.issuer).toEqual(TEST_USER_IDENTITY_ID);
-			expect(response.owner).toEqual(TEST_USER_IDENTITY_ID_2);
+			expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
 
 			// Second transfer: back from USER_2 to USER_1
-			await gasStationNftConnector.transfer(
-				TEST_USER_IDENTITY_ID_2,
-				nftId,
-				TEST_USER_IDENTITY_ID,
-				TEST_ADDRESS
-			);
+			await gasStationNftConnector.transfer(TEST_USER_DID_2, nftId, TEST_ADDRESS);
 
 			// Verify it's back to USER_1
 			response = await gasStationNftConnector.resolve(nftId);
-			expect(response.issuer).toEqual(TEST_USER_IDENTITY_ID);
-			expect(response.owner).toEqual(TEST_USER_IDENTITY_ID);
+			expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
 
 			const urn = Urn.fromValidString(nftId);
 			expect(urn.namespaceIdentifier()).toEqual("nft");
@@ -357,7 +331,7 @@ describe("IotaNftConnector with Gas Station", () => {
 				uri: "https://example.com/gas-station-transfer.png"
 			};
 			const nftId = await gasStationNftConnector.mint(
-				TEST_USER_IDENTITY_ID,
+				TEST_USER_DID,
 				"gas_station_transfer_test",
 				immutableMetadata,
 				{ initialField: "initialValue", gasStationCreated: true }
@@ -375,18 +349,11 @@ describe("IotaNftConnector with Gas Station", () => {
 			};
 
 			// Transfer with metadata update using gas station
-			await gasStationNftConnector.transfer(
-				TEST_USER_IDENTITY_ID,
-				nftId,
-				TEST_USER_IDENTITY_ID_2,
-				TEST_ADDRESS_2,
-				transferMetadata
-			);
+			await gasStationNftConnector.transfer(TEST_USER_DID, nftId, TEST_ADDRESS_2, transferMetadata);
 
 			const response = await gasStationNftConnector.resolve(nftId);
-			expect(response.owner).toEqual(TEST_USER_IDENTITY_ID_2);
 			expect(response.metadata).toEqual(transferMetadata);
-			expect(response.issuer).toEqual(TEST_USER_IDENTITY_ID); // Issuer should remain unchanged
+			expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/); // Identity Object ID stays constant across transfers
 
 			const urn = Urn.fromValidString(nftId);
 			expect(urn.namespaceIdentifier()).toEqual("nft");
@@ -405,7 +372,7 @@ describe("IotaNftConnector with Gas Station", () => {
 				uri: "https://example.com/gas-station-update-nft.png"
 			};
 			const nftId = await gasStationNftConnector.mint(
-				TEST_USER_IDENTITY_ID,
+				TEST_USER_DID,
 				"gas_station_update_test",
 				immutableMetadata,
 				{
@@ -413,7 +380,7 @@ describe("IotaNftConnector with Gas Station", () => {
 				}
 			);
 
-			await gasStationNftConnector.update(TEST_USER_IDENTITY_ID, nftId, {
+			await gasStationNftConnector.update(TEST_USER_DID, nftId, {
 				updatedField: "gasStationNewValue",
 				anotherField: "anotherGasStationValue",
 				gasStationUpdate: true,
@@ -445,7 +412,7 @@ describe("IotaNftConnector with Gas Station", () => {
 				uri: "https://example.com/gas-station-burn-nft.png"
 			};
 			const nftId = await gasStationNftConnector.mint(
-				TEST_USER_IDENTITY_ID,
+				TEST_USER_DID,
 				"gas_station_burn_test",
 				immutableMetadata,
 				{
@@ -453,23 +420,18 @@ describe("IotaNftConnector with Gas Station", () => {
 				}
 			);
 
-			await gasStationNftConnector.burn(TEST_USER_IDENTITY_ID, nftId);
+			await gasStationNftConnector.burn(TEST_USER_DID, nftId);
 			await expect(gasStationNftConnector.resolve(nftId)).rejects.toThrow();
 		}, 30000);
 
 		test("Can burn an NFT on a transferred address using gas station", async () => {
 			const burnTestNftId = await gasStationNftConnector.mint(
-				TEST_USER_IDENTITY_ID,
+				TEST_USER_DID,
 				"gas_station_burn_test"
 			);
 
-			await gasStationNftConnector.transfer(
-				TEST_USER_IDENTITY_ID,
-				burnTestNftId,
-				TEST_USER_IDENTITY_ID_2,
-				TEST_ADDRESS_2
-			);
-			await gasStationNftConnector.burn(TEST_USER_IDENTITY_ID_2, burnTestNftId);
+			await gasStationNftConnector.transfer(TEST_USER_DID, burnTestNftId, TEST_ADDRESS_2);
+			await gasStationNftConnector.burn(TEST_USER_DID_2, burnTestNftId);
 		}, 60000);
 
 		test("Can mint an NFT with complex metadata using gas station", async () => {
@@ -491,7 +453,7 @@ describe("IotaNftConnector with Gas Station", () => {
 				}
 			};
 			const complexNftId = await gasStationNftConnector.mint(
-				TEST_USER_IDENTITY_ID,
+				TEST_USER_DID,
 				"gas_station_complex_tag",
 				immutableMetadata,
 				complexMetadata
@@ -531,9 +493,7 @@ describe("IotaNftConnector with Gas Station", () => {
 			await connector.start();
 
 			// The gas station unavailability should be detected during NFT operations
-			await expect(
-				connector.mint(TEST_USER_IDENTITY_ID, "test_gas_station_unavailable")
-			).rejects.toThrow();
+			await expect(connector.mint(TEST_USER_DID, "test_gas_station_unavailable")).rejects.toThrow();
 		}, 20000);
 
 		test("Should handle invalid gas station auth token", async () => {
@@ -556,7 +516,7 @@ describe("IotaNftConnector with Gas Station", () => {
 			await connector.start();
 
 			// The invalid auth token should be detected during NFT operations
-			await expect(connector.mint(TEST_USER_IDENTITY_ID, "test_invalid_auth")).rejects.toThrow();
+			await expect(connector.mint(TEST_USER_DID, "test_invalid_auth")).rejects.toThrow();
 		}, 20000);
 
 		test("Throws error when unauthorized user attempts to transfer NFT using gas station", async () => {
@@ -567,7 +527,7 @@ describe("IotaNftConnector with Gas Station", () => {
 				uri: "https://example.com/gas-station-unauthorized-nft.png"
 			};
 			const nftId = await gasStationNftConnector.mint(
-				TEST_USER_IDENTITY_ID,
+				TEST_USER_DID,
 				"gas_station_unauthorized_test",
 				immutableMetadata,
 				{
@@ -581,29 +541,19 @@ describe("IotaNftConnector with Gas Station", () => {
 			);
 
 			await expect(
-				gasStationNftConnector.transfer(
-					"unauthorizedController",
-					nftId,
-					TEST_USER_IDENTITY_ID_2,
-					TEST_ADDRESS_2
-				)
+				gasStationNftConnector.transfer("unauthorizedController", nftId, TEST_ADDRESS_2)
 			).rejects.toThrow("transferFailed");
 		}, 30000);
 
 		test("Cannot transfer a burned NFT using gas station", async () => {
 			const burnTestNftId = await gasStationNftConnector.mint(
-				TEST_USER_IDENTITY_ID,
+				TEST_USER_DID,
 				"gas_station_burn_transfer_test"
 			);
 
-			await gasStationNftConnector.burn(TEST_USER_IDENTITY_ID, burnTestNftId);
+			await gasStationNftConnector.burn(TEST_USER_DID, burnTestNftId);
 			await expect(
-				gasStationNftConnector.transfer(
-					TEST_USER_IDENTITY_ID,
-					burnTestNftId,
-					TEST_USER_IDENTITY_ID_2,
-					TEST_ADDRESS_2
-				)
+				gasStationNftConnector.transfer(TEST_USER_DID, burnTestNftId, TEST_ADDRESS_2)
 			).rejects.toThrow("transferFailed");
 		}, 30000);
 	});

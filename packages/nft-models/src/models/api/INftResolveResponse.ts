@@ -15,9 +15,10 @@ export interface INftResolveResponse {
 		issuer: string;
 
 		/**
-		 * The owner of the NFT.
+		 * The on-chain Object ID of the verified IOTA Identity that minted this NFT.
+		 * Empty string when not minted with identity verification.
 		 */
-		owner: string;
+		issuerIdentityId: string;
 
 		/**
 		 * The tag data for the NFT.

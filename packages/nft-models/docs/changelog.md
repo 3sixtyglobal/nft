@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.3-next.4](https://github.com/twinfoundation/nft/compare/nft-models-v0.0.3-next.3...nft-models-v0.0.3-next.4) (2026-04-20)
+
+
+### Features
+
+* add on-chain identity binding to NFT minting ([#58](https://github.com/twinfoundation/nft/issues/58)) ([730a16d](https://github.com/twinfoundation/nft/commit/730a16d70fc026c920dbede0e4dafc96f37b729a))
+
 ## [0.0.3-next.3](https://github.com/twinfoundation/nft/compare/nft-models-v0.0.3-next.2...nft-models-v0.0.3-next.3) (2026-03-03)
 
 

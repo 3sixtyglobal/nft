@@ -60,7 +60,7 @@ The id of the created NFT in urn format.
 
 ### resolve() {#resolve}
 
-> **resolve**\<`T`, `U`\>(`id`): `Promise`\<\{ `issuer`: `string`; `owner`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
+> **resolve**\<`T`, `U`\>(`id`): `Promise`\<\{ `issuer`: `string`; `issuerIdentityId`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
 
 Resolve an NFT.
 
@@ -84,7 +84,7 @@ The id of the NFT to resolve.
 
 #### Returns
 
-`Promise`\<\{ `issuer`: `string`; `owner`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
+`Promise`\<\{ `issuer`: `string`; `issuerIdentityId`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
 
 The data for the NFT.
 
@@ -120,7 +120,7 @@ Nothing.
 
 ### transfer() {#transfer}
 
-> **transfer**\<`U`\>(`controllerIdentity`, `id`, `recipientIdentity`, `recipientAddress`, `metadata?`): `Promise`\<`void`\>
+> **transfer**\<`U`\>(`controllerIdentity`, `id`, `recipientAddress`, `metadata?`): `Promise`\<`void`\>
 
 Transfer an NFT.
 
@@ -143,12 +143,6 @@ The controller of the NFT who can make changes.
 `string`
 
 The id of the NFT to transfer in urn format.
-
-##### recipientIdentity
-
-`string`
-
-The recipient identity for the NFT.
 
 ##### recipientAddress
 

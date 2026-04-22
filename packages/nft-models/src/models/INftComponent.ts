@@ -34,7 +34,7 @@ export interface INftComponent extends IComponent {
 		controllerIdentity?: string
 	): Promise<{
 		issuer: string;
-		owner: string;
+		issuerIdentityId: string;
 		tag: string;
 		immutableMetadata?: T;
 		metadata?: U;
@@ -51,7 +51,6 @@ export interface INftComponent extends IComponent {
 	/**
 	 * Transfer an NFT.
 	 * @param id The id of the NFT to transfer in urn format.
-	 * @param recipientIdentity The recipient identity for the NFT.
 	 * @param recipientAddress The recipient address for the NFT.
 	 * @param metadata Optional mutable data to include during the transfer.
 	 * @param controllerIdentity The identity to perform the nft operation with.
@@ -59,7 +58,6 @@ export interface INftComponent extends IComponent {
 	 */
 	transfer<U = unknown>(
 		id: string,
-		recipientIdentity: string,
 		recipientAddress: string,
 		metadata?: U,
 		controllerIdentity?: string

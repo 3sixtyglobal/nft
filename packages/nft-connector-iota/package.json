@@ -1,6 +1,6 @@
 {
 	"name": "@twin.org/nft-connector-iota",
-	"version": "0.0.3-next.3",
+	"version": "0.0.3-next.4",
 	"description": "IOTA-backed NFT connector for network operations and on-ledger state.",
 	"repository": {
 		"type": "git",
@@ -41,13 +41,14 @@
 		"@twin.org/dlt-iota": "next",
 		"@twin.org/logging-models": "next",
 		"@twin.org/nameof": "next",
-		"@twin.org/nft-models": "0.0.3-next.3",
+		"@twin.org/nft-models": "0.0.3-next.4",
 		"@twin.org/vault-models": "next",
 		"@twin.org/wallet-models": "next"
 	},
 	"devDependencies": {
 		"@twin.org/entity": "next",
 		"@twin.org/entity-storage-connector-memory": "next",
+		"@twin.org/identity-connector-iota": "^0.0.3-next.18",
 		"@twin.org/move-to-json": "next",
 		"@twin.org/nameof-transformer": "next",
 		"@twin.org/nameof-vitest-plugin": "next",
@@ -58,9 +59,9 @@
 		"@vitest/coverage-v8": "4.1.1",
 		"copyfiles": "2.4.1",
 		"dotenv": "17.3.1",
+		"nodemon": "3.1.14",
 		"rimraf": "6.1.3",
 		"ts-patch": "3.3.0",
-		"nodemon": "3.1.14",
 		"typedoc": "0.28.18",
 		"typedoc-plugin-markdown": "4.11.0",
 		"typescript": "5.9.3",

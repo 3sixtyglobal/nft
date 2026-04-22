@@ -144,7 +144,7 @@ The id of the created NFT in urn format.
 
 ### resolve() {#resolve}
 
-> **resolve**\<`T`, `U`\>(`nftId`): `Promise`\<\{ `issuer`: `string`; `owner`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
+> **resolve**\<`T`, `U`\>(`nftId`): `Promise`\<\{ `issuer`: `string`; `issuerIdentityId`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
 
 Resolve an NFT to get its details.
 
@@ -168,7 +168,7 @@ The id of the NFT to resolve.
 
 #### Returns
 
-`Promise`\<\{ `issuer`: `string`; `owner`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
+`Promise`\<\{ `issuer`: `string`; `issuerIdentityId`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
 
 The NFT details.
 
@@ -212,7 +212,7 @@ void.
 
 ### transfer() {#transfer}
 
-> **transfer**\<`U`\>(`controller`, `nftId`, `recipientIdentity`, `recipientAddress`, `metadata?`): `Promise`\<`void`\>
+> **transfer**\<`U`\>(`controller`, `nftId`, `recipientAddress`, `metadata?`): `Promise`\<`void`\>
 
 Transfer an NFT to a new owner.
 
@@ -235,12 +235,6 @@ The identity of the user to access the vault keys.
 `string`
 
 The id of the NFT to transfer.
-
-##### recipientIdentity
-
-`string`
-
-The recipient identity for the NFT.
 
 ##### recipientAddress
 
