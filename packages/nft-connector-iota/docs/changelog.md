@@ -1,12 +1,12 @@
 # Changelog
 
-## [0.0.3-next.4](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.3-next.3...nft-connector-iota-v0.0.3-next.4) (2026-04-20)
+## [0.0.3-next.4](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.3-next.3...nft-connector-iota-v0.0.3-next.4) (2026-04-20)
 
 
 ### Features
 
-* add on-chain identity binding to NFT minting ([#58](https://github.com/twinfoundation/nft/issues/58)) ([730a16d](https://github.com/twinfoundation/nft/commit/730a16d70fc026c920dbede0e4dafc96f37b729a))
-* cleaning the contract deployments and upgrading the iota versions ([#61](https://github.com/twinfoundation/nft/issues/61)) ([7206ff7](https://github.com/twinfoundation/nft/commit/7206ff7a1af5f6aed14cad1a617f140cfe0a0eab))
+* add on-chain identity binding to NFT minting ([#58](https://github.com/iotaledger/twin-nft/issues/58)) ([730a16d](https://github.com/iotaledger/twin-nft/commit/730a16d70fc026c920dbede0e4dafc96f37b729a))
+* cleaning the contract deployments and upgrading the iota versions ([#61](https://github.com/iotaledger/twin-nft/issues/61)) ([7206ff7](https://github.com/iotaledger/twin-nft/commit/7206ff7a1af5f6aed14cad1a617f140cfe0a0eab))
 
 
 ### Dependencies
@@ -15,7 +15,7 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.3-next.3 to 0.0.3-next.4
 
-## [0.0.3-next.3](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.3-next.2...nft-connector-iota-v0.0.3-next.3) (2026-03-03)
+## [0.0.3-next.3](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.3-next.2...nft-connector-iota-v0.0.3-next.3) (2026-03-03)
 
 
 ### Miscellaneous Chores
@@ -29,12 +29,12 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.3-next.2 to 0.0.3-next.3
 
-## [0.0.3-next.2](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.3-next.1...nft-connector-iota-v0.0.3-next.2) (2026-02-25)
+## [0.0.3-next.2](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.3-next.1...nft-connector-iota-v0.0.3-next.2) (2026-02-25)
 
 
 ### Features
 
-* update dependencies ([31f283a](https://github.com/twinfoundation/nft/commit/31f283a98097b4a8dfbcea9ca75e1e4445c52e37))
+* update dependencies ([31f283a](https://github.com/iotaledger/twin-nft/commit/31f283a98097b4a8dfbcea9ca75e1e4445c52e37))
 
 
 ### Dependencies
@@ -43,36 +43,36 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.3-next.1 to 0.0.3-next.2
 
-## [0.0.3-next.1](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.3-next.0...nft-connector-iota-v0.0.3-next.1) (2025-11-12)
+## [0.0.3-next.1](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.3-next.0...nft-connector-iota-v0.0.3-next.1) (2025-11-12)
 
 
 ### Features
 
-* add context id features ([#50](https://github.com/twinfoundation/nft/issues/50)) ([56c31c7](https://github.com/twinfoundation/nft/commit/56c31c7ba10e3ef8ad44f6463153f90888e64711))
-* add validate-locales ([0055a56](https://github.com/twinfoundation/nft/commit/0055a56ed166946f1db860aa0725ad53248b3427))
-* eslint migration to flat config ([0e6fc12](https://github.com/twinfoundation/nft/commit/0e6fc128c3c8f6cd34db793787437dd4af2c9994))
-* github action simplification and readme update ([#26](https://github.com/twinfoundation/nft/issues/26)) ([4182787](https://github.com/twinfoundation/nft/commit/4182787203c00fc760ec43c9d4198e4da20adfb7))
-* improve components state for deployments based on contract id ([20d69b0](https://github.com/twinfoundation/nft/commit/20d69b0084ba6932ef53e1eceec0506526b08ba6))
-* iota rebased release ([8d05d1f](https://github.com/twinfoundation/nft/commit/8d05d1f58c1aacac983c100697ab40a314ad34ea))
-* move to json integration ([#31](https://github.com/twinfoundation/nft/issues/31)) ([89944ba](https://github.com/twinfoundation/nft/commit/89944ba05b955944f84419224c3ae63fef28cc23))
-* remove NFT migration and version validation methods from IotaNftConnector ([#46](https://github.com/twinfoundation/nft/issues/46)) ([2b15d8c](https://github.com/twinfoundation/nft/commit/2b15d8c9b83f461feee03fa5a0f1e90304762461))
-* smart contract upgrade and versioning ([#33](https://github.com/twinfoundation/nft/issues/33)) ([49bf1a0](https://github.com/twinfoundation/nft/commit/49bf1a0ea891f9ef4f9b86ee6448bfd9ffc2d092))
-* update connector config and tests for gas station ([#24](https://github.com/twinfoundation/nft/issues/24)) ([c74eccc](https://github.com/twinfoundation/nft/commit/c74eccc3ca79b676ef21de7b7e69fcf9941ea43e))
-* update contracts file ([a341feb](https://github.com/twinfoundation/nft/commit/a341feb311063e889553d7ee995ed0d5093718c2))
-* update dependencies ([8660f76](https://github.com/twinfoundation/nft/commit/8660f76ca324b0f476e45544cac6bee4b3146c3b))
-* update dlt packages ([12c4966](https://github.com/twinfoundation/nft/commit/12c4966bceb926b7cdcf1449165bee09187a426c))
-* update framework core ([f3496b6](https://github.com/twinfoundation/nft/commit/f3496b61bfebbb3479bb92df39ecfa9ac8d90b9b))
-* update IOTA CLI version and remove redundant upgrade tests ([#39](https://github.com/twinfoundation/nft/issues/39)) ([e6355a8](https://github.com/twinfoundation/nft/commit/e6355a89038f52df20f24f64727c62e581b71d8a))
-* use latest dlt packages with latency fix ([#14](https://github.com/twinfoundation/nft/issues/14)) ([c8c20ed](https://github.com/twinfoundation/nft/commit/c8c20edd74daf4610125f4abc0fd613d42b6a195))
-* use shared store mechanism ([#16](https://github.com/twinfoundation/nft/issues/16)) ([897bc78](https://github.com/twinfoundation/nft/commit/897bc7805248ba1388b2dd03df24c33f1633f344))
-* wallet only required for write operations ([d3f3522](https://github.com/twinfoundation/nft/commit/d3f3522919e205aaeff83c1f13bbea9a68c5bf5c))
+* add context id features ([#50](https://github.com/iotaledger/twin-nft/issues/50)) ([56c31c7](https://github.com/iotaledger/twin-nft/commit/56c31c7ba10e3ef8ad44f6463153f90888e64711))
+* add validate-locales ([0055a56](https://github.com/iotaledger/twin-nft/commit/0055a56ed166946f1db860aa0725ad53248b3427))
+* eslint migration to flat config ([0e6fc12](https://github.com/iotaledger/twin-nft/commit/0e6fc128c3c8f6cd34db793787437dd4af2c9994))
+* github action simplification and readme update ([#26](https://github.com/iotaledger/twin-nft/issues/26)) ([4182787](https://github.com/iotaledger/twin-nft/commit/4182787203c00fc760ec43c9d4198e4da20adfb7))
+* improve components state for deployments based on contract id ([20d69b0](https://github.com/iotaledger/twin-nft/commit/20d69b0084ba6932ef53e1eceec0506526b08ba6))
+* iota rebased release ([8d05d1f](https://github.com/iotaledger/twin-nft/commit/8d05d1f58c1aacac983c100697ab40a314ad34ea))
+* move to json integration ([#31](https://github.com/iotaledger/twin-nft/issues/31)) ([89944ba](https://github.com/iotaledger/twin-nft/commit/89944ba05b955944f84419224c3ae63fef28cc23))
+* remove NFT migration and version validation methods from IotaNftConnector ([#46](https://github.com/iotaledger/twin-nft/issues/46)) ([2b15d8c](https://github.com/iotaledger/twin-nft/commit/2b15d8c9b83f461feee03fa5a0f1e90304762461))
+* smart contract upgrade and versioning ([#33](https://github.com/iotaledger/twin-nft/issues/33)) ([49bf1a0](https://github.com/iotaledger/twin-nft/commit/49bf1a0ea891f9ef4f9b86ee6448bfd9ffc2d092))
+* update connector config and tests for gas station ([#24](https://github.com/iotaledger/twin-nft/issues/24)) ([c74eccc](https://github.com/iotaledger/twin-nft/commit/c74eccc3ca79b676ef21de7b7e69fcf9941ea43e))
+* update contracts file ([a341feb](https://github.com/iotaledger/twin-nft/commit/a341feb311063e889553d7ee995ed0d5093718c2))
+* update dependencies ([8660f76](https://github.com/iotaledger/twin-nft/commit/8660f76ca324b0f476e45544cac6bee4b3146c3b))
+* update dlt packages ([12c4966](https://github.com/iotaledger/twin-nft/commit/12c4966bceb926b7cdcf1449165bee09187a426c))
+* update framework core ([f3496b6](https://github.com/iotaledger/twin-nft/commit/f3496b61bfebbb3479bb92df39ecfa9ac8d90b9b))
+* update IOTA CLI version and remove redundant upgrade tests ([#39](https://github.com/iotaledger/twin-nft/issues/39)) ([e6355a8](https://github.com/iotaledger/twin-nft/commit/e6355a89038f52df20f24f64727c62e581b71d8a))
+* use latest dlt packages with latency fix ([#14](https://github.com/iotaledger/twin-nft/issues/14)) ([c8c20ed](https://github.com/iotaledger/twin-nft/commit/c8c20edd74daf4610125f4abc0fd613d42b6a195))
+* use shared store mechanism ([#16](https://github.com/iotaledger/twin-nft/issues/16)) ([897bc78](https://github.com/iotaledger/twin-nft/commit/897bc7805248ba1388b2dd03df24c33f1633f344))
+* wallet only required for write operations ([d3f3522](https://github.com/iotaledger/twin-nft/commit/d3f3522919e205aaeff83c1f13bbea9a68c5bf5c))
 
 
 ### Bug Fixes
 
-* contract independent tests ([#35](https://github.com/twinfoundation/nft/issues/35)) ([b54ad6e](https://github.com/twinfoundation/nft/commit/b54ad6e1727284230f21db0032dc8ff437444812))
-* min change for new version ([#44](https://github.com/twinfoundation/nft/issues/44)) ([8976aae](https://github.com/twinfoundation/nft/commit/8976aae3356b5c1e47305bd45c66288211f2fba7))
-* return if package already deployed ([bf09fa1](https://github.com/twinfoundation/nft/commit/bf09fa15818f968d7c0f2ddbc29a5566511607d2))
+* contract independent tests ([#35](https://github.com/iotaledger/twin-nft/issues/35)) ([b54ad6e](https://github.com/iotaledger/twin-nft/commit/b54ad6e1727284230f21db0032dc8ff437444812))
+* min change for new version ([#44](https://github.com/iotaledger/twin-nft/issues/44)) ([8976aae](https://github.com/iotaledger/twin-nft/commit/8976aae3356b5c1e47305bd45c66288211f2fba7))
+* return if package already deployed ([bf09fa1](https://github.com/iotaledger/twin-nft/commit/bf09fa15818f968d7c0f2ddbc29a5566511607d2))
 
 
 ### Dependencies
@@ -81,12 +81,12 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.3-next.0 to 0.0.3-next.1
 
-## [0.0.2-next.8](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.2-next.7...nft-connector-iota-v0.0.2-next.8) (2025-10-09)
+## [0.0.2-next.8](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.2-next.7...nft-connector-iota-v0.0.2-next.8) (2025-10-09)
 
 
 ### Features
 
-* add validate-locales ([0055a56](https://github.com/twinfoundation/nft/commit/0055a56ed166946f1db860aa0725ad53248b3427))
+* add validate-locales ([0055a56](https://github.com/iotaledger/twin-nft/commit/0055a56ed166946f1db860aa0725ad53248b3427))
 
 
 ### Dependencies
@@ -95,12 +95,12 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.2-next.7 to 0.0.2-next.8
 
-## [0.0.2-next.7](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.2-next.6...nft-connector-iota-v0.0.2-next.7) (2025-09-26)
+## [0.0.2-next.7](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.2-next.6...nft-connector-iota-v0.0.2-next.7) (2025-09-26)
 
 
 ### Features
 
-* remove NFT migration and version validation methods from IotaNftConnector ([#46](https://github.com/twinfoundation/nft/issues/46)) ([2b15d8c](https://github.com/twinfoundation/nft/commit/2b15d8c9b83f461feee03fa5a0f1e90304762461))
+* remove NFT migration and version validation methods from IotaNftConnector ([#46](https://github.com/iotaledger/twin-nft/issues/46)) ([2b15d8c](https://github.com/iotaledger/twin-nft/commit/2b15d8c9b83f461feee03fa5a0f1e90304762461))
 
 
 ### Dependencies
@@ -109,17 +109,17 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.2-next.6 to 0.0.2-next.7
 
-## [0.0.2-next.6](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.2-next.5...nft-connector-iota-v0.0.2-next.6) (2025-09-25)
+## [0.0.2-next.6](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.2-next.5...nft-connector-iota-v0.0.2-next.6) (2025-09-25)
 
 
 ### Features
 
-* update contracts file ([a341feb](https://github.com/twinfoundation/nft/commit/a341feb311063e889553d7ee995ed0d5093718c2))
+* update contracts file ([a341feb](https://github.com/iotaledger/twin-nft/commit/a341feb311063e889553d7ee995ed0d5093718c2))
 
 
 ### Bug Fixes
 
-* min change for new version ([#44](https://github.com/twinfoundation/nft/issues/44)) ([8976aae](https://github.com/twinfoundation/nft/commit/8976aae3356b5c1e47305bd45c66288211f2fba7))
+* min change for new version ([#44](https://github.com/iotaledger/twin-nft/issues/44)) ([8976aae](https://github.com/iotaledger/twin-nft/commit/8976aae3356b5c1e47305bd45c66288211f2fba7))
 
 
 ### Dependencies
@@ -128,13 +128,13 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.2-next.5 to 0.0.2-next.6
 
-## [0.0.2-next.5](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.2-next.4...nft-connector-iota-v0.0.2-next.5) (2025-09-22)
+## [0.0.2-next.5](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.2-next.4...nft-connector-iota-v0.0.2-next.5) (2025-09-22)
 
 
 ### Features
 
-* update IOTA CLI version and remove redundant upgrade tests ([#39](https://github.com/twinfoundation/nft/issues/39)) ([e6355a8](https://github.com/twinfoundation/nft/commit/e6355a89038f52df20f24f64727c62e581b71d8a))
-* wallet only required for write operations ([d3f3522](https://github.com/twinfoundation/nft/commit/d3f3522919e205aaeff83c1f13bbea9a68c5bf5c))
+* update IOTA CLI version and remove redundant upgrade tests ([#39](https://github.com/iotaledger/twin-nft/issues/39)) ([e6355a8](https://github.com/iotaledger/twin-nft/commit/e6355a89038f52df20f24f64727c62e581b71d8a))
+* wallet only required for write operations ([d3f3522](https://github.com/iotaledger/twin-nft/commit/d3f3522919e205aaeff83c1f13bbea9a68c5bf5c))
 
 
 ### Dependencies
@@ -143,18 +143,18 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.2-next.4 to 0.0.2-next.5
 
-## [0.0.2-next.4](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.2-next.3...nft-connector-iota-v0.0.2-next.4) (2025-09-10)
+## [0.0.2-next.4](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.2-next.3...nft-connector-iota-v0.0.2-next.4) (2025-09-10)
 
 
 ### Features
 
-* eslint migration to flat config ([0e6fc12](https://github.com/twinfoundation/nft/commit/0e6fc128c3c8f6cd34db793787437dd4af2c9994))
-* smart contract upgrade and versioning ([#33](https://github.com/twinfoundation/nft/issues/33)) ([49bf1a0](https://github.com/twinfoundation/nft/commit/49bf1a0ea891f9ef4f9b86ee6448bfd9ffc2d092))
+* eslint migration to flat config ([0e6fc12](https://github.com/iotaledger/twin-nft/commit/0e6fc128c3c8f6cd34db793787437dd4af2c9994))
+* smart contract upgrade and versioning ([#33](https://github.com/iotaledger/twin-nft/issues/33)) ([49bf1a0](https://github.com/iotaledger/twin-nft/commit/49bf1a0ea891f9ef4f9b86ee6448bfd9ffc2d092))
 
 
 ### Bug Fixes
 
-* contract independent tests ([#35](https://github.com/twinfoundation/nft/issues/35)) ([b54ad6e](https://github.com/twinfoundation/nft/commit/b54ad6e1727284230f21db0032dc8ff437444812))
+* contract independent tests ([#35](https://github.com/iotaledger/twin-nft/issues/35)) ([b54ad6e](https://github.com/iotaledger/twin-nft/commit/b54ad6e1727284230f21db0032dc8ff437444812))
 
 
 ### Dependencies
@@ -163,12 +163,12 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.2-next.3 to 0.0.2-next.4
 
-## [0.0.2-next.3](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.2-next.2...nft-connector-iota-v0.0.2-next.3) (2025-08-20)
+## [0.0.2-next.3](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.2-next.2...nft-connector-iota-v0.0.2-next.3) (2025-08-20)
 
 
 ### Features
 
-* update framework core ([f3496b6](https://github.com/twinfoundation/nft/commit/f3496b61bfebbb3479bb92df39ecfa9ac8d90b9b))
+* update framework core ([f3496b6](https://github.com/iotaledger/twin-nft/commit/f3496b61bfebbb3479bb92df39ecfa9ac8d90b9b))
 
 
 ### Dependencies
@@ -177,12 +177,12 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.2-next.2 to 0.0.2-next.3
 
-## [0.0.2-next.2](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.2-next.1...nft-connector-iota-v0.0.2-next.2) (2025-07-25)
+## [0.0.2-next.2](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.2-next.1...nft-connector-iota-v0.0.2-next.2) (2025-07-25)
 
 
 ### Features
 
-* move to json integration ([#31](https://github.com/twinfoundation/nft/issues/31)) ([89944ba](https://github.com/twinfoundation/nft/commit/89944ba05b955944f84419224c3ae63fef28cc23))
+* move to json integration ([#31](https://github.com/iotaledger/twin-nft/issues/31)) ([89944ba](https://github.com/iotaledger/twin-nft/commit/89944ba05b955944f84419224c3ae63fef28cc23))
 
 
 ### Dependencies
@@ -191,24 +191,24 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.2-next.1 to 0.0.2-next.2
 
-## [0.0.2-next.1](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.2-next.0...nft-connector-iota-v0.0.2-next.1) (2025-07-16)
+## [0.0.2-next.1](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.2-next.0...nft-connector-iota-v0.0.2-next.1) (2025-07-16)
 
 
 ### Features
 
-* github action simplification and readme update ([#26](https://github.com/twinfoundation/nft/issues/26)) ([4182787](https://github.com/twinfoundation/nft/commit/4182787203c00fc760ec43c9d4198e4da20adfb7))
-* improve components state for deployments based on contract id ([20d69b0](https://github.com/twinfoundation/nft/commit/20d69b0084ba6932ef53e1eceec0506526b08ba6))
-* iota rebased release ([8d05d1f](https://github.com/twinfoundation/nft/commit/8d05d1f58c1aacac983c100697ab40a314ad34ea))
-* update connector config and tests for gas station ([#24](https://github.com/twinfoundation/nft/issues/24)) ([c74eccc](https://github.com/twinfoundation/nft/commit/c74eccc3ca79b676ef21de7b7e69fcf9941ea43e))
-* update dependencies ([8660f76](https://github.com/twinfoundation/nft/commit/8660f76ca324b0f476e45544cac6bee4b3146c3b))
-* update dlt packages ([12c4966](https://github.com/twinfoundation/nft/commit/12c4966bceb926b7cdcf1449165bee09187a426c))
-* use latest dlt packages with latency fix ([#14](https://github.com/twinfoundation/nft/issues/14)) ([c8c20ed](https://github.com/twinfoundation/nft/commit/c8c20edd74daf4610125f4abc0fd613d42b6a195))
-* use shared store mechanism ([#16](https://github.com/twinfoundation/nft/issues/16)) ([897bc78](https://github.com/twinfoundation/nft/commit/897bc7805248ba1388b2dd03df24c33f1633f344))
+* github action simplification and readme update ([#26](https://github.com/iotaledger/twin-nft/issues/26)) ([4182787](https://github.com/iotaledger/twin-nft/commit/4182787203c00fc760ec43c9d4198e4da20adfb7))
+* improve components state for deployments based on contract id ([20d69b0](https://github.com/iotaledger/twin-nft/commit/20d69b0084ba6932ef53e1eceec0506526b08ba6))
+* iota rebased release ([8d05d1f](https://github.com/iotaledger/twin-nft/commit/8d05d1f58c1aacac983c100697ab40a314ad34ea))
+* update connector config and tests for gas station ([#24](https://github.com/iotaledger/twin-nft/issues/24)) ([c74eccc](https://github.com/iotaledger/twin-nft/commit/c74eccc3ca79b676ef21de7b7e69fcf9941ea43e))
+* update dependencies ([8660f76](https://github.com/iotaledger/twin-nft/commit/8660f76ca324b0f476e45544cac6bee4b3146c3b))
+* update dlt packages ([12c4966](https://github.com/iotaledger/twin-nft/commit/12c4966bceb926b7cdcf1449165bee09187a426c))
+* use latest dlt packages with latency fix ([#14](https://github.com/iotaledger/twin-nft/issues/14)) ([c8c20ed](https://github.com/iotaledger/twin-nft/commit/c8c20edd74daf4610125f4abc0fd613d42b6a195))
+* use shared store mechanism ([#16](https://github.com/iotaledger/twin-nft/issues/16)) ([897bc78](https://github.com/iotaledger/twin-nft/commit/897bc7805248ba1388b2dd03df24c33f1633f344))
 
 
 ### Bug Fixes
 
-* return if package already deployed ([bf09fa1](https://github.com/twinfoundation/nft/commit/bf09fa15818f968d7c0f2ddbc29a5566511607d2))
+* return if package already deployed ([bf09fa1](https://github.com/iotaledger/twin-nft/commit/bf09fa15818f968d7c0f2ddbc29a5566511607d2))
 
 
 ### Dependencies
@@ -222,7 +222,7 @@
 
 ### Features
 
-* release to production ([4d338b3](https://github.com/twinfoundation/nft/commit/4d338b3e8a4dbccc61a1d1da3c470ba86cefe535))
+* release to production ([4d338b3](https://github.com/iotaledger/twin-nft/commit/4d338b3e8a4dbccc61a1d1da3c470ba86cefe535))
 
 
 ### Dependencies
@@ -231,12 +231,12 @@
   * dependencies
     * @twin.org/nft-models bumped from ^0.0.0 to ^0.0.1
 
-## [0.0.1-next.32](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.1-next.31...nft-connector-iota-v0.0.1-next.32) (2025-06-24)
+## [0.0.1-next.32](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.1-next.31...nft-connector-iota-v0.0.1-next.32) (2025-06-24)
 
 
 ### Features
 
-* update connector config and tests for gas station ([#24](https://github.com/twinfoundation/nft/issues/24)) ([c74eccc](https://github.com/twinfoundation/nft/commit/c74eccc3ca79b676ef21de7b7e69fcf9941ea43e))
+* update connector config and tests for gas station ([#24](https://github.com/iotaledger/twin-nft/issues/24)) ([c74eccc](https://github.com/iotaledger/twin-nft/commit/c74eccc3ca79b676ef21de7b7e69fcf9941ea43e))
 
 
 ### Dependencies
@@ -245,12 +245,12 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.1-next.31 to 0.0.1-next.32
 
-## [0.0.1-next.31](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.1-next.30...nft-connector-iota-v0.0.1-next.31) (2025-06-12)
+## [0.0.1-next.31](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.1-next.30...nft-connector-iota-v0.0.1-next.31) (2025-06-12)
 
 
 ### Features
 
-* update dependencies ([8660f76](https://github.com/twinfoundation/nft/commit/8660f76ca324b0f476e45544cac6bee4b3146c3b))
+* update dependencies ([8660f76](https://github.com/iotaledger/twin-nft/commit/8660f76ca324b0f476e45544cac6bee4b3146c3b))
 
 
 ### Dependencies
@@ -259,12 +259,12 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.1-next.30 to 0.0.1-next.31
 
-## [0.0.1-next.30](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.1-next.29...nft-connector-iota-v0.0.1-next.30) (2025-05-22)
+## [0.0.1-next.30](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.1-next.29...nft-connector-iota-v0.0.1-next.30) (2025-05-22)
 
 
 ### Features
 
-* improve components state for deployments based on contract id ([20d69b0](https://github.com/twinfoundation/nft/commit/20d69b0084ba6932ef53e1eceec0506526b08ba6))
+* improve components state for deployments based on contract id ([20d69b0](https://github.com/iotaledger/twin-nft/commit/20d69b0084ba6932ef53e1eceec0506526b08ba6))
 
 
 ### Dependencies
@@ -273,12 +273,12 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.1-next.29 to 0.0.1-next.30
 
-## [0.0.1-next.29](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.1-next.28...nft-connector-iota-v0.0.1-next.29) (2025-05-21)
+## [0.0.1-next.29](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.1-next.28...nft-connector-iota-v0.0.1-next.29) (2025-05-21)
 
 
 ### Features
 
-* update dlt packages ([12c4966](https://github.com/twinfoundation/nft/commit/12c4966bceb926b7cdcf1449165bee09187a426c))
+* update dlt packages ([12c4966](https://github.com/iotaledger/twin-nft/commit/12c4966bceb926b7cdcf1449165bee09187a426c))
 
 
 ### Dependencies
@@ -287,12 +287,12 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.1-next.28 to 0.0.1-next.29
 
-## [0.0.1-next.28](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.1-next.27...nft-connector-iota-v0.0.1-next.28) (2025-05-06)
+## [0.0.1-next.28](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.1-next.27...nft-connector-iota-v0.0.1-next.28) (2025-05-06)
 
 
 ### Features
 
-* iota rebased release ([8d05d1f](https://github.com/twinfoundation/nft/commit/8d05d1f58c1aacac983c100697ab40a314ad34ea))
+* iota rebased release ([8d05d1f](https://github.com/iotaledger/twin-nft/commit/8d05d1f58c1aacac983c100697ab40a314ad34ea))
 
 
 ### Dependencies
@@ -301,12 +301,12 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.1-next.27 to 0.0.1-next.28
 
-## [0.0.1-next.27](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.1-next.26...nft-connector-iota-v0.0.1-next.27) (2025-04-24)
+## [0.0.1-next.27](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.1-next.26...nft-connector-iota-v0.0.1-next.27) (2025-04-24)
 
 
 ### Bug Fixes
 
-* return if package already deployed ([bf09fa1](https://github.com/twinfoundation/nft/commit/bf09fa15818f968d7c0f2ddbc29a5566511607d2))
+* return if package already deployed ([bf09fa1](https://github.com/iotaledger/twin-nft/commit/bf09fa15818f968d7c0f2ddbc29a5566511607d2))
 
 
 ### Dependencies
@@ -315,12 +315,12 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.1-next.26 to 0.0.1-next.27
 
-## [0.0.1-next.26](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.1-next.25...nft-connector-iota-v0.0.1-next.26) (2025-04-17)
+## [0.0.1-next.26](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.1-next.25...nft-connector-iota-v0.0.1-next.26) (2025-04-17)
 
 
 ### Features
 
-* use shared store mechanism ([#16](https://github.com/twinfoundation/nft/issues/16)) ([897bc78](https://github.com/twinfoundation/nft/commit/897bc7805248ba1388b2dd03df24c33f1633f344))
+* use shared store mechanism ([#16](https://github.com/iotaledger/twin-nft/issues/16)) ([897bc78](https://github.com/iotaledger/twin-nft/commit/897bc7805248ba1388b2dd03df24c33f1633f344))
 
 
 ### Dependencies
@@ -329,12 +329,12 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.1-next.25 to 0.0.1-next.26
 
-## [0.0.1-next.25](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.1-next.24...nft-connector-iota-v0.0.1-next.25) (2025-04-17)
+## [0.0.1-next.25](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.1-next.24...nft-connector-iota-v0.0.1-next.25) (2025-04-17)
 
 
 ### Features
 
-* use latest dlt packages with latency fix ([#14](https://github.com/twinfoundation/nft/issues/14)) ([c8c20ed](https://github.com/twinfoundation/nft/commit/c8c20edd74daf4610125f4abc0fd613d42b6a195))
+* use latest dlt packages with latency fix ([#14](https://github.com/iotaledger/twin-nft/issues/14)) ([c8c20ed](https://github.com/iotaledger/twin-nft/commit/c8c20edd74daf4610125f4abc0fd613d42b6a195))
 
 
 ### Dependencies
@@ -343,7 +343,7 @@
   * dependencies
     * @twin.org/nft-models bumped from 0.0.1-next.24 to 0.0.1-next.25
 
-## [0.0.1-next.24](https://github.com/twinfoundation/nft/compare/nft-connector-iota-v0.0.1-next.23...nft-connector-iota-v0.0.1-next.24) (2025-03-28)
+## [0.0.1-next.24](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.1-next.23...nft-connector-iota-v0.0.1-next.24) (2025-03-28)
 
 
 ### Miscellaneous Chores
