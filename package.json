@@ -4,7 +4,7 @@
 	"description": "Modular NFT connectors, services, and tooling.",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/twinfoundation/nft.git"
+		"url": "git+https://github.com/iotaledger/nft.git"
 	},
 	"author": "martyn.janes@iota.org",
 	"license": "Apache-2.0",
@@ -63,7 +63,7 @@
 	],
 	"type": "module",
 	"bugs": {
-		"url": "git+https://github.com/twinfoundation/nft/issues"
+		"url": "git+https://github.com/iotaledger/nft/issues"
 	},
 	"homepage": "https://twindev.org"
 }
