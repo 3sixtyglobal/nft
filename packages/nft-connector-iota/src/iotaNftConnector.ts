@@ -23,7 +23,6 @@ import type { ILoggingComponent } from "@twin.org/logging-models";
 import { nameof } from "@twin.org/nameof";
 import type { INftConnector } from "@twin.org/nft-models";
 import { VaultConnectorFactory, type IVaultConnector } from "@twin.org/vault-models";
-import { WalletConnectorFactory, type IWalletConnector } from "@twin.org/wallet-models";
 import compiledModulesJson from "./contracts/smartContractDeployments/smart-contract-deployments.json" with { type: "json" };
 import { IotaNftUtils } from "./iotaNftUtils.js";
 import type { IIotaNftConnectorConfig } from "./models/IIotaNftConnectorConfig.js";
@@ -55,12 +54,6 @@ export class IotaNftConnector implements INftConnector {
 	 * @internal
 	 */
 	private readonly _vaultConnector: IVaultConnector;
-
-	/**
-	 * Connector for wallet operations.
-	 * @internal
-	 */
-	private readonly _walletConnector?: IWalletConnector;
 
 	/**
 	 * The configuration for the connector.
@@ -115,16 +108,12 @@ export class IotaNftConnector implements INftConnector {
 			options.config.clientOptions
 		);
 		this._vaultConnector = VaultConnectorFactory.get(options.vaultConnectorType ?? "vault");
-		this._walletConnector = WalletConnectorFactory.getIfExists(
-			options.walletConnectorType ?? "wallet"
-		);
 
 		this._logging = ComponentFactory.getIfExists(options?.loggingComponentType ?? "logging");
 
 		this._config = options.config;
 
-		this._deploymentConfig =
-			options.deploymentConfig ?? (compiledModulesJson as unknown as ISmartContractDeployments);
+		this._deploymentConfig = options.deploymentConfig ?? compiledModulesJson;
 
 		this._contractName = this._config.contractName ?? "nft";
 		Guards.stringValue(IotaNftConnector.CLASS_NAME, nameof(this._contractName), this._contractName);
@@ -237,24 +226,19 @@ export class IotaNftConnector implements INftConnector {
 		Guards.stringValue(IotaNftConnector.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
 		Guards.stringValue(IotaNftConnector.CLASS_NAME, nameof(tag), tag);
 
-		if (Is.empty(this._walletConnector)) {
-			throw new GeneralError(IotaNftConnector.CLASS_NAME, "noWalletConfigured");
-		}
-
 		try {
 			const packageId = this.getPackageId();
 
 			const txb = Iota.createTransaction();
 			txb.setGasBudget(this._gasBudget);
 
-			const walletAddressIndex = this._config.walletAddressIndex ?? 0;
-			const addresses = await this._walletConnector.getAddresses(
+			const address = await Iota.getAddress(
+				this._vaultConnector,
+				this._config,
 				controllerIdentity,
-				0,
-				walletAddressIndex,
-				1
+				this._config.accountAddressIndex ?? 0,
+				this._config.walletAddressIndex ?? 0
 			);
-			const address = addresses[0];
 
 			const metadataString = metadata ? JSON.stringify(metadata) : "";
 			const immutableMetadataString = immutableMetadata ? JSON.stringify(immutableMetadata) : "";
@@ -473,10 +457,6 @@ export class IotaNftConnector implements INftConnector {
 			Guards.object(IotaNftConnector.CLASS_NAME, nameof(metadata), metadata);
 		}
 
-		if (Is.empty(this._walletConnector)) {
-			throw new GeneralError(IotaNftConnector.CLASS_NAME, "noWalletConfigured");
-		}
-
 		const urnParsed = Urn.fromValidString(nftId);
 		if (urnParsed.namespaceMethod() !== IotaNftConnector.NAMESPACE) {
 			throw new GeneralError(IotaNftConnector.CLASS_NAME, "namespaceMismatch", {
@@ -501,14 +481,13 @@ export class IotaNftConnector implements INftConnector {
 			const ownerAddress = this.getOwnerAddress(nftId, object);
 
 			// Verify ownership — compare on-chain owner address against the controller's wallet address
-			const walletAddressIndex = this._config.walletAddressIndex ?? 0;
-			const controllerAddresses = await this._walletConnector.getAddresses(
+			const controllerAddress = await Iota.getAddress(
+				this._vaultConnector,
+				this._config,
 				controller,
-				0,
-				walletAddressIndex,
-				1
+				this._config.accountAddressIndex ?? 0,
+				this._config.walletAddressIndex ?? 0
 			);
-			const controllerAddress = controllerAddresses[0];
 			if (ownerAddress !== controllerAddress) {
 				throw new GeneralError(IotaNftConnector.CLASS_NAME, "transferFailed", {
 					currentOwner: ownerAddress,

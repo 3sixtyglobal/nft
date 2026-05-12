@@ -5,7 +5,7 @@ import path from "node:path";
 import { promisify } from "node:util";
 import { Guards } from "@twin.org/core";
 import { Bip39 } from "@twin.org/crypto";
-import type { ISmartContractDeployments } from "@twin.org/dlt-iota";
+import { Iota, type ISmartContractDeployments } from "@twin.org/dlt-iota";
 import { MemoryEntityStorageConnector } from "@twin.org/entity-storage-connector-memory";
 import { EntityStorageConnectorFactory } from "@twin.org/entity-storage-models";
 import { IotaIdentityConnector } from "@twin.org/identity-connector-iota";
@@ -17,8 +17,6 @@ import {
 	type VaultSecret
 } from "@twin.org/vault-connector-entity-storage";
 import { VaultConnectorFactory } from "@twin.org/vault-models";
-import { IotaFaucetConnector, IotaWalletConnector } from "@twin.org/wallet-connector-iota";
-import { FaucetConnectorFactory, WalletConnectorFactory } from "@twin.org/wallet-models";
 import dotenv from "dotenv";
 import {
 	cleanupTestDeployment,
@@ -48,8 +46,8 @@ Guards.stringValue(
 );
 
 export const TEST_NODE_IDENTITY = "test-node-identity";
-export const TEST_USER_IDENTITY_ID = "test-user-identity";
-export const TEST_USER_IDENTITY_ID_2 = "test-user-identity-2";
+export const TEST_USER_IDENTITY = "test-user-identity";
+export const TEST_USER_IDENTITY_2 = "test-user-identity-2";
 
 /**
  * On-chain IOTA DIDs created during setupTestEnv() for use as controllerIdentity
@@ -103,14 +101,11 @@ await TEST_VAULT_CONNECTOR.setSecret(
 );
 
 // Store mnemonics in vault for user identity
-await TEST_VAULT_CONNECTOR.setSecret(
-	`${TEST_USER_IDENTITY_ID}/${TEST_MNEMONIC_NAME}`,
-	TEST_MNEMONIC
-);
+await TEST_VAULT_CONNECTOR.setSecret(`${TEST_USER_IDENTITY}/${TEST_MNEMONIC_NAME}`, TEST_MNEMONIC);
 
 // Store mnemonics in vault for user identity 2
 await TEST_VAULT_CONNECTOR.setSecret(
-	`${TEST_USER_IDENTITY_ID_2}/${TEST_MNEMONIC_NAME}`,
+	`${TEST_USER_IDENTITY_2}/${TEST_MNEMONIC_NAME}`,
 	TEST_2_MNEMONIC
 );
 
@@ -125,26 +120,12 @@ export const TEST_CLIENT_OPTIONS = {
 	url: TEST_NODE_ENDPOINT
 };
 
-export const TEST_FAUCET_CONNECTOR = new IotaFaucetConnector({
-	config: {
-		clientOptions: TEST_CLIENT_OPTIONS,
-		endpoint: TEST_FAUCET_ENDPOINT,
-		vaultMnemonicId: TEST_MNEMONIC_NAME,
-		network: TEST_NETWORK
-	}
-});
-FaucetConnectorFactory.register("faucet", () => TEST_FAUCET_CONNECTOR);
-
-export const TEST_WALLET_CONNECTOR = new IotaWalletConnector({
-	config: {
-		clientOptions: TEST_CLIENT_OPTIONS,
-		vaultMnemonicId: TEST_MNEMONIC_NAME,
-		coinType: TEST_COIN_TYPE,
-		network: TEST_NETWORK
-	}
-});
-
-WalletConnectorFactory.register("wallet", () => TEST_WALLET_CONNECTOR);
+export const TEST_IOTA_CONFIG = {
+	clientOptions: TEST_CLIENT_OPTIONS,
+	network: TEST_NETWORK,
+	coinType: TEST_COIN_TYPE,
+	vaultMnemonicId: TEST_MNEMONIC_NAME
+};
 
 export const TEST_IDENTITY_CONNECTOR = new IotaIdentityConnector({
 	config: {
@@ -155,12 +136,40 @@ export const TEST_IDENTITY_CONNECTOR = new IotaIdentityConnector({
 	vaultConnectorType: "vault"
 });
 
-const testAddresses = await TEST_WALLET_CONNECTOR.getAddresses(TEST_USER_IDENTITY_ID, 0, 0, 1);
-const testAddresses2 = await TEST_WALLET_CONNECTOR.getAddresses(TEST_USER_IDENTITY_ID_2, 0, 0, 1);
-const nodeAddresses = await TEST_WALLET_CONNECTOR.getAddresses(TEST_NODE_IDENTITY, 0, 0, 1);
+const testAddresses = await Iota.getAddresses(
+	TEST_VAULT_CONNECTOR,
+	TEST_IOTA_CONFIG,
+	TEST_USER_IDENTITY,
+	0,
+	0,
+	1
+);
+const testAddresses2 = await Iota.getAddresses(
+	TEST_VAULT_CONNECTOR,
+	TEST_IOTA_CONFIG,
+	TEST_USER_IDENTITY_2,
+	0,
+	0,
+	1
+);
+const nodeAddresses = await Iota.getAddresses(
+	TEST_VAULT_CONNECTOR,
+	TEST_IOTA_CONFIG,
+	TEST_NODE_IDENTITY,
+	0,
+	0,
+	1
+);
 
 // DEPLOYER_IDENTITY uses the deployer mnemonic (this is the actual AdminCap owner)
-const deployerAddresses = await TEST_WALLET_CONNECTOR.getAddresses(TEST_DEPLOYER_IDENTITY, 0, 0, 1);
+const deployerAddresses = await Iota.getAddresses(
+	TEST_VAULT_CONNECTOR,
+	TEST_IOTA_CONFIG,
+	TEST_DEPLOYER_IDENTITY,
+	0,
+	0,
+	1
+);
 
 export const TEST_ADDRESS = testAddresses[0];
 export const TEST_ADDRESS_2 = testAddresses2[0];
@@ -201,7 +210,8 @@ async function verifyIotaCliInstalled(): Promise<void> {
 			(error as Error).message.includes("not found")
 		) {
 			throw new Error(
-				"IOTA CLI is not installed. Please install it from: https://github.com/iotaledger/iota/releases/"
+				"IOTA CLI is not installed. Please install it from: https://github.com/iotaledger/iota/releases/",
+				{ cause: error }
 			);
 		}
 		throw new Error("Failed to check IOTA CLI version", { cause: error });
@@ -229,22 +239,21 @@ export async function setupTestEnv(): Promise<void> {
 	);
 
 	console.debug("[setupTestEnv] Ensuring test addresses have sufficient funds");
-	await ensureFundsForAddress(TEST_NODE_IDENTITY, NODE_ADDRESS, TEST_WALLET_CONNECTOR);
-	await ensureFundsForAddress(TEST_USER_IDENTITY_ID, TEST_ADDRESS, TEST_WALLET_CONNECTOR);
-	await ensureFundsForAddress(TEST_USER_IDENTITY_ID_2, TEST_ADDRESS_2, TEST_WALLET_CONNECTOR);
-	await ensureFundsForAddress(TEST_DEPLOYER_IDENTITY, DEPLOYER_ADDRESS, TEST_WALLET_CONNECTOR);
+	await ensureFundsForAddress(TEST_NODE_IDENTITY, NODE_ADDRESS);
+	await ensureFundsForAddress(TEST_USER_IDENTITY, TEST_ADDRESS);
+	await ensureFundsForAddress(TEST_USER_IDENTITY_2, TEST_ADDRESS_2);
+	await ensureFundsForAddress(TEST_DEPLOYER_IDENTITY, DEPLOYER_ADDRESS);
 
 	// Create on-chain IOTA Identities for test users. The vault already has the
 	// mnemonic stored under TEST_USER_IDENTITY_ID, so createDocument() can derive
-	// the signing keypair. We then also store the mnemonic under the DID key so
-	// walletConnector.getAddresses(did, ...) works when mint() is called.
+	// the signing keypair. We then also store the mnemonic under the DID key
 	console.debug("[setupTestEnv] Creating on-chain IOTA Identities for test users");
-	const userDoc = await TEST_IDENTITY_CONNECTOR.createDocument(TEST_USER_IDENTITY_ID);
+	const userDoc = await TEST_IDENTITY_CONNECTOR.createDocument(TEST_USER_IDENTITY);
 	TEST_USER_DID = userDoc.id;
 	await TEST_VAULT_CONNECTOR.setSecret(`${TEST_USER_DID}/${TEST_MNEMONIC_NAME}`, TEST_MNEMONIC);
 	console.debug("[setupTestEnv] TEST_USER_DID:", TEST_USER_DID);
 
-	const user2Doc = await TEST_IDENTITY_CONNECTOR.createDocument(TEST_USER_IDENTITY_ID_2);
+	const user2Doc = await TEST_IDENTITY_CONNECTOR.createDocument(TEST_USER_IDENTITY_2);
 	TEST_USER_DID_2 = user2Doc.id;
 	await TEST_VAULT_CONNECTOR.setSecret(`${TEST_USER_DID_2}/${TEST_MNEMONIC_NAME}`, TEST_2_MNEMONIC);
 	console.debug("[setupTestEnv] TEST_USER_DID_2:", TEST_USER_DID_2);
@@ -284,24 +293,21 @@ export async function cleanupTestEnv(): Promise<void> {
  * Only requests from faucet if current balance is below minimum required.
  * @param identity The identity to use for wallet operations.
  * @param address The address to ensure funds for.
- * @param walletConnector The wallet connector to use.
  * @returns Promise that resolves when funds are ensured.
  */
-async function ensureFundsForAddress(
-	identity: string,
-	address: string,
-	walletConnector: IotaWalletConnector
-): Promise<void> {
+async function ensureFundsForAddress(identity: string, address: string): Promise<void> {
 	try {
 		// Use ensureBalance which will automatically request from faucet if needed
-		const success = await walletConnector.ensureBalance(
+		const success = await Iota.ensureBalance(
+			TEST_IOTA_CONFIG,
+			TEST_FAUCET_ENDPOINT,
 			identity,
 			address,
 			MIN_BALANCE_REQUIRED,
 			30
 		);
 
-		const currentBalance = await walletConnector.getBalance(identity, address);
+		const currentBalance = await Iota.getBalance(TEST_IOTA_CONFIG, address);
 		console.debug(`[ensureFundsForAddress] Address ${address} has balance: ${currentBalance}`);
 
 		if (!success) {

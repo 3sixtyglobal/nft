@@ -23,8 +23,7 @@
 			"packageNotFoundOnNetwork": "Package \"{deployedPackageId}\" not found on \"{network}\" network",
 			"deployedPackageIdRequired": "deployedPackageId is required for network operations on \"{network}\".",
 			"packageIdNotFound": "Package ID not found for network \"{network}\"",
-			"invalidGasBudget": "Invalid gas budget: {gasBudget}",
-			"noWalletConfigured": "For write operations a wallet must be configured in the connector options"
+			"invalidGasBudget": "Invalid gas budget: {gasBudget}"
 		},
 		"iotaNftUtils": { "invalidNftIdFormat": "The NFT ID \"{id}\" has an invalid format" }
 	}

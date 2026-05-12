@@ -13,10 +13,10 @@ export interface IIotaNftConnectorConfig extends IIotaConfig {
 	contractName?: string;
 
 	/**
-	 * The package controller address index to use when creating package.
+	 * The account address index to use when creating NFT.
 	 * @default 0
 	 */
-	packageControllerAddressIndex?: number;
+	accountAddressIndex?: number;
 
 	/**
 	 * The wallet address index to use when creating NFT.
