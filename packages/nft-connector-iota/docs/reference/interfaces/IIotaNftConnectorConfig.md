@@ -22,11 +22,11 @@ The name of the contract to use.
 
 ***
 
-### packageControllerAddressIndex? {#packagecontrolleraddressindex}
+### accountAddressIndex? {#accountaddressindex}
 
-> `optional` **packageControllerAddressIndex?**: `number`
+> `optional` **accountAddressIndex?**: `number`
 
-The package controller address index to use when creating package.
+The account address index to use when creating NFT.
 
 #### Default
 

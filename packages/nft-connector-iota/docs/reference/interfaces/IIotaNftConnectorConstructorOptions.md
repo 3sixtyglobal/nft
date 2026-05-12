@@ -26,20 +26,6 @@ The vault connector type to use.
 
 ***
 
-### walletConnectorType? {#walletconnectortype}
-
-> `optional` **walletConnectorType?**: `string`
-
-The wallet connector type to use.
-
-#### Default
-
-```ts
-"wallet"
-```
-
-***
-
 ### loggingComponentType? {#loggingcomponenttype}
 
 > `optional` **loggingComponentType?**: `string`
