@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.0.3-next.5](https://github.com/iotaledger/twin-nft/compare/nft-connector-entity-storage-v0.0.3-next.4...nft-connector-entity-storage-v0.0.3-next.5) (2026-05-12)
+
+
+### Features
+
+* typescript 6 update ([91b94b8](https://github.com/iotaledger/twin-nft/commit/91b94b846ea081b09b2228681776ce30f104a36e))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-models bumped from 0.0.3-next.4 to 0.0.3-next.5
+
 ## [0.0.3-next.4](https://github.com/iotaledger/twin-nft/compare/nft-connector-entity-storage-v0.0.3-next.3...nft-connector-entity-storage-v0.0.3-next.4) (2026-04-20)
 
 
