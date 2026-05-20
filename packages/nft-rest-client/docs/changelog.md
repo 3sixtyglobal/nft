@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.0.3-next.6](https://github.com/iotaledger/twin-nft/compare/nft-rest-client-v0.0.3-next.5...nft-rest-client-v0.0.3-next.6) (2026-05-20)
+
+
+### Miscellaneous Chores
+
+* **nft-rest-client:** Synchronize repo versions
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-models bumped from 0.0.3-next.5 to 0.0.3-next.6
+
 ## [0.0.3-next.5](https://github.com/iotaledger/twin-nft/compare/nft-rest-client-v0.0.3-next.4...nft-rest-client-v0.0.3-next.5) (2026-05-12)
 
 
