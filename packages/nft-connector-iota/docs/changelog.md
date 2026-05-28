@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.0.3-next.7](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.3-next.6...nft-connector-iota-v0.0.3-next.7) (2026-05-28)
+
+
+### Features
+
+* expose deployment package id ([#67](https://github.com/iotaledger/twin-nft/issues/67)) ([c727514](https://github.com/iotaledger/twin-nft/commit/c72751421f0963d049c96347dfc9b96934282bfc))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-models bumped from 0.0.3-next.6 to 0.0.3-next.7
+
 ## [0.0.3-next.6](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.3-next.5...nft-connector-iota-v0.0.3-next.6) (2026-05-20)
 
 

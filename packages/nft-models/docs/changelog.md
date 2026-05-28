@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.3-next.7](https://github.com/iotaledger/twin-nft/compare/nft-models-v0.0.3-next.6...nft-models-v0.0.3-next.7) (2026-05-28)
+
+
+### Miscellaneous Chores
+
+* **nft-models:** Synchronize repo versions
+
 ## [0.0.3-next.6](https://github.com/iotaledger/twin-nft/compare/nft-models-v0.0.3-next.5...nft-models-v0.0.3-next.6) (2026-05-20)
 
 
