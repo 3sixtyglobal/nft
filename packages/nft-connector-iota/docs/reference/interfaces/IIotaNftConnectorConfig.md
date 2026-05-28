@@ -65,3 +65,26 @@ false
 #### Overrides
 
 `IIotaConfig.enableCostLogging`
+
+***
+
+### deploymentConfig? {#deploymentconfig}
+
+> `optional` **deploymentConfig?**: `ISmartContractDeployments`
+
+Optional deployment configuration to use instead of the default compiled configuration.
+This allows tests and other scenarios to use different contract deployments.
+
+#### Default
+
+```ts
+Uses compiled smart-contract-deployments.json
+```
+
+***
+
+### deploymentPkgId? {#deploymentpkgid}
+
+> `optional` **deploymentPkgId?**: `string`
+
+Optional deployment package ID to use instead of the one from the deployment configuration.
