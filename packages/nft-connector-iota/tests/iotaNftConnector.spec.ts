@@ -30,9 +30,9 @@ describe("IotaNftConnector", () => {
 				clientOptions: TEST_CLIENT_OPTIONS,
 				vaultMnemonicId: TEST_MNEMONIC_NAME,
 				network: TEST_NETWORK,
-				enableCostLogging: true
-			},
-			deploymentConfig
+				enableCostLogging: true,
+				deploymentConfig
+			}
 		});
 		// Start the connector with test-deployed packages
 		await nftConnector.start();
@@ -48,9 +48,9 @@ describe("IotaNftConnector", () => {
 			config: {
 				clientOptions: TEST_CLIENT_OPTIONS,
 				vaultMnemonicId: TEST_MNEMONIC_NAME,
-				network: TEST_NETWORK
-			},
-			deploymentConfig
+				network: TEST_NETWORK,
+				deploymentConfig
+			}
 		});
 		await expect(unstartedConnector.mint(TEST_USER_DID, "test_tag")).rejects.toThrow(
 			"iotaNftConnector.mintingFailed"

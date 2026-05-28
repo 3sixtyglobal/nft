@@ -1,6 +1,6 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import type { IIotaConfig } from "@twin.org/dlt-iota";
+import type { IIotaConfig, ISmartContractDeployments } from "@twin.org/dlt-iota";
 
 /**
  * Configuration for the IOTA NFT Connector.
@@ -29,4 +29,16 @@ export interface IIotaNftConnectorConfig extends IIotaConfig {
 	 * @default false
 	 */
 	enableCostLogging?: boolean;
+
+	/**
+	 * Optional deployment configuration to use instead of the default compiled configuration.
+	 * This allows tests and other scenarios to use different contract deployments.
+	 * @default Uses compiled smart-contract-deployments.json
+	 */
+	deploymentConfig?: ISmartContractDeployments;
+
+	/**
+	 * Optional deployment package ID to use instead of the one from the deployment configuration.
+	 */
+	deploymentPkgId?: string;
 }

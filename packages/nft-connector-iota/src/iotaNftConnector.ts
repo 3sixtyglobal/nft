@@ -147,22 +147,28 @@ export class IotaNftConnector implements INftConnector {
 		const nodeLogging = ComponentFactory.getIfExists<ILoggingComponent>(nodeLoggingComponentType);
 
 		try {
-			const contractData = this._deploymentConfig[this._config.network as NetworkTypes];
+			let deploymentPackageId: string | undefined = this._config.deploymentPkgId;
 
-			if (!Is.objectValue<IContractData>(contractData)) {
-				throw new GeneralError(IotaNftConnector.CLASS_NAME, "contractDataNotFound", {
-					network: this._config.network,
-					availableNetworks: Object.keys(this._deploymentConfig)
-				});
+			if (!Is.stringValue(deploymentPackageId)) {
+				const contractData = this._deploymentConfig[this._config.network as NetworkTypes];
+
+				if (!Is.objectValue<IContractData>(contractData)) {
+					throw new GeneralError(IotaNftConnector.CLASS_NAME, "contractDataNotFound", {
+						network: this._config.network,
+						availableNetworks: Object.keys(this._deploymentConfig)
+					});
+				}
+
+				deploymentPackageId = contractData.deployedPackageId;
 			}
 
-			if (!Is.stringValue(contractData.deployedPackageId)) {
+			if (!Is.stringValue(deploymentPackageId)) {
 				throw new GeneralError(IotaNftConnector.CLASS_NAME, "deployedPackageIdRequired", {
 					network: this._config.network
 				});
 			}
 
-			this._deployedPackageId = contractData.deployedPackageId;
+			this._deployedPackageId = deploymentPackageId;
 
 			if (!this._deployedPackageId) {
 				throw new GeneralError(IotaNftConnector.CLASS_NAME, "packageIdNotFound", {
@@ -189,10 +195,7 @@ export class IotaNftConnector implements INftConnector {
 				message: "contractReady",
 				data: {
 					network: this._config.network,
-					packageId: contractData.packageId,
-					deployedPackageId: this._deployedPackageId,
-					upgradeCapabilityId: contractData.upgradeCapabilityId,
-					migrationStateId: contractData.migrationStateId
+					deployedPackageId: this._deployedPackageId
 				}
 			});
 		} catch (error) {
