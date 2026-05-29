@@ -4,7 +4,7 @@
 	"description": "IOTA-backed NFT connector for network operations and on-ledger state.",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/iotaledger/nft.git",
+		"url": "git+https://github.com/iotaledger/twin-nft.git",
 		"directory": "packages/nft-connector-iota"
 	},
 	"author": "cornel.filip@iota.org",
@@ -95,7 +95,7 @@
 		"integration"
 	],
 	"bugs": {
-		"url": "git+https://github.com/iotaledger/nft/issues"
+		"url": "git+https://github.com/iotaledger/twin-nft/issues"
 	},
 	"homepage": "https://twindev.org"
 }

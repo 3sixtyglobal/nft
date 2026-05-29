@@ -4,7 +4,7 @@
 	"description": "HTTP client for calling NFT service endpoints from applications.",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/iotaledger/nft.git",
+		"url": "git+https://github.com/iotaledger/twin-nft.git",
 		"directory": "packages/nft-rest-client"
 	},
 	"author": "martyn.janes@iota.org",
@@ -78,7 +78,7 @@
 		"assets"
 	],
 	"bugs": {
-		"url": "git+https://github.com/iotaledger/nft/issues"
+		"url": "git+https://github.com/iotaledger/twin-nft/issues"
 	},
 	"homepage": "https://twindev.org"
 }

@@ -4,7 +4,7 @@
 	"description": "NFT service orchestration with REST route generation.",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/iotaledger/nft.git",
+		"url": "git+https://github.com/iotaledger/twin-nft.git",
 		"directory": "packages/nft-service"
 	},
 	"author": "martyn.janes@iota.org",
@@ -84,7 +84,7 @@
 		"business-logic"
 	],
 	"bugs": {
-		"url": "git+https://github.com/iotaledger/nft/issues"
+		"url": "git+https://github.com/iotaledger/twin-nft/issues"
 	},
 	"homepage": "https://twindev.org"
 }

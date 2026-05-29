@@ -4,7 +4,7 @@
 	"description": "Entity storage NFT connector for local persistence and test-oriented workflows.",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/iotaledger/nft.git",
+		"url": "git+https://github.com/iotaledger/twin-nft.git",
 		"directory": "packages/nft-connector-entity-storage"
 	},
 	"author": "martyn.janes@iota.org",
@@ -86,7 +86,7 @@
 		"integration"
 	],
 	"bugs": {
-		"url": "git+https://github.com/iotaledger/nft/issues"
+		"url": "git+https://github.com/iotaledger/twin-nft/issues"
 	},
 	"homepage": "https://twindev.org"
 }
