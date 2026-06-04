@@ -648,6 +648,7 @@ export class IotaNftConnector implements INftConnector {
 	 * @param nftId The id of the NFT.
 	 * @param object The object to get the owner from.
 	 * @returns The owner address.
+	 * @throws GeneralError If the owner address cannot be found.
 	 * @internal
 	 */
 	private getOwnerAddress(nftId: string, object?: IotaObjectResponse): string {

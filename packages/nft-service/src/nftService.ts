@@ -178,6 +178,7 @@ export class NftService implements INftComponent {
 	 * Get the connector from the uri.
 	 * @param id The id of the NFT in urn format.
 	 * @returns The connector.
+	 * @throws GeneralError If the namespace does not match.
 	 * @internal
 	 */
 	private getConnector(id: string): INftConnector {
