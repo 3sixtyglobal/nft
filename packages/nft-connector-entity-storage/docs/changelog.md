@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.0.3-next.8](https://github.com/iotaledger/twin-nft/compare/nft-connector-entity-storage-v0.0.3-next.7...nft-connector-entity-storage-v0.0.3-next.8) (2026-06-11)
+
+
+### Miscellaneous Chores
+
+* **nft-connector-entity-storage:** Synchronize repo versions
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-models bumped from 0.0.3-next.7 to 0.0.3-next.8
+
 ## [0.0.3-next.7](https://github.com/iotaledger/twin-nft/compare/nft-connector-entity-storage-v0.0.3-next.6...nft-connector-entity-storage-v0.0.3-next.7) (2026-05-28)
 
 
