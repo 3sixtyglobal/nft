@@ -19,7 +19,6 @@ export interface IIotaNftConnectorConstructorOptions {
 
 	/**
 	 * The logging component type.
-	 * @default logging
 	 */
 	loggingComponentType?: string;
 }

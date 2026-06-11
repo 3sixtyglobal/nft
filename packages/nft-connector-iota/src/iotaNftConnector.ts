@@ -109,7 +109,7 @@ export class IotaNftConnector implements INftConnector {
 		);
 		this._vaultConnector = VaultConnectorFactory.get(options.vaultConnectorType ?? "vault");
 
-		this._logging = ComponentFactory.getIfExists(options?.loggingComponentType ?? "logging");
+		this._logging = ComponentFactory.getIfExists(options?.loggingComponentType);
 
 		this._config = options.config;
 
