@@ -1,8 +1,6 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import { exec } from "node:child_process";
 import path from "node:path";
-import { promisify } from "node:util";
 import { Guards } from "@twin.org/core";
 import { Bip39 } from "@twin.org/crypto";
 import { Iota, type ISmartContractDeployments } from "@twin.org/dlt-iota";
@@ -18,13 +16,7 @@ import {
 } from "@twin.org/vault-connector-entity-storage";
 import { VaultConnectorFactory } from "@twin.org/vault-models";
 import dotenv from "dotenv";
-import {
-	cleanupTestDeployment,
-	deployTestContractsComplete,
-	type ITestDeploymentConfig
-} from "./helpers/testContractDeployment.js";
-
-const execAsync = promisify(exec);
+import compiledDeployments from "../src/contracts/smartContractDeployments/smart-contract-deployments.json" with { type: "json" };
 
 console.debug("Setting up test environment from .env and .env.dev files");
 
@@ -55,13 +47,11 @@ export const TEST_USER_IDENTITY_2 = "test-user-identity-2";
  */
 export let TEST_USER_DID: string;
 export let TEST_USER_DID_2: string;
-export const TEST_DEPLOYER_IDENTITY = "deployer-identity";
 export const TEST_MNEMONIC_NAME = "test-mnemonic";
 export const TEST_NETWORK = process.env.TEST_NETWORK ?? "testnet";
 export const TEST_NODE_MNEMONIC = process.env.TEST_NODE_MNEMONIC ?? Bip39.randomMnemonic();
 export const TEST_MNEMONIC = process.env.TEST_MNEMONIC ?? Bip39.randomMnemonic();
 export const TEST_2_MNEMONIC = process.env.TEST_2_MNEMONIC ?? Bip39.randomMnemonic();
-export const TEST_DEPLOYER_MNEMONIC = process.env.TEST_DEPLOYER_MNEMONIC ?? Bip39.randomMnemonic();
 export const TEST_NODE_ENDPOINT = process.env.TEST_NODE_ENDPOINT ?? "https://api.testnet.iota.cafe";
 export const TEST_FAUCET_ENDPOINT =
 	process.env.TEST_FAUCET_ENDPOINT ?? "https://faucet.testnet.iota.cafe/gas";
@@ -111,12 +101,6 @@ await TEST_VAULT_CONNECTOR.setSecret(
 	TEST_2_MNEMONIC
 );
 
-// Store deployer mnemonic (this is the actual AdminCap owner)
-await TEST_VAULT_CONNECTOR.setSecret(
-	`${TEST_DEPLOYER_IDENTITY}/${TEST_MNEMONIC_NAME}`,
-	TEST_DEPLOYER_MNEMONIC
-);
-
 // Setup client options
 export const TEST_CLIENT_OPTIONS = {
 	url: TEST_NODE_ENDPOINT
@@ -163,20 +147,9 @@ const nodeAddresses = await Iota.getAddresses(
 	1
 );
 
-// DEPLOYER_IDENTITY uses the deployer mnemonic (this is the actual AdminCap owner)
-const deployerAddresses = await Iota.getAddresses(
-	TEST_VAULT_CONNECTOR,
-	TEST_IOTA_CONFIG,
-	TEST_DEPLOYER_IDENTITY,
-	0,
-	0,
-	1
-);
-
 export const TEST_ADDRESS = testAddresses[0];
 export const TEST_ADDRESS_2 = testAddresses2[0];
 export const NODE_ADDRESS = nodeAddresses[0];
-export const DEPLOYER_ADDRESS = deployerAddresses[0];
 
 /**
  * Global variable to store test deployment configuration.
@@ -199,34 +172,9 @@ export function getTestDeploymentConfig(): ISmartContractDeployments {
 }
 
 /**
- * Verify that IOTA CLI is installed and available.
- * @throws GeneralError if IOTA CLI is not installed or version check fails.
- */
-async function verifyIotaCliInstalled(): Promise<void> {
-	try {
-		console.debug("[setupTestEnv] Verifying IOTA CLI installation");
-		await execAsync("iota --version");
-	} catch (error) {
-		if (
-			(error as { code?: number }).code === 127 ||
-			(error as Error).message.includes("not found")
-		) {
-			throw new Error(
-				"IOTA CLI is not installed. Please install it from: https://github.com/iotaledger/iota/releases/",
-				{ cause: error }
-			);
-		}
-		throw new Error("Failed to check IOTA CLI version", { cause: error });
-	}
-}
-
-/**
  * Setup the test environment.
  */
 export async function setupTestEnv(): Promise<void> {
-	// Verify IOTA CLI is available
-	await verifyIotaCliInstalled();
-
 	console.debug(
 		"Test Address",
 		`${TEST_EXPLORER_URL}address/${TEST_ADDRESS}?network=${TEST_NETWORK}`
@@ -244,7 +192,6 @@ export async function setupTestEnv(): Promise<void> {
 	await ensureFundsForAddress(TEST_NODE_IDENTITY, NODE_ADDRESS);
 	await ensureFundsForAddress(TEST_USER_IDENTITY, TEST_ADDRESS);
 	await ensureFundsForAddress(TEST_USER_IDENTITY_2, TEST_ADDRESS_2);
-	await ensureFundsForAddress(TEST_DEPLOYER_IDENTITY, DEPLOYER_ADDRESS);
 
 	// Create on-chain IOTA Identities for test users. The vault already has the
 	// mnemonic stored under TEST_USER_IDENTITY_ID, so createDocument() can derive
@@ -260,34 +207,14 @@ export async function setupTestEnv(): Promise<void> {
 	await TEST_VAULT_CONNECTOR.setSecret(`${TEST_USER_DID_2}/${TEST_MNEMONIC_NAME}`, TEST_2_MNEMONIC);
 	console.debug("[setupTestEnv] TEST_USER_DID_2:", TEST_USER_DID_2);
 
-	// Deploy test contracts using TEST_DEPLOYER_MNEMONIC
-	try {
-		const deploymentConfig: ITestDeploymentConfig = {
-			network: TEST_NETWORK,
-			nodeEndpoint: TEST_NODE_ENDPOINT,
-			faucetEndpoint: TEST_FAUCET_ENDPOINT,
-			deployerMnemonic: TEST_DEPLOYER_MNEMONIC ?? "",
-			gasBudget: TEST_GAS_BUDGET
-		};
-
-		TEST_DEPLOYMENT_CONFIG = await deployTestContractsComplete(deploymentConfig);
-	} catch (error) {
-		console.error("[setupTestEnv] Test contract deployment failed:", error);
-		throw error;
-	}
+	TEST_DEPLOYMENT_CONFIG = compiledDeployments as ISmartContractDeployments;
 }
 
 /**
  * Cleanup test environment and temporary files.
  */
 export async function cleanupTestEnv(): Promise<void> {
-	try {
-		await cleanupTestDeployment();
-		TEST_DEPLOYMENT_CONFIG = undefined;
-	} catch (error) {
-		console.warn("[cleanupTestEnv] Cleanup failed:", error);
-		// Don't throw - cleanup failures shouldn't break tests
-	}
+	TEST_DEPLOYMENT_CONFIG = undefined;
 }
 
 /**
