@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0.
 
 /**
- * Response to resolving the NFT.
+ * Response returned after resolving an NFT.
  */
 export interface INftResolveResponse {
 	/**
-	 * The data that was resolved.
+	 * The resolved NFT data.
 	 */
 	body: {
 		/**

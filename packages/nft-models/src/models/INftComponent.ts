@@ -44,7 +44,7 @@ export interface INftComponent extends IComponent {
 	 * Burn an NFT.
 	 * @param id The id of the NFT to burn in urn format.
 	 * @param controllerIdentity The identity to perform the nft operation with.
-	 * @returns Nothing.
+	 * @returns A promise that resolves when the NFT has been permanently destroyed.
 	 */
 	burn(id: string, controllerIdentity?: string): Promise<void>;
 
@@ -54,7 +54,7 @@ export interface INftComponent extends IComponent {
 	 * @param recipientAddress The recipient address for the NFT.
 	 * @param metadata Optional mutable data to include during the transfer.
 	 * @param controllerIdentity The identity to perform the nft operation with.
-	 * @returns Nothing.
+	 * @returns A promise that resolves when the NFT ownership has been transferred.
 	 */
 	transfer<U = unknown>(
 		id: string,
@@ -68,7 +68,7 @@ export interface INftComponent extends IComponent {
 	 * @param id The id of the NFT to update in urn format.
 	 * @param metadata The mutable data to update.
 	 * @param controllerIdentity The identity to perform the nft operation with.
-	 * @returns Nothing.
+	 * @returns A promise that resolves when the NFT metadata has been updated.
 	 */
 	update<U = unknown>(id: string, metadata: U, controllerIdentity?: string): Promise<void>;
 }

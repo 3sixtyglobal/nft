@@ -12,7 +12,7 @@ export interface INftFields {
 		/**
 		 * The ID of the NFT.
 		 */
-		id: string; // UID is an object with an 'id' field
+		id: string;
 	};
 	/**
 	 * The version of the NFT contract that created this NFT.

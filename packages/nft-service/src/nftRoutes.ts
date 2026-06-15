@@ -243,7 +243,7 @@ export function generateRestRoutesNft(baseRouteName: string, componentName: stri
  * @param httpRequestContext The request context for the API.
  * @param componentName The name of the component to use in the routes.
  * @param request The request.
- * @returns The response object with additional http response properties.
+ * @returns A created response containing the location header with the new NFT id.
  */
 export async function nftMint(
 	httpRequestContext: IHttpRequestContext,
@@ -278,7 +278,7 @@ export async function nftMint(
  * @param httpRequestContext The request context for the API.
  * @param componentName The name of the component to use in the routes.
  * @param request The request.
- * @returns The response object with additional http response properties.
+ * @returns A response containing the resolved NFT data.
  */
 export async function nftResolve(
 	httpRequestContext: IHttpRequestContext,
@@ -311,7 +311,7 @@ export async function nftResolve(
  * @param httpRequestContext The request context for the API.
  * @param componentName The name of the component to use in the routes.
  * @param request The request.
- * @returns The response object with additional http response properties.
+ * @returns A no-content response indicating the NFT was burned successfully.
  */
 export async function nftBurn(
 	httpRequestContext: IHttpRequestContext,
@@ -342,7 +342,7 @@ export async function nftBurn(
  * @param httpRequestContext The request context for the API.
  * @param componentName The name of the component to use in the routes.
  * @param request The request.
- * @returns The response object with additional http response properties.
+ * @returns A no-content response indicating the NFT was transferred successfully.
  */
 export async function nftTransfer(
 	httpRequestContext: IHttpRequestContext,
@@ -383,7 +383,7 @@ export async function nftTransfer(
  * @param httpRequestContext The request context for the API.
  * @param componentName The name of the component to use in the routes.
  * @param request The request.
- * @returns The response object with additional http response properties.
+ * @returns A no-content response indicating the NFT metadata was updated successfully.
  */
 export async function nftUpdate(
 	httpRequestContext: IHttpRequestContext,

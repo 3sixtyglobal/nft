@@ -3,6 +3,9 @@
 import type { IRestRouteEntryPoint } from "@twin.org/api-models";
 import { generateRestRoutesNft, tagsNft } from "./nftRoutes.js";
 
+/**
+ * REST entry point definitions for the NFT service.
+ */
 export const restEntryPoints: IRestRouteEntryPoint[] = [
 	{
 		name: "nft",

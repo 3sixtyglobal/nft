@@ -2,21 +2,21 @@
 // SPDX-License-Identifier: Apache-2.0.
 
 /**
- * Update the mutable data for the NFT.
+ * Request to update the mutable metadata of an NFT.
  */
 export interface INftUpdateRequest {
 	/**
-	 * The data to be used in the update.
+	 * The path parameters for the request.
 	 */
 	pathParams: {
 		/**
-		 * The id of the NFT to transfer in urn format.
+		 * The id of the NFT to update in urn format.
 		 */
 		id: string;
 	};
 
 	/**
-	 * The data to be used in the update.
+	 * The request body containing update parameters.
 	 */
 	body: {
 		/**

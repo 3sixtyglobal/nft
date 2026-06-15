@@ -16,7 +16,7 @@ import type {
 import { HeaderTypes } from "@twin.org/web";
 
 /**
- * Client for performing NFT through to REST endpoints.
+ * Client for performing NFT operations via REST endpoints.
  */
 export class NftRestClient extends BaseRestClient implements INftComponent {
 	/**
@@ -34,7 +34,7 @@ export class NftRestClient extends BaseRestClient implements INftComponent {
 
 	/**
 	 * Returns the class name of the component.
-	 * @returns The class name of the component.
+	 * @returns The class name.
 	 */
 	public className(): string {
 		return NftRestClient.CLASS_NAME;
@@ -102,7 +102,7 @@ export class NftRestClient extends BaseRestClient implements INftComponent {
 	/**
 	 * Burn an NFT.
 	 * @param id The id of the NFT to burn in urn format.
-	 * @returns Nothing.
+	 * @returns A promise that resolves when the NFT has been permanently destroyed.
 	 */
 	public async burn(id: string): Promise<void> {
 		Urn.guard(NftRestClient.CLASS_NAME, nameof(id), id);
@@ -119,7 +119,7 @@ export class NftRestClient extends BaseRestClient implements INftComponent {
 	 * @param id The id of the NFT to transfer in urn format.
 	 * @param recipientAddress The recipient address for the NFT.
 	 * @param metadata Optional mutable data to include during the transfer.
-	 * @returns Nothing.
+	 * @returns A promise that resolves when the NFT ownership has been transferred.
 	 */
 	public async transfer<T = unknown>(
 		id: string,
@@ -141,10 +141,10 @@ export class NftRestClient extends BaseRestClient implements INftComponent {
 	}
 
 	/**
-	 * Update the data of the NFT.
+	 * Update the mutable data of the NFT.
 	 * @param id The id of the NFT to update in urn format.
 	 * @param metadata The mutable data to update.
-	 * @returns Nothing.
+	 * @returns A promise that resolves when the NFT metadata has been updated.
 	 */
 	public async update<U = unknown>(id: string, metadata: U): Promise<void> {
 		Guards.stringValue(NftRestClient.CLASS_NAME, nameof(id), id);

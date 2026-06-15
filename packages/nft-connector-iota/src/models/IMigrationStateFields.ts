@@ -12,7 +12,7 @@ export interface IMigrationStateFields {
 		/**
 		 * The ID of the MigrationState object.
 		 */
-		id: string; // UID is an object with an 'id' field
+		id: string;
 	};
 	/**
 	 * Whether migration is currently enabled.

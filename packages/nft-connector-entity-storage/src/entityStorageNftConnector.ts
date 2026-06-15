@@ -50,7 +50,7 @@ export class EntityStorageNftConnector implements INftConnector {
 
 	/**
 	 * Returns the class name of the component.
-	 * @returns The class name of the component.
+	 * @returns The class name.
 	 */
 	public className(): string {
 		return EntityStorageNftConnector.CLASS_NAME;
@@ -155,7 +155,7 @@ export class EntityStorageNftConnector implements INftConnector {
 	 * Burn an NFT.
 	 * @param controllerIdentity The controller of the NFT who can make changes.
 	 * @param id The id of the NFT to burn in urn format.
-	 * @returns Nothing.
+	 * @returns A promise that resolves when the NFT has been permanently destroyed.
 	 */
 	public async burn(controllerIdentity: string, id: string): Promise<void> {
 		Guards.stringValue(
@@ -202,7 +202,7 @@ export class EntityStorageNftConnector implements INftConnector {
 	 * @param id The id of the NFT to transfer in urn format.
 	 * @param recipientAddress The recipient address for the NFT.
 	 * @param metadata Optional mutable data to include during the transfer.
-	 * @returns Nothing.
+	 * @returns A promise that resolves when the NFT ownership has been transferred.
 	 */
 	public async transfer<T = unknown>(
 		controllerIdentity: string,
@@ -260,11 +260,11 @@ export class EntityStorageNftConnector implements INftConnector {
 	}
 
 	/**
-	 * Update the data of the NFT.
-	 * @param controllerIdentity The owner of the NFT who can make changes.
+	 * Update the mutable data of the NFT.
+	 * @param controllerIdentity The controller of the NFT who can make changes.
 	 * @param id The id of the NFT to update in urn format.
 	 * @param metadata The mutable data to update.
-	 * @returns Nothing.
+	 * @returns A promise that resolves when the NFT metadata has been updated.
 	 */
 	public async update<T = unknown>(
 		controllerIdentity: string,

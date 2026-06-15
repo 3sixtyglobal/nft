@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0.
 
 /**
- * Transfer the NFT and update the metadata.
+ * Request to transfer an NFT to a new owner.
  */
 export interface INftTransferRequest {
 	/**
-	 * The data to be used in the transfer.
+	 * The path parameters for the request.
 	 */
 	pathParams: {
 		/**
@@ -16,7 +16,7 @@ export interface INftTransferRequest {
 	};
 
 	/**
-	 * The data to be used in the transfer.
+	 * The request body containing transfer parameters.
 	 */
 	body: {
 		/**

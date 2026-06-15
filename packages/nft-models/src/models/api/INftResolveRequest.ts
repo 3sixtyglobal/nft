@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0.
 
 /**
- * Resolve the NFT.
+ * Request to resolve an NFT by its id.
  */
 export interface INftResolveRequest {
 	/**
-	 * The data to be used for resolving.
+	 * The path parameters for the request.
 	 */
 	pathParams: {
 		/**

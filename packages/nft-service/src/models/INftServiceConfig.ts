@@ -6,7 +6,7 @@
  */
 export interface INftServiceConfig {
 	/**
-	 * What is the default connector to use for NFT. If not provided the first connector from the factory will be used.
+	 * The default connector namespace to use for NFT operations; defaults to the first registered connector.
 	 */
 	defaultNamespace?: string;
 }

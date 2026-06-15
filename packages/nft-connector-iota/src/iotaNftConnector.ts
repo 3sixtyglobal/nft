@@ -132,7 +132,7 @@ export class IotaNftConnector implements INftConnector {
 
 	/**
 	 * Returns the class name of the component.
-	 * @returns The class name of the component.
+	 * @returns The class name.
 	 */
 	public className(): string {
 		return IotaNftConnector.CLASS_NAME;
@@ -141,7 +141,7 @@ export class IotaNftConnector implements INftConnector {
 	/**
 	 * Bootstrap the NFT contract.
 	 * @param nodeLoggingComponentType The node logging component type.
-	 * @returns void.
+	 * @returns A promise that resolves when the contract package is verified and ready.
 	 */
 	public async start(nodeLoggingComponentType?: string): Promise<void> {
 		const nodeLogging = ComponentFactory.getIfExists<ILoggingComponent>(nodeLoggingComponentType);
@@ -377,7 +377,7 @@ export class IotaNftConnector implements INftConnector {
 	 * Burn an NFT.
 	 * @param controllerIdentity The controller of the NFT who can make changes.
 	 * @param id The id of the NFT to burn in urn format.
-	 * @returns void.
+	 * @returns A promise that resolves when the NFT has been permanently destroyed.
 	 */
 	public async burn(controllerIdentity: string, id: string): Promise<void> {
 		Guards.stringValue(IotaNftConnector.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
@@ -445,7 +445,7 @@ export class IotaNftConnector implements INftConnector {
 	 * @param nftId The id of the NFT to transfer.
 	 * @param recipientAddress The recipient address for the NFT.
 	 * @param metadata Optional metadata to update during transfer.
-	 * @returns void.
+	 * @returns A promise that resolves when the NFT ownership has been transferred.
 	 */
 	public async transfer<U = unknown>(
 		controller: string,
@@ -549,7 +549,7 @@ export class IotaNftConnector implements INftConnector {
 	 * @param controllerIdentity The controller of the NFT who can make changes.
 	 * @param id The id of the NFT to update in urn format.
 	 * @param metadata The new metadata for the NFT.
-	 * @returns void.
+	 * @returns A promise that resolves when the NFT metadata has been updated.
 	 */
 	public async update<U = unknown>(
 		controllerIdentity: string,

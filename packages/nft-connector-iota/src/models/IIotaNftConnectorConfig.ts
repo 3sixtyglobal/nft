@@ -32,7 +32,6 @@ export interface IIotaNftConnectorConfig extends IIotaConfig {
 
 	/**
 	 * Optional deployment configuration to use instead of the default compiled configuration.
-	 * This allows tests and other scenarios to use different contract deployments.
 	 * @default Uses compiled smart-contract-deployments.json
 	 */
 	deploymentConfig?: ISmartContractDeployments;

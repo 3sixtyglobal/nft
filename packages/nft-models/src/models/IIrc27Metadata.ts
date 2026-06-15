@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0.
 
 /**
- * Model defining the IRC27 NFT Standards.
- * https://docs.iota.org/developer/references/framework/stardust/irc27
+ * Model defining the IRC27 NFT metadata standard.
+ * @see https://docs.iota.org/developer/references/framework/stardust/irc27
  */
 export interface IIrc27Metadata {
 	/**

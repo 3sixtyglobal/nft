@@ -41,7 +41,7 @@ export class NftService implements INftComponent {
 
 	/**
 	 * Returns the class name of the component.
-	 * @returns The class name of the component.
+	 * @returns The class name.
 	 */
 	public className(): string {
 		return NftService.CLASS_NAME;
@@ -110,7 +110,7 @@ export class NftService implements INftComponent {
 	 * Burn an NFT.
 	 * @param id The id of the NFT to burn in urn format.
 	 * @param controllerIdentity The identity to perform the nft operation with.
-	 * @returns Nothing.
+	 * @returns A promise that resolves when the NFT has been permanently destroyed.
 	 */
 	public async burn(id: string, controllerIdentity?: string): Promise<void> {
 		Urn.guard(NftService.CLASS_NAME, nameof(id), id);
@@ -130,7 +130,7 @@ export class NftService implements INftComponent {
 	 * @param recipientAddress The recipient address for the NFT.
 	 * @param metadata Optional mutable data to include during the transfer.
 	 * @param controllerIdentity The identity to perform the nft operation with.
-	 * @returns Nothing.
+	 * @returns A promise that resolves when the NFT ownership has been transferred.
 	 */
 	public async transfer<U = unknown>(
 		id: string,
@@ -151,11 +151,11 @@ export class NftService implements INftComponent {
 	}
 
 	/**
-	 * Update the data of the NFT.
+	 * Update the mutable data of the NFT.
 	 * @param id The id of the NFT to update in urn format.
 	 * @param metadata The mutable data to update.
 	 * @param controllerIdentity The identity to perform the nft operation with.
-	 * @returns Nothing.
+	 * @returns A promise that resolves when the NFT metadata has been updated.
 	 */
 	public async update<U = unknown>(
 		id: string,
