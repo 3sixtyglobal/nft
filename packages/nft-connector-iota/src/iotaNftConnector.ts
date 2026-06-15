@@ -113,7 +113,7 @@ export class IotaNftConnector implements INftConnector {
 
 		this._config = options.config;
 
-		this._deploymentConfig = options.deploymentConfig ?? compiledModulesJson;
+		this._deploymentConfig = options.config.deploymentConfig ?? compiledModulesJson;
 
 		this._contractName = this._config.contractName ?? "nft";
 		Guards.stringValue(IotaNftConnector.CLASS_NAME, nameof(this._contractName), this._contractName);

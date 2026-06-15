@@ -33,6 +33,7 @@ EntityStorageConnectorFactory.register(
 	"nft",
 	() =>
 		new MemoryEntityStorageConnector<Nft>({
-			entitySchema: nameof<Nft>()
+			entitySchema: nameof<Nft>(),
+			config: { storageKey: "nft" }
 		})
 );
