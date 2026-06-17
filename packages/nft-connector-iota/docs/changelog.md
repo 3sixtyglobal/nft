@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.0.3-next.9](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.3-next.8...nft-connector-iota-v0.0.3-next.9) (2026-06-17)
+
+
+### Features
+
+* vault signers ([#72](https://github.com/iotaledger/twin-nft/issues/72)) ([2736701](https://github.com/iotaledger/twin-nft/commit/273670199ea8416a00c7931e9c885d66c485f9b3))
+
+
+### Bug Fixes
+
+* use async getStore in tests ([78946ce](https://github.com/iotaledger/twin-nft/commit/78946cec177c71f7dc0c5d701c85421956542640))
+* use async getStore in tests ([ecbd33f](https://github.com/iotaledger/twin-nft/commit/ecbd33f3fdb47d7fa0aceb448adb63e2f662e2cd))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-models bumped from 0.0.3-next.8 to 0.0.3-next.9
+
 ## [0.0.3-next.8](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.0.3-next.7...nft-connector-iota-v0.0.3-next.8) (2026-06-11)
 
 

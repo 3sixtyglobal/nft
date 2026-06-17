@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.0.3-next.9](https://github.com/iotaledger/twin-nft/compare/nft-cli-v0.0.3-next.8...nft-cli-v0.0.3-next.9) (2026-06-17)
+
+
+### Bug Fixes
+
+* use async getStore in tests ([ecbd33f](https://github.com/iotaledger/twin-nft/commit/ecbd33f3fdb47d7fa0aceb448adb63e2f662e2cd))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-connector-iota bumped from 0.0.3-next.8 to 0.0.3-next.9
+
 ## [0.0.3-next.8](https://github.com/iotaledger/twin-nft/compare/nft-cli-v0.0.3-next.7...nft-cli-v0.0.3-next.8) (2026-06-11)
 
 
