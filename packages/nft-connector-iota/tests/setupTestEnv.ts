@@ -207,7 +207,7 @@ export async function setupTestEnv(): Promise<void> {
 	await TEST_VAULT_CONNECTOR.setSecret(`${TEST_USER_DID_2}/${TEST_MNEMONIC_NAME}`, TEST_2_MNEMONIC);
 	console.debug("[setupTestEnv] TEST_USER_DID_2:", TEST_USER_DID_2);
 
-	TEST_DEPLOYMENT_CONFIG = compiledDeployments as ISmartContractDeployments;
+	TEST_DEPLOYMENT_CONFIG = compiledDeployments;
 }
 
 /**

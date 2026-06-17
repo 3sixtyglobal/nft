@@ -1,6 +1,5 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import type { IotaObjectResponse } from "@iota/iota-sdk/client";
 import {
 	BaseError,
 	ComponentFactory,
@@ -651,18 +650,22 @@ export class IotaNftConnector implements INftConnector {
 	 * @throws GeneralError If the owner address cannot be found.
 	 * @internal
 	 */
-	private getOwnerAddress(nftId: string, object?: IotaObjectResponse): string {
-		const owner = object?.data?.owner;
+	private getOwnerAddress(nftId: string, object?: unknown): string {
+		if (
+			Is.object<{ data?: { owner?: { AddressOwner: string } | { ObjectOwner: string } } }>(object)
+		) {
+			const owner = object?.data?.owner;
 
-		if (Is.object(owner)) {
-			if ("AddressOwner" in owner) {
-				return owner.AddressOwner;
-			} else if ("ObjectOwner" in owner) {
-				return owner.ObjectOwner;
+			if (Is.object(owner)) {
+				if ("AddressOwner" in owner) {
+					return owner.AddressOwner;
+				} else if ("ObjectOwner" in owner) {
+					return owner.ObjectOwner;
+				}
+				// Shared ownership is handled as null
 			}
-			// Shared ownership is handled as null
 		}
 
-		throw new GeneralError(IotaNftConnector.CLASS_NAME, "nftOwnerNftFound", { nftId });
+		throw new GeneralError(IotaNftConnector.CLASS_NAME, "nftOwnerNotFound", { nftId });
 	}
 }

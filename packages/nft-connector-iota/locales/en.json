@@ -14,7 +14,7 @@
 			"namespaceMismatch": "The namespace in the urn \"{id}\" does not match the namespace of the IOTA NFT connector \"{namespace}\"",
 			"failedToGetNftId": "Failed to get NFT ID from mint response",
 			"nftNotFound": "The NFT \"{notFoundId}\" was not found",
-			"nftOwnerNftFound": "The owner for NFT \"{nftId}\" was not found",
+			"nftOwnerNotFound": "The owner for NFT \"{nftId}\" was not found",
 			"startFailed": "Failed to start the IOTA NFT connector",
 			"packageIdNotInitialised": "The package id has not been initialised.",
 			"invalidImmutableMetadata": "The immutable metadata for NFT \"{nftId}\" is invalid",

@@ -34,8 +34,6 @@
 		"dist:no-test": "npm run clean && npm run build && npm run test:build"
 	},
 	"dependencies": {
-		"@iota/bcs": "1.6.0",
-		"@iota/iota-sdk": "1.13.0",
 		"@twin.org/core": "next",
 		"@twin.org/crypto": "next",
 		"@twin.org/dlt-iota": "next",
@@ -47,7 +45,7 @@
 	"devDependencies": {
 		"@twin.org/entity": "next",
 		"@twin.org/entity-storage-connector-memory": "next",
-		"@twin.org/identity-connector-iota": "^0.0.3-next.18",
+		"@twin.org/identity-connector-iota": "next",
 		"@twin.org/move-to-json": "next",
 		"@twin.org/nameof-transformer": "next",
 		"@twin.org/nameof-vitest-plugin": "next",
