@@ -28,4 +28,4 @@ The request.
 
 `Promise`\<`INftResolveResponse`\>
 
-The response object with additional http response properties.
+A response containing the resolved NFT data.

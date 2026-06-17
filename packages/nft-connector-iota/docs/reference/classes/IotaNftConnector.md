@@ -54,7 +54,7 @@ Returns the class name of the component.
 
 `string`
 
-The class name of the component.
+The class name.
 
 #### Implementation of
 
@@ -80,7 +80,7 @@ The node logging component type.
 
 `Promise`\<`void`\>
 
-void.
+A promise that resolves when the contract package is verified and ready.
 
 #### Implementation of
 
@@ -202,7 +202,7 @@ The id of the NFT to burn in urn format.
 
 `Promise`\<`void`\>
 
-void.
+A promise that resolves when the NFT has been permanently destroyed.
 
 #### Implementation of
 
@@ -252,7 +252,7 @@ Optional metadata to update during transfer.
 
 `Promise`\<`void`\>
 
-void.
+A promise that resolves when the NFT ownership has been transferred.
 
 #### Implementation of
 
@@ -296,7 +296,7 @@ The new metadata for the NFT.
 
 `Promise`\<`void`\>
 
-void.
+A promise that resolves when the NFT metadata has been updated.
 
 #### Implementation of
 

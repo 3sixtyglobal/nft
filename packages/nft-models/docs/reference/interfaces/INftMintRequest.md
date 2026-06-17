@@ -1,6 +1,6 @@
 # Interface: INftMintRequest
 
-Mint the data and return the NFT id.
+Request to mint a new NFT.
 
 ## Properties
 
@@ -8,7 +8,7 @@ Mint the data and return the NFT id.
 
 > **body**: `object`
 
-The data to be used in the minting.
+The request body containing minting parameters.
 
 #### tag
 

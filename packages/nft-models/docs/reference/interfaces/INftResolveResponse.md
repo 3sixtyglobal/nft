@@ -1,6 +1,6 @@
 # Interface: INftResolveResponse
 
-Response to resolving the NFT.
+Response returned after resolving an NFT.
 
 ## Properties
 
@@ -8,7 +8,7 @@ Response to resolving the NFT.
 
 > **body**: `object`
 
-The data that was resolved.
+The resolved NFT data.
 
 #### issuer
 

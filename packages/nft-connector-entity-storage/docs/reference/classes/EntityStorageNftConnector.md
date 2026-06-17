@@ -54,7 +54,7 @@ Returns the class name of the component.
 
 `string`
 
-The class name of the component.
+The class name.
 
 #### Implementation of
 
@@ -176,7 +176,7 @@ The id of the NFT to burn in urn format.
 
 `Promise`\<`void`\>
 
-Nothing.
+A promise that resolves when the NFT has been permanently destroyed.
 
 #### Implementation of
 
@@ -226,7 +226,7 @@ Optional mutable data to include during the transfer.
 
 `Promise`\<`void`\>
 
-Nothing.
+A promise that resolves when the NFT ownership has been transferred.
 
 #### Implementation of
 
@@ -238,7 +238,7 @@ Nothing.
 
 > **update**\<`T`\>(`controllerIdentity`, `id`, `metadata`): `Promise`\<`void`\>
 
-Update the data of the NFT.
+Update the mutable data of the NFT.
 
 #### Type Parameters
 
@@ -252,7 +252,7 @@ Update the data of the NFT.
 
 `string`
 
-The owner of the NFT who can make changes.
+The controller of the NFT who can make changes.
 
 ##### id
 
@@ -270,7 +270,7 @@ The mutable data to update.
 
 `Promise`\<`void`\>
 
-Nothing.
+A promise that resolves when the NFT metadata has been updated.
 
 #### Implementation of
 

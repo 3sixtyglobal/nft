@@ -1,6 +1,6 @@
 # Class: Nft
 
-Class describing the nft.
+Class describing an NFT entity stored in entity storage.
 
 ## Constructors
 
@@ -42,7 +42,7 @@ The owner of the NFT.
 
 > **tag**: `string`
 
-The tag for the nft.
+The tag for the NFT.
 
 ***
 

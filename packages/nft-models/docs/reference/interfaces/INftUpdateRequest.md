@@ -1,6 +1,6 @@
 # Interface: INftUpdateRequest
 
-Update the mutable data for the NFT.
+Request to update the mutable metadata of an NFT.
 
 ## Properties
 
@@ -8,13 +8,13 @@ Update the mutable data for the NFT.
 
 > **pathParams**: `object`
 
-The data to be used in the update.
+The path parameters for the request.
 
 #### id
 
 > **id**: `string`
 
-The id of the NFT to transfer in urn format.
+The id of the NFT to update in urn format.
 
 ***
 
@@ -22,7 +22,7 @@ The id of the NFT to transfer in urn format.
 
 > **body**: `object`
 
-The data to be used in the update.
+The request body containing update parameters.
 
 #### metadata?
 

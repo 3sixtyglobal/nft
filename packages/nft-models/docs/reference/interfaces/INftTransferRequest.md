@@ -1,6 +1,6 @@
 # Interface: INftTransferRequest
 
-Transfer the NFT and update the metadata.
+Request to transfer an NFT to a new owner.
 
 ## Properties
 
@@ -8,7 +8,7 @@ Transfer the NFT and update the metadata.
 
 > **pathParams**: `object`
 
-The data to be used in the transfer.
+The path parameters for the request.
 
 #### id
 
@@ -22,7 +22,7 @@ The id of the NFT to transfer in urn format.
 
 > **body**: `object`
 
-The data to be used in the transfer.
+The request body containing transfer parameters.
 
 #### recipientAddress
 

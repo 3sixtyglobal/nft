@@ -126,7 +126,7 @@ The identity to perform the nft operation with.
 
 `Promise`\<`void`\>
 
-Nothing.
+A promise that resolves when the NFT has been permanently destroyed.
 
 ***
 
@@ -172,7 +172,7 @@ The identity to perform the nft operation with.
 
 `Promise`\<`void`\>
 
-Nothing.
+A promise that resolves when the NFT ownership has been transferred.
 
 ***
 
@@ -212,4 +212,4 @@ The identity to perform the nft operation with.
 
 `Promise`\<`void`\>
 
-Nothing.
+A promise that resolves when the NFT metadata has been updated.

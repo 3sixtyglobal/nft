@@ -114,7 +114,7 @@ The id of the NFT to burn in urn format.
 
 `Promise`\<`void`\>
 
-Nothing.
+A promise that resolves when the NFT has been permanently destroyed.
 
 ***
 
@@ -160,7 +160,7 @@ Optional mutable data to include during the transfer.
 
 `Promise`\<`void`\>
 
-Nothing.
+A promise that resolves when the NFT ownership has been transferred.
 
 ***
 
@@ -200,4 +200,4 @@ The mutable data to update.
 
 `Promise`\<`void`\>
 
-Nothing.
+A promise that resolves when the NFT metadata has been updated.

@@ -28,4 +28,4 @@ The request.
 
 `Promise`\<`INoContentResponse`\>
 
-The response object with additional http response properties.
+A no-content response indicating the NFT was burned successfully.

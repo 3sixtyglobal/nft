@@ -46,7 +46,7 @@ Returns the class name of the component.
 
 `string`
 
-The class name of the component.
+The class name.
 
 #### Implementation of
 
@@ -180,7 +180,7 @@ The identity to perform the nft operation with.
 
 `Promise`\<`void`\>
 
-Nothing.
+A promise that resolves when the NFT has been permanently destroyed.
 
 #### Implementation of
 
@@ -230,7 +230,7 @@ The identity to perform the nft operation with.
 
 `Promise`\<`void`\>
 
-Nothing.
+A promise that resolves when the NFT ownership has been transferred.
 
 #### Implementation of
 
@@ -242,7 +242,7 @@ Nothing.
 
 > **update**\<`U`\>(`id`, `metadata`, `controllerIdentity?`): `Promise`\<`void`\>
 
-Update the data of the NFT.
+Update the mutable data of the NFT.
 
 #### Type Parameters
 
@@ -274,7 +274,7 @@ The identity to perform the nft operation with.
 
 `Promise`\<`void`\>
 
-Nothing.
+A promise that resolves when the NFT metadata has been updated.
 
 #### Implementation of
 

@@ -1,6 +1,9 @@
 # Interface: IIrc27Metadata
 
-Model defining the IRC27 NFT Standards.
+Model defining the IRC27 NFT metadata standard.
+
+## See
+
 https://docs.iota.org/developer/references/framework/stardust/irc27
 
 ## Properties
