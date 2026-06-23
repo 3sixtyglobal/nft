@@ -29,6 +29,7 @@ export class NftService implements INftComponent {
 	/**
 	 * Create a new instance of NftService.
 	 * @param options The options for the service.
+	 * @throws GeneralError If no NFT connectors are registered.
 	 */
 	constructor(options?: INftServiceConstructorOptions) {
 		const names = NftConnectorFactory.names();

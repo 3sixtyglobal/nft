@@ -93,6 +93,8 @@ export class IotaNftConnector implements INftConnector {
 	/**
 	 * Create a new instance of IotaNftConnector.
 	 * @param options The options for the connector.
+	 * @throws GuardError If any required options are missing or invalid.
+	 * @throws GeneralError If the gas budget is invalid.
 	 */
 	constructor(options: IIotaNftConnectorConstructorOptions) {
 		Guards.object(IotaNftConnector.CLASS_NAME, nameof(options), options);
