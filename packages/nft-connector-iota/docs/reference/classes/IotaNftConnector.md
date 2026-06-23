@@ -26,6 +26,14 @@ The options for the connector.
 
 `IotaNftConnector`
 
+#### Throws
+
+GuardError If any required options are missing or invalid.
+
+#### Throws
+
+GeneralError If the gas budget is invalid.
+
 ## Properties
 
 ### NAMESPACE {#namespace}

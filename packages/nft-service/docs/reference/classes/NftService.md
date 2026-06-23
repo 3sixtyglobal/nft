@@ -26,6 +26,10 @@ The options for the service.
 
 `NftService`
 
+#### Throws
+
+GeneralError If no NFT connectors are registered.
+
 ## Properties
 
 ### CLASS\_NAME {#class_name}
