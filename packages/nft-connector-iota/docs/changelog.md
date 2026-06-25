@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.9.0](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.9.0...nft-connector-iota-v0.9.0) (2026-06-25)
+
+
+### Features
+
+* release to production ([4d338b3](https://github.com/iotaledger/twin-nft/commit/4d338b3e8a4dbccc61a1d1da3c470ba86cefe535))
+* release to production ([#80](https://github.com/iotaledger/twin-nft/issues/80)) ([b4d903e](https://github.com/iotaledger/twin-nft/commit/b4d903e1459782b30240317a964e787f3b9f957f))
+
 ## [0.9.0-next.1](https://github.com/iotaledger/twin-nft/compare/nft-connector-iota-v0.9.0-next.0...nft-connector-iota-v0.9.0-next.1) (2026-06-23)
 
 
