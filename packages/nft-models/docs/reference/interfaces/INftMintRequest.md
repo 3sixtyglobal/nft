@@ -1,14 +1,14 @@
 # Interface: INftMintRequest
 
-Mint the data and return the NFT id.
+Request to mint a new NFT.
 
 ## Properties
 
-### body
+### body {#body}
 
 > **body**: `object`
 
-The data to be used in the minting.
+The request body containing minting parameters.
 
 #### tag
 
@@ -18,18 +18,18 @@ The tag for the NFT.
 
 #### immutableMetadata?
 
-> `optional` **immutableMetadata**: `unknown`
+> `optional` **immutableMetadata?**: `unknown`
 
 The immutable metadata for the NFT.
 
 #### metadata?
 
-> `optional` **metadata**: `unknown`
+> `optional` **metadata?**: `unknown`
 
 The metadata for the NFT.
 
 #### namespace?
 
-> `optional` **namespace**: `string`
+> `optional` **namespace?**: `string`
 
 The namespace of the connector to use for the NFT, defaults to component configured namespace.

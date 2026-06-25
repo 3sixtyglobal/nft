@@ -7,6 +7,7 @@ import type {
 	IRestRoute,
 	ITag
 } from "@twin.org/api-models";
+import { ContextIdHelper, ContextIdKeys, ContextIdStore } from "@twin.org/context";
 import { ComponentFactory, Guards } from "@twin.org/core";
 import { nameof } from "@twin.org/nameof";
 import type {
@@ -119,10 +120,9 @@ export function generateRestRoutesNft(baseRouteName: string, componentName: stri
 						id: "nftResolveResponseExample",
 						response: {
 							body: {
-								issuer:
-									"did:iota:tst:0x85ef62ea94fc4eeeeeddf6acc3b566e988e613081d0b93cc54ed831ed4c18d44",
-								owner:
-									"did:iota:tst:0x85ef62ea94fc4eeeeeddf6acc3b566e988e613081d0b93cc54ed831ed4c18d44",
+								issuer: "0x85ef62ea94fc4eeeeeddf6acc3b566e988e613081d0b93cc54ed831ed4c18d44",
+								issuerIdentityId:
+									"0xa1d80bee7fdb4fd91ae45c6e539209f73cb743b7da9db3e21322ea75af1878c0",
 								tag: "MY-NFT",
 								immutableMetadata: {
 									docName: "bill-of-lading",
@@ -186,8 +186,6 @@ export function generateRestRoutesNft(baseRouteName: string, componentName: stri
 							id: "nft:iota:aW90YS1uZnQ6dHN0OjB4NzYyYjljNDllYTg2OWUwZWJkYTliYmZhNzY5Mzk0NDdhNDI4ZGNmMTc4YzVkMTVhYjQ0N2UyZDRmYmJiNGViMg=="
 						},
 						body: {
-							recipientIdentity:
-								"did:iota:tst:0x85ef62ea94fc4eeeeeddf6acc3b566e988e613081d0b93cc54ed831ed4c18d44",
 							recipientAddress: "tst1prctjk5ck0dutnsunnje6u90jk5htx03qznjjmkd6843pzltlgz87srjzzv",
 							metadata: {
 								data: "AAAAA"
@@ -245,7 +243,7 @@ export function generateRestRoutesNft(baseRouteName: string, componentName: stri
  * @param httpRequestContext The request context for the API.
  * @param componentName The name of the component to use in the routes.
  * @param request The request.
- * @returns The response object with additional http response properties.
+ * @returns A created response containing the location header with the new NFT id.
  */
 export async function nftMint(
 	httpRequestContext: IHttpRequestContext,
@@ -255,13 +253,17 @@ export async function nftMint(
 	Guards.object<INftMintRequest>(ROUTES_SOURCE, nameof(request), request);
 	Guards.object<INftMintRequest["body"]>(ROUTES_SOURCE, nameof(request.body), request.body);
 	Guards.stringValue(ROUTES_SOURCE, nameof(request.body.tag), request.body.tag);
+
+	const contextIds = await ContextIdStore.getContextIds();
+	ContextIdHelper.guard(contextIds, ContextIdKeys.Organization);
+
 	const component = ComponentFactory.get<INftComponent>(componentName);
 	const id = await component.mint(
 		request.body.tag,
 		request.body.immutableMetadata,
 		request.body.metadata,
 		request.body.namespace,
-		httpRequestContext.userIdentity
+		contextIds[ContextIdKeys.Organization]
 	);
 	return {
 		statusCode: HttpStatusCode.created,
@@ -276,7 +278,7 @@ export async function nftMint(
  * @param httpRequestContext The request context for the API.
  * @param componentName The name of the component to use in the routes.
  * @param request The request.
- * @returns The response object with additional http response properties.
+ * @returns A response containing the resolved NFT data.
  */
 export async function nftResolve(
 	httpRequestContext: IHttpRequestContext,
@@ -291,8 +293,14 @@ export async function nftResolve(
 	);
 	Guards.stringValue(ROUTES_SOURCE, nameof(request.pathParams.id), request.pathParams.id);
 
+	const contextIds = await ContextIdStore.getContextIds();
+	ContextIdHelper.guard(contextIds, ContextIdKeys.Organization);
+
 	const component = ComponentFactory.get<INftComponent>(componentName);
-	const result = await component.resolve(request.pathParams.id, httpRequestContext.userIdentity);
+	const result = await component.resolve(
+		request.pathParams.id,
+		contextIds[ContextIdKeys.Organization]
+	);
 	return {
 		body: result
 	};
@@ -303,7 +311,7 @@ export async function nftResolve(
  * @param httpRequestContext The request context for the API.
  * @param componentName The name of the component to use in the routes.
  * @param request The request.
- * @returns The response object with additional http response properties.
+ * @returns A no-content response indicating the NFT was burned successfully.
  */
 export async function nftBurn(
 	httpRequestContext: IHttpRequestContext,
@@ -318,8 +326,11 @@ export async function nftBurn(
 	);
 	Guards.stringValue(ROUTES_SOURCE, nameof(request.pathParams.id), request.pathParams.id);
 
+	const contextIds = await ContextIdStore.getContextIds();
+	ContextIdHelper.guard(contextIds, ContextIdKeys.Organization);
+
 	const component = ComponentFactory.get<INftComponent>(componentName);
-	await component.burn(request.pathParams.id, httpRequestContext.userIdentity);
+	await component.burn(request.pathParams.id, contextIds[ContextIdKeys.Organization]);
 
 	return {
 		statusCode: HttpStatusCode.noContent
@@ -331,7 +342,7 @@ export async function nftBurn(
  * @param httpRequestContext The request context for the API.
  * @param componentName The name of the component to use in the routes.
  * @param request The request.
- * @returns The response object with additional http response properties.
+ * @returns A no-content response indicating the NFT was transferred successfully.
  */
 export async function nftTransfer(
 	httpRequestContext: IHttpRequestContext,
@@ -351,19 +362,15 @@ export async function nftTransfer(
 		nameof(request.body.recipientAddress),
 		request.body.recipientAddress
 	);
-	Guards.stringValue(
-		ROUTES_SOURCE,
-		nameof(request.body.recipientIdentity),
-		request.body.recipientIdentity
-	);
+	const contextIds = await ContextIdStore.getContextIds();
+	ContextIdHelper.guard(contextIds, ContextIdKeys.Organization);
 
 	const component = ComponentFactory.get<INftComponent>(componentName);
 	await component.transfer(
 		request.pathParams.id,
-		request.body.recipientIdentity,
 		request.body.recipientAddress,
 		request.body.metadata,
-		httpRequestContext.userIdentity
+		contextIds[ContextIdKeys.Organization]
 	);
 
 	return {
@@ -376,7 +383,7 @@ export async function nftTransfer(
  * @param httpRequestContext The request context for the API.
  * @param componentName The name of the component to use in the routes.
  * @param request The request.
- * @returns The response object with additional http response properties.
+ * @returns A no-content response indicating the NFT metadata was updated successfully.
  */
 export async function nftUpdate(
 	httpRequestContext: IHttpRequestContext,
@@ -393,11 +400,14 @@ export async function nftUpdate(
 	Guards.object<INftUpdateRequest["body"]>(ROUTES_SOURCE, nameof(request.body), request.body);
 	Guards.object(ROUTES_SOURCE, nameof(request.body.metadata), request.body.metadata);
 
+	const contextIds = await ContextIdStore.getContextIds();
+	ContextIdHelper.guard(contextIds, ContextIdKeys.Organization);
+
 	const component = ComponentFactory.get<INftComponent>(componentName);
 	await component.update(
 		request.pathParams.id,
 		request.body.metadata,
-		httpRequestContext.userIdentity
+		contextIds[ContextIdKeys.Organization]
 	);
 
 	return {

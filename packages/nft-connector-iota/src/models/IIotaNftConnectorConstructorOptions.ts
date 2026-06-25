@@ -1,6 +1,6 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import type { IIotaNftConnectorConfig } from "./IIotaNftConnectorConfig";
+import type { IIotaNftConnectorConfig } from "./IIotaNftConnectorConfig.js";
 
 /**
  * Options for the IotaNftConnector.
@@ -18,14 +18,7 @@ export interface IIotaNftConnectorConstructorOptions {
 	vaultConnectorType?: string;
 
 	/**
-	 * The wallet connector type to use.
-	 * @default "wallet"
+	 * The logging component type.
 	 */
-	walletConnectorType?: string;
-
-	/**
-	 * The logging connector type.
-	 * @default logging
-	 */
-	loggingConnectorType?: string;
+	loggingComponentType?: string;
 }

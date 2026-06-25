@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0.
 import { EntityStorageNftConnector } from "@twin.org/nft-connector-entity-storage";
 import { NftConnectorFactory } from "@twin.org/nft-models";
-import { NftService } from "../src/nftService";
+import { NftService } from "../src/nftService.js";
 
 describe("NftService", () => {
 	test("Can create an instance", async () => {

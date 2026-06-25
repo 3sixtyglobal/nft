@@ -26,9 +26,17 @@ The options for the connector.
 
 `IotaNftConnector`
 
+#### Throws
+
+GuardError If any required options are missing or invalid.
+
+#### Throws
+
+GeneralError If the gas budget is invalid.
+
 ## Properties
 
-### NAMESPACE
+### NAMESPACE {#namespace}
 
 > `readonly` `static` **NAMESPACE**: `string` = `"iota"`
 
@@ -36,53 +44,51 @@ The namespace supported by the nft connector.
 
 ***
 
-### CLASS\_NAME
+### CLASS\_NAME {#class_name}
 
-> `readonly` **CLASS\_NAME**: `string`
+> `readonly` `static` **CLASS\_NAME**: `string`
 
 Runtime name for the class.
 
-#### Implementation of
-
-`INftConnector.CLASS_NAME`
-
 ## Methods
 
-### start()
+### className() {#classname}
 
-> **start**(`nodeIdentity`, `nodeLoggingConnectorType?`, `componentState?`): `Promise`\<`void`\>
+> **className**(): `string`
+
+Returns the class name of the component.
+
+#### Returns
+
+`string`
+
+The class name.
+
+#### Implementation of
+
+`INftConnector.className`
+
+***
+
+### start() {#start}
+
+> **start**(`nodeLoggingComponentType?`): `Promise`\<`void`\>
 
 Bootstrap the NFT contract.
 
 #### Parameters
 
-##### nodeIdentity
+##### nodeLoggingComponentType?
 
 `string`
 
-The identity of the node.
-
-##### nodeLoggingConnectorType?
-
-`string`
-
-The node logging connector type, defaults to "node-logging".
-
-##### componentState?
-
-The component state.
-
-###### contractDeployments?
-
-\{[`id`: `string`]: `string`; \}
-
-The contract deployments.
+The node logging component type.
 
 #### Returns
 
 `Promise`\<`void`\>
 
-void.
+A promise that resolves when the contract package is verified and ready.
 
 #### Implementation of
 
@@ -90,7 +96,7 @@ void.
 
 ***
 
-### mint()
+### mint() {#mint}
 
 > **mint**\<`T`, `U`\>(`controllerIdentity`, `tag`, `immutableMetadata?`, `metadata?`): `Promise`\<`string`\>
 
@@ -144,9 +150,9 @@ The id of the created NFT in urn format.
 
 ***
 
-### resolve()
+### resolve() {#resolve}
 
-> **resolve**\<`T`, `U`\>(`nftId`): `Promise`\<\{ `issuer`: `string`; `owner`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
+> **resolve**\<`T`, `U`\>(`nftId`): `Promise`\<\{ `issuer`: `string`; `issuerIdentityId`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
 
 Resolve an NFT to get its details.
 
@@ -170,7 +176,7 @@ The id of the NFT to resolve.
 
 #### Returns
 
-`Promise`\<\{ `issuer`: `string`; `owner`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
+`Promise`\<\{ `issuer`: `string`; `issuerIdentityId`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
 
 The NFT details.
 
@@ -180,7 +186,7 @@ The NFT details.
 
 ***
 
-### burn()
+### burn() {#burn}
 
 > **burn**(`controllerIdentity`, `id`): `Promise`\<`void`\>
 
@@ -204,7 +210,7 @@ The id of the NFT to burn in urn format.
 
 `Promise`\<`void`\>
 
-void.
+A promise that resolves when the NFT has been permanently destroyed.
 
 #### Implementation of
 
@@ -212,9 +218,9 @@ void.
 
 ***
 
-### transfer()
+### transfer() {#transfer}
 
-> **transfer**\<`U`\>(`controller`, `nftId`, `recipientIdentity`, `recipientAddress`, `metadata?`): `Promise`\<`void`\>
+> **transfer**\<`U`\>(`controller`, `nftId`, `recipientAddress`, `metadata?`): `Promise`\<`void`\>
 
 Transfer an NFT to a new owner.
 
@@ -238,12 +244,6 @@ The identity of the user to access the vault keys.
 
 The id of the NFT to transfer.
 
-##### recipientIdentity
-
-`string`
-
-The recipient identity for the NFT.
-
 ##### recipientAddress
 
 `string`
@@ -260,7 +260,7 @@ Optional metadata to update during transfer.
 
 `Promise`\<`void`\>
 
-void.
+A promise that resolves when the NFT ownership has been transferred.
 
 #### Implementation of
 
@@ -268,7 +268,7 @@ void.
 
 ***
 
-### update()
+### update() {#update}
 
 > **update**\<`U`\>(`controllerIdentity`, `id`, `metadata`): `Promise`\<`void`\>
 
@@ -304,7 +304,7 @@ The new metadata for the NFT.
 
 `Promise`\<`void`\>
 
-void.
+A promise that resolves when the NFT metadata has been updated.
 
 #### Implementation of
 

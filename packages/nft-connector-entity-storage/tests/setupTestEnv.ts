@@ -5,15 +5,24 @@ import { MemoryEntityStorageConnector } from "@twin.org/entity-storage-connector
 import { EntityStorageConnectorFactory } from "@twin.org/entity-storage-models";
 import { nameof } from "@twin.org/nameof";
 import * as dotenv from "dotenv";
-import type { Nft } from "../src/entities/nft";
-import { initSchema } from "../src/schema";
+import type { Nft } from "../src/entities/nft.js";
+import { initSchema } from "../src/schema.js";
 
 console.debug("Setting up test environment from .env and .env.dev files");
 
-dotenv.config({ path: [path.join(__dirname, ".env"), path.join(__dirname, ".env.dev")] });
+dotenv.config({
+	path: [path.join(__dirname, ".env"), path.join(__dirname, ".env.dev")],
+	quiet: true
+});
 
-export const TEST_IDENTITY_ID = "test-identity";
-export const TEST_IDENTITY_ID_2 = "test-identity-2";
+export const TEST_NODE_IDENTITY =
+	"did:entity-storage:0x0101010101010101010101010101010101010101010101010101010101010101";
+export const TEST_ORGANIZATION_IDENTITY =
+	"did:entity-storage:0x0202020202020202020202020202020202020202020202020202020202020202";
+export const TEST_USER_IDENTITY =
+	"did:entity-storage:0x0303030303030303030303030303030303030303030303030303030303030303";
+export const TEST_USER_IDENTITY_2 =
+	"did:entity-storage:0x0404040404040404040404040404040404040404040404040404040404040404";
 
 export const TEST_ADDRESS_1 = "test-address-1";
 export const TEST_ADDRESS_2 = "test-address-2";
@@ -24,6 +33,7 @@ EntityStorageConnectorFactory.register(
 	"nft",
 	() =>
 		new MemoryEntityStorageConnector<Nft>({
-			entitySchema: nameof<Nft>()
+			entitySchema: nameof<Nft>(),
+			config: { storageKey: "nft" }
 		})
 );

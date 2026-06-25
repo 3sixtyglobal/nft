@@ -26,31 +26,41 @@ The options for the service.
 
 `NftService`
 
+#### Throws
+
+GeneralError If no NFT connectors are registered.
+
 ## Properties
 
-### NAMESPACE
+### CLASS\_NAME {#class_name}
 
-> `readonly` `static` **NAMESPACE**: `string` = `"nft"`
-
-The namespace supported by the nft service.
-
-***
-
-### CLASS\_NAME
-
-> `readonly` **CLASS\_NAME**: `string`
+> `readonly` `static` **CLASS\_NAME**: `string`
 
 Runtime name for the class.
 
-#### Implementation of
-
-`INftComponent.CLASS_NAME`
-
 ## Methods
 
-### mint()
+### className() {#classname}
 
-> **mint**\<`T`, `U`\>(`tag`, `immutableMetadata?`, `metadata?`, `namespace?`, `identity?`): `Promise`\<`string`\>
+> **className**(): `string`
+
+Returns the class name of the component.
+
+#### Returns
+
+`string`
+
+The class name.
+
+#### Implementation of
+
+`INftComponent.className`
+
+***
+
+### mint() {#mint}
+
+> **mint**\<`T`, `U`\>(`tag`, `immutableMetadata?`, `metadata?`, `namespace?`, `controllerIdentity?`): `Promise`\<`string`\>
 
 Mint an NFT.
 
@@ -90,11 +100,11 @@ The metadata for the NFT.
 
 The namespace of the connector to use for the NFT, defaults to service configured namespace.
 
-##### identity?
+##### controllerIdentity?
 
 `string`
 
-The identity to perform the nft operation on.
+The identity to perform the nft operation with.
 
 #### Returns
 
@@ -108,9 +118,9 @@ The id of the created NFT in urn format.
 
 ***
 
-### resolve()
+### resolve() {#resolve}
 
-> **resolve**\<`T`, `U`\>(`id`, `identity?`): `Promise`\<\{ `issuer`: `string`; `owner`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
+> **resolve**\<`T`, `U`\>(`id`, `controllerIdentity?`): `Promise`\<\{ `issuer`: `string`; `issuerIdentityId`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
 
 Resolve an NFT.
 
@@ -132,15 +142,15 @@ Resolve an NFT.
 
 The id of the NFT to resolve.
 
-##### identity?
+##### controllerIdentity?
 
 `string`
 
-The identity to perform the nft operation on.
+The identity to perform the nft operation with.
 
 #### Returns
 
-`Promise`\<\{ `issuer`: `string`; `owner`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
+`Promise`\<\{ `issuer`: `string`; `issuerIdentityId`: `string`; `tag`: `string`; `immutableMetadata?`: `T`; `metadata?`: `U`; \}\>
 
 The data for the NFT.
 
@@ -150,9 +160,9 @@ The data for the NFT.
 
 ***
 
-### burn()
+### burn() {#burn}
 
-> **burn**(`id`, `identity?`): `Promise`\<`void`\>
+> **burn**(`id`, `controllerIdentity?`): `Promise`\<`void`\>
 
 Burn an NFT.
 
@@ -164,17 +174,17 @@ Burn an NFT.
 
 The id of the NFT to burn in urn format.
 
-##### identity?
+##### controllerIdentity?
 
 `string`
 
-The identity to perform the nft operation on.
+The identity to perform the nft operation with.
 
 #### Returns
 
 `Promise`\<`void`\>
 
-Nothing.
+A promise that resolves when the NFT has been permanently destroyed.
 
 #### Implementation of
 
@@ -182,9 +192,9 @@ Nothing.
 
 ***
 
-### transfer()
+### transfer() {#transfer}
 
-> **transfer**\<`U`\>(`id`, `recipientIdentity`, `recipientAddress`, `metadata?`, `identity?`): `Promise`\<`void`\>
+> **transfer**\<`U`\>(`id`, `recipientAddress`, `metadata?`, `controllerIdentity?`): `Promise`\<`void`\>
 
 Transfer an NFT.
 
@@ -202,12 +212,6 @@ Transfer an NFT.
 
 The id of the NFT to transfer in urn format.
 
-##### recipientIdentity
-
-`string`
-
-The recipient identity for the NFT.
-
 ##### recipientAddress
 
 `string`
@@ -220,17 +224,17 @@ The recipient address for the NFT.
 
 Optional mutable data to include during the transfer.
 
-##### identity?
+##### controllerIdentity?
 
 `string`
 
-The identity to perform the nft operation on.
+The identity to perform the nft operation with.
 
 #### Returns
 
 `Promise`\<`void`\>
 
-Nothing.
+A promise that resolves when the NFT ownership has been transferred.
 
 #### Implementation of
 
@@ -238,11 +242,11 @@ Nothing.
 
 ***
 
-### update()
+### update() {#update}
 
-> **update**\<`U`\>(`id`, `metadata`, `identity?`): `Promise`\<`void`\>
+> **update**\<`U`\>(`id`, `metadata`, `controllerIdentity?`): `Promise`\<`void`\>
 
-Update the data of the NFT.
+Update the mutable data of the NFT.
 
 #### Type Parameters
 
@@ -264,17 +268,17 @@ The id of the NFT to update in urn format.
 
 The mutable data to update.
 
-##### identity?
+##### controllerIdentity?
 
 `string`
 
-The identity to perform the nft operation on.
+The identity to perform the nft operation with.
 
 #### Returns
 
 `Promise`\<`void`\>
 
-Nothing.
+A promise that resolves when the NFT metadata has been updated.
 
 #### Implementation of
 

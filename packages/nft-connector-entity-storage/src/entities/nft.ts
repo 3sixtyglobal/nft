@@ -3,7 +3,7 @@
 import { entity, property } from "@twin.org/entity";
 
 /**
- * Class describing the nft.
+ * Class describing an NFT entity stored in entity storage.
  */
 @entity()
 export class Nft {
@@ -26,7 +26,7 @@ export class Nft {
 	public owner!: string;
 
 	/**
-	 * The tag for the nft.
+	 * The tag for the NFT.
 	 */
 	@property({ type: "string" })
 	public tag!: string;

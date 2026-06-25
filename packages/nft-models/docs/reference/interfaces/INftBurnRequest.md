@@ -1,14 +1,14 @@
 # Interface: INftBurnRequest
 
-Burn the NFT.
+Request to burn an NFT.
 
 ## Properties
 
-### pathParams
+### pathParams {#pathparams}
 
 > **pathParams**: `object`
 
-The data to be used for resolving.
+The path parameters for the request.
 
 #### id
 

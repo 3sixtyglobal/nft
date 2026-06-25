@@ -28,4 +28,4 @@ The request.
 
 `Promise`\<`ICreatedResponse`\>
 
-The response object with additional http response properties.
+A created response containing the location header with the new NFT id.

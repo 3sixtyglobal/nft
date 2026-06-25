@@ -12,8 +12,12 @@ export interface INftFields {
 		/**
 		 * The ID of the NFT.
 		 */
-		id: string; // UID is an object with an 'id' field
+		id: string;
 	};
+	/**
+	 * The version of the NFT contract that created this NFT.
+	 */
+	version: string;
 	/**
 	 * The immutable metadata of the NFT.
 	 */
@@ -27,15 +31,12 @@ export interface INftFields {
 	 */
 	metadata: string;
 	/**
-	 * The issuer of the NFT.
+	 * The issuer of the NFT — the wallet address that signed the mint transaction.
 	 */
 	issuer: string;
 	/**
-	 * The issuer identity of the NFT.
+	 * The on-chain Object ID (as hex address string) of the verified IOTA Identity that minted
+	 * this NFT. "0x0000...0000" when minted via the unverified mint() function.
 	 */
-	issuerIdentity: string;
-	/**
-	 * The owner identity of the NFT.
-	 */
-	ownerIdentity: string;
+	issuerIdentityId: string;
 }

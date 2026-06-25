@@ -1,14 +1,14 @@
 # Interface: INftResolveRequest
 
-Resolve the NFT.
+Request to resolve an NFT by its id.
 
 ## Properties
 
-### pathParams
+### pathParams {#pathparams}
 
 > **pathParams**: `object`
 
-The data to be used for resolving.
+The path parameters for the request.
 
 #### id
 

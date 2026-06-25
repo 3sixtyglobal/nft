@@ -4,8 +4,8 @@ Options for the nft service constructor.
 
 ## Properties
 
-### config?
+### config? {#config}
 
-> `optional` **config**: [`INftServiceConfig`](INftServiceConfig.md)
+> `optional` **config?**: [`INftServiceConfig`](INftServiceConfig.md)
 
 The configuration for the service.

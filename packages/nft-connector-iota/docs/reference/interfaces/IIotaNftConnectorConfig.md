@@ -8,9 +8,9 @@ Configuration for the IOTA NFT Connector.
 
 ## Properties
 
-### contractName?
+### contractName? {#contractname}
 
-> `optional` **contractName**: `string`
+> `optional` **contractName?**: `string`
 
 The name of the contract to use.
 
@@ -22,11 +22,11 @@ The name of the contract to use.
 
 ***
 
-### packageControllerAddressIndex?
+### accountAddressIndex? {#accountaddressindex}
 
-> `optional` **packageControllerAddressIndex**: `number`
+> `optional` **accountAddressIndex?**: `number`
 
-The package controller address index to use when creating package.
+The account address index to use when creating NFT.
 
 #### Default
 
@@ -36,9 +36,9 @@ The package controller address index to use when creating package.
 
 ***
 
-### walletAddressIndex?
+### walletAddressIndex? {#walletaddressindex}
 
-> `optional` **walletAddressIndex**: `number`
+> `optional` **walletAddressIndex?**: `number`
 
 The wallet address index to use when creating NFT.
 
@@ -50,9 +50,9 @@ The wallet address index to use when creating NFT.
 
 ***
 
-### enableCostLogging?
+### enableCostLogging? {#enablecostlogging}
 
-> `optional` **enableCostLogging**: `boolean`
+> `optional` **enableCostLogging?**: `boolean`
 
 Enable cost logging.
 
@@ -61,3 +61,29 @@ Enable cost logging.
 ```ts
 false
 ```
+
+#### Overrides
+
+`IIotaConfig.enableCostLogging`
+
+***
+
+### deploymentConfig? {#deploymentconfig}
+
+> `optional` **deploymentConfig?**: `ISmartContractDeployments`
+
+Optional deployment configuration to use instead of the default compiled configuration.
+
+#### Default
+
+```ts
+Uses compiled smart-contract-deployments.json
+```
+
+***
+
+### deploymentPkgId? {#deploymentpkgid}
+
+> `optional` **deploymentPkgId?**: `string`
+
+Optional deployment package ID to use instead of the one from the deployment configuration.

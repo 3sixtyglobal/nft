@@ -1,9 +1,7 @@
 {
 	"info": {
 		"iotaNftConnector": {
-			"contractAlreadyDeployed": "Contract already deployed",
-			"contractDeploymentStarted": "Contract deployment started",
-			"contractDeploymentCompleted": "Contract deployment completed"
+			"contractReady": "Contract ready for use"
 		}
 	},
 	"error": {
@@ -15,13 +13,17 @@
 			"updateFailed": "Updating the NFT failed",
 			"namespaceMismatch": "The namespace in the urn \"{id}\" does not match the namespace of the IOTA NFT connector \"{namespace}\"",
 			"failedToGetNftId": "Failed to get NFT ID from mint response",
-			"nftNotFound": "The NFT \"{nftId}\" was not found",
-			"nftOwnerNftFound": "The owner for NFT \"{nftId}\" was not found",
+			"nftNotFound": "The NFT \"{notFoundId}\" was not found",
+			"nftOwnerNotFound": "The owner for NFT \"{nftId}\" was not found",
 			"startFailed": "Failed to start the IOTA NFT connector",
-			"deployTransactionFailed": "Deploying the contract failed with error: \"{error}\"",
-			"connectorNotStarted": "Please call start() before using this connector. Package ID: \"{packageId}\" is missing.",
+			"packageIdNotInitialised": "The package id has not been initialised.",
 			"invalidImmutableMetadata": "The immutable metadata for NFT \"{nftId}\" is invalid",
-			"invalidMetadata": "The metadata for NFT \"{nftId}\" is invalid"
+			"invalidMetadata": "The metadata for NFT \"{nftId}\" is invalid",
+			"contractDataNotFound": "Contract data not found for network \"{network}\". Available networks: {availableNetworks}",
+			"packageNotFoundOnNetwork": "Package \"{deployedPackageId}\" not found on \"{network}\" network",
+			"deployedPackageIdRequired": "deployedPackageId is required for network operations on \"{network}\".",
+			"packageIdNotFound": "Package ID not found for network \"{network}\"",
+			"invalidGasBudget": "Invalid gas budget: {gasBudget}"
 		},
 		"iotaNftUtils": { "invalidNftIdFormat": "The NFT ID \"{id}\" has an invalid format" }
 	}

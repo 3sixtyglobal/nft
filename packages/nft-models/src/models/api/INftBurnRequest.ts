@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0.
 
 /**
- * Burn the NFT.
+ * Request to burn an NFT.
  */
 export interface INftBurnRequest {
 	/**
-	 * The data to be used for resolving.
+	 * The path parameters for the request.
 	 */
 	pathParams: {
 		/**

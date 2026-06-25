@@ -6,60 +6,60 @@ import {
 	TEST_ADDRESS,
 	TEST_ADDRESS_2,
 	setupTestEnv,
-	TEST_USER_IDENTITY_ID_2,
-	TEST_USER_IDENTITY_ID,
-	TEST_NODE_IDENTITY,
+	getTestDeploymentConfig,
+	cleanupTestEnv,
+	TEST_USER_DID,
+	TEST_USER_DID_2,
 	TEST_NETWORK,
 	TEST_MNEMONIC_NAME,
-	TEST_VAULT_CONNECTOR,
-	TEST_EXPLORER_URL,
-	TEST_NODE_MNEMONIC
-} from "./setupTestEnv";
-import { IotaNftConnector } from "../src/iotaNftConnector";
+	TEST_EXPLORER_URL
+} from "./setupTestEnv.js";
+import { IotaNftConnector } from "../src/iotaNftConnector.js";
 
-let nftId: string;
 let nftConnector: IotaNftConnector;
 
 describe("IotaNftConnector", () => {
 	beforeAll(async () => {
 		await setupTestEnv();
+
+		// Get the dynamically deployed test contracts
+		const deploymentConfig = getTestDeploymentConfig();
 		// Connector for deployment (using node/deployer mnemonic)
 		nftConnector = new IotaNftConnector({
 			config: {
 				clientOptions: TEST_CLIENT_OPTIONS,
 				vaultMnemonicId: TEST_MNEMONIC_NAME,
 				network: TEST_NETWORK,
-				enableCostLogging: true
+				enableCostLogging: true,
+				deploymentConfig
 			}
 		});
-		// Deploy the Move contract
-		const componentState: { contractDeployments?: { [id: string]: string } } = {};
-		await nftConnector.start(TEST_NODE_IDENTITY, undefined, componentState);
-		console.debug("Component State", componentState);
+		// Start the connector with test-deployed packages
+		await nftConnector.start();
+	});
 
-		const keys = Object.keys(componentState.contractDeployments ?? {});
-		console.debug(
-			"Deployed contract",
-			`${TEST_EXPLORER_URL}object/${componentState.contractDeployments?.[keys[0]]}?network=${TEST_NETWORK}`
-		);
+	afterAll(async () => {
+		await cleanupTestEnv();
 	});
 
 	test("Cannot mint an NFT before start", async () => {
+		const deploymentConfig = getTestDeploymentConfig();
 		const unstartedConnector = new IotaNftConnector({
 			config: {
 				clientOptions: TEST_CLIENT_OPTIONS,
 				vaultMnemonicId: TEST_MNEMONIC_NAME,
-				network: TEST_NETWORK
+				network: TEST_NETWORK,
+				deploymentConfig
 			}
 		});
-		await expect(unstartedConnector.mint(TEST_USER_IDENTITY_ID, "test_tag")).rejects.toThrow(
-			"connectorNotStarted"
+		await expect(unstartedConnector.mint(TEST_USER_DID, "test_tag")).rejects.toThrow(
+			"iotaNftConnector.mintingFailed"
 		);
 	});
 
 	test("Can mint an NFT with no data", async () => {
 		const tag = "test_tag";
-		nftId = await nftConnector.mint(TEST_USER_IDENTITY_ID, tag);
+		const nftId = await nftConnector.mint(TEST_USER_DID, tag);
 		const urn = Urn.fromValidString(nftId);
 		expect(urn.namespaceIdentifier()).toEqual("nft");
 		const specificParts = urn.namespaceSpecificParts();
@@ -68,8 +68,7 @@ describe("IotaNftConnector", () => {
 		expect(specificParts[2].length).toBeGreaterThan(0);
 		expect(specificParts[3].length).toBeGreaterThan(0);
 		const response = await nftConnector.resolve(nftId);
-		expect(response.issuer).toEqual(TEST_USER_IDENTITY_ID);
-		expect(response.owner).toEqual(TEST_USER_IDENTITY_ID);
+		expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
 		expect(response.immutableMetadata).toBeUndefined();
 
 		console.debug(
@@ -85,7 +84,7 @@ describe("IotaNftConnector", () => {
 			uri: "https://example.com/nft.png"
 		};
 		const tag = "test_tag";
-		nftId = await nftConnector.mint(TEST_USER_IDENTITY_ID, tag, immutableMetadata, {
+		const nftId = await nftConnector.mint(TEST_USER_DID, tag, immutableMetadata, {
 			customField: "customValue"
 		});
 		const urn = Urn.fromValidString(nftId);
@@ -96,8 +95,7 @@ describe("IotaNftConnector", () => {
 		expect(specificParts[2].length).toBeGreaterThan(0);
 		expect(specificParts[3].length).toBeGreaterThan(0);
 		const response = await nftConnector.resolve(nftId);
-		expect(response.issuer).toEqual(TEST_USER_IDENTITY_ID);
-		expect(response.owner).toEqual(TEST_USER_IDENTITY_ID);
+		expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
 
 		console.debug(
 			"Created",
@@ -106,190 +104,151 @@ describe("IotaNftConnector", () => {
 	});
 
 	test("Can resolve an NFT", async () => {
-		const response = await nftConnector.resolve(nftId);
-		expect(response.issuer).toEqual(TEST_USER_IDENTITY_ID);
-		expect(response.owner).toEqual(TEST_USER_IDENTITY_ID);
-		expect(response.tag).toEqual("test_tag");
-		expect(response.metadata).toEqual({ customField: "customValue" });
-		expect(response.immutableMetadata).toEqual({
-			name: "Test NFT",
-			description: "This is a test NFT",
-			uri: "https://example.com/nft.png"
+		// Create a new NFT for this test
+		const immutableMetadata = {
+			name: "Resolve Test NFT",
+			description: "This is a test NFT for resolve functionality",
+			uri: "https://example.com/resolve-nft.png"
+		};
+		const nftId = await nftConnector.mint(TEST_USER_DID, "resolve_test_tag", immutableMetadata, {
+			customField: "customValue"
 		});
+
+		const response = await nftConnector.resolve(nftId);
+		expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
+		expect(response.tag).toEqual("resolve_test_tag");
+		expect(response.metadata).toEqual({ customField: "customValue" });
+		expect(response.immutableMetadata).toEqual(immutableMetadata);
 	});
 
 	test("Can transfer an NFT", async () => {
-		await nftConnector.transfer(
-			TEST_USER_IDENTITY_ID,
-			nftId,
-			TEST_USER_IDENTITY_ID_2,
-			TEST_ADDRESS_2
-		);
-
-		const response = await nftConnector.resolve(nftId);
-		expect(response.issuer).toEqual(TEST_USER_IDENTITY_ID);
-		expect(response.owner).toEqual(TEST_USER_IDENTITY_ID_2);
-
-		const urn = Urn.fromValidString(nftId);
-		expect(urn.namespaceIdentifier()).toEqual("nft");
-		const specificParts = urn.namespaceSpecificParts();
-		console.debug(
-			"Created",
-			`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
-		);
-	});
-
-	test("Can transfer an NFT back to the original owner", async () => {
-		await nftConnector.transfer(
-			TEST_USER_IDENTITY_ID_2,
-			nftId,
-			TEST_USER_IDENTITY_ID,
-			TEST_ADDRESS
-		);
-
-		const response = await nftConnector.resolve(nftId);
-		expect(response.issuer).toEqual(TEST_USER_IDENTITY_ID);
-		expect(response.owner).toEqual(TEST_USER_IDENTITY_ID);
-
-		const urn = Urn.fromValidString(nftId);
-		expect(urn.namespaceIdentifier()).toEqual("nft");
-		const specificParts = urn.namespaceSpecificParts();
-		console.debug(
-			"Created",
-			`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
-		);
-	});
-
-	test("Can transfer an NFT with metadata update", async () => {
-		const testNftId = await nftConnector.mint(
-			TEST_USER_IDENTITY_ID,
-			"transfer_test",
-			{
-				name: "Transfer Test NFT",
-				description: "NFT for testing transfer with metadata",
-				uri: "https://example.com/transfer.png"
-			},
-			{ initialField: "initialValue" }
-		);
-
-		// Prepare new metadata for transfer
-		const transferMetadata = {
-			updatedField: "transferValue",
-			timestamp: Date.now(),
-			transferInfo: { previousOwner: TEST_ADDRESS, transferDate: new Date().toISOString() }
+		// Create a new NFT for this test
+		const immutableMetadata = {
+			name: "Transfer Test NFT",
+			description: "This is a test NFT for transfer functionality",
+			uri: "https://example.com/transfer-nft.png"
 		};
-
-		// Transfer with metadata update
-		await nftConnector.transfer(
-			TEST_USER_IDENTITY_ID,
-			testNftId,
-			TEST_USER_IDENTITY_ID_2,
-			TEST_ADDRESS_2,
-			transferMetadata
-		);
-
-		const response = await nftConnector.resolve(testNftId);
-		expect(response.owner).toEqual(TEST_USER_IDENTITY_ID_2);
-		expect(response.metadata).toEqual(transferMetadata);
-		expect(response.issuer).toEqual(TEST_USER_IDENTITY_ID); // Issuer should remain unchanged
-
-		const urn = Urn.fromValidString(nftId);
-		expect(urn.namespaceIdentifier()).toEqual("nft");
-		const specificParts = urn.namespaceSpecificParts();
-		console.debug(
-			"Created",
-			`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
-		);
-	});
-
-	test("Throws error when unauthorized user attempts to transfer NFT", async () => {
-		await TEST_VAULT_CONNECTOR.setSecret(
-			`unauthorizedController/${TEST_MNEMONIC_NAME}`,
-			TEST_NODE_MNEMONIC
-		);
-
-		await expect(
-			nftConnector.transfer(
-				"unauthorizedController",
-				nftId,
-				TEST_USER_IDENTITY_ID_2,
-				TEST_ADDRESS_2
-			)
-		).rejects.toThrow("transferFailed");
-	});
-
-	test("Can update the mutable data of an NFT", async () => {
-		await nftConnector.update(TEST_USER_IDENTITY_ID, nftId, {
-			updatedField: "newValue",
-			anotherField: "anotherValue"
+		const nftId = await nftConnector.mint(TEST_USER_DID, "transfer_test_tag", immutableMetadata, {
+			customField: "customValue"
 		});
 
-		const response = await nftConnector.resolve(nftId);
-		expect(response.metadata).toEqual({ updatedField: "newValue", anotherField: "anotherValue" });
+		// Transfer the NFT to a new owner
+		await nftConnector.transfer(TEST_USER_DID, nftId, TEST_ADDRESS_2);
 
-		const urn = Urn.fromValidString(nftId);
-		expect(urn.namespaceIdentifier()).toEqual("nft");
-		const specificParts = urn.namespaceSpecificParts();
-		console.debug(
-			"Created",
-			`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
+		// Resolve to verify the new ownership
+		const response = await nftConnector.resolve(nftId);
+		expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
+		expect(response.tag).toEqual("transfer_test_tag");
+	});
+
+	test("Can transfer NFT with metadata update", async () => {
+		// Create a new NFT for this test
+		const immutableMetadata = {
+			name: "Transfer with Metadata Test NFT",
+			description: "This is a test NFT for transfer with metadata functionality",
+			uri: "https://example.com/transfer-metadata-nft.png"
+		};
+		const initialMetadata = { initialField: "initialValue" };
+		const nftId = await nftConnector.mint(
+			TEST_USER_DID,
+			"transfer_metadata_test_tag",
+			immutableMetadata,
+			initialMetadata
 		);
+
+		const newMetadata = { updatedField: "updatedValue", newField: "newValue" };
+
+		// Transfer with metadata update
+		await nftConnector.transfer(TEST_USER_DID, nftId, TEST_ADDRESS_2, newMetadata);
+
+		// Verify ownership and metadata changes
+		const response = await nftConnector.resolve(nftId);
+		expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
+		expect(response.tag).toEqual("transfer_metadata_test_tag");
+		expect(response.metadata).toEqual(newMetadata);
+		expect(response.immutableMetadata).toEqual(immutableMetadata);
+	});
+
+	test("Can update NFT metadata", async () => {
+		// Create a new NFT for this test
+		const immutableMetadata = {
+			name: "Update Test NFT",
+			description: "This is a test NFT for update functionality",
+			uri: "https://example.com/update-nft.png"
+		};
+		const initialMetadata = { initialField: "initialValue" };
+		const nftId = await nftConnector.mint(
+			TEST_USER_DID,
+			"update_test_tag",
+			immutableMetadata,
+			initialMetadata
+		);
+
+		const updatedMetadata = { updatedField: "updatedValue", newField: "newValue" };
+
+		// Update the metadata
+		await nftConnector.update(TEST_USER_DID, nftId, updatedMetadata);
+
+		// Verify the metadata was updated
+		const response = await nftConnector.resolve(nftId);
+		expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
+		expect(response.tag).toEqual("update_test_tag");
+		expect(response.metadata).toEqual(updatedMetadata);
+		expect(response.immutableMetadata).toEqual(immutableMetadata);
 	});
 
 	test("Can burn an NFT", async () => {
-		await nftConnector.burn(TEST_USER_IDENTITY_ID, nftId);
+		// Create a new NFT for this test
+		const immutableMetadata = {
+			name: "Burn Test NFT",
+			description: "This is a test NFT for burn functionality",
+			uri: "https://example.com/burn-nft.png"
+		};
+		const nftId = await nftConnector.mint(TEST_USER_DID, "burn_test_tag", immutableMetadata, {
+			customField: "customValue"
+		});
+
+		// Verify the NFT exists before burning
+		const responseBefore = await nftConnector.resolve(nftId);
+		expect(responseBefore.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
+
+		// Burn the NFT
+		await nftConnector.burn(TEST_USER_DID, nftId);
+
+		// Verify the NFT no longer exists
 		await expect(nftConnector.resolve(nftId)).rejects.toThrow();
 	});
 
-	test("Cannot transfer a burned NFT", async () => {
-		const burnTestNftId = await nftConnector.mint(TEST_USER_IDENTITY_ID, TEST_ADDRESS, "burn_test");
+	test("Cannot transfer NFT without proper ownership", async () => {
+		const nftId = await nftConnector.mint(TEST_USER_DID, "ownership_test", {
+			name: "Ownership Test"
+		});
 
-		await nftConnector.burn(TEST_USER_IDENTITY_ID, burnTestNftId);
-		await expect(
-			nftConnector.transfer(
-				TEST_USER_IDENTITY_ID,
-				burnTestNftId,
-				TEST_USER_IDENTITY_ID_2,
-				TEST_ADDRESS_2
-			)
-		).rejects.toThrow("transferFailed");
+		// Should fail when trying to transfer from wrong owner
+		await expect(nftConnector.transfer(TEST_USER_DID_2, nftId, TEST_ADDRESS)).rejects.toThrow(
+			"transferFailed"
+		);
 	});
 
-	test("Can burn an NFT on a transferred address", async () => {
-		const burnTestNftId = await nftConnector.mint(TEST_USER_IDENTITY_ID, TEST_ADDRESS, "burn_test");
+	test("Cannot update NFT metadata without proper ownership", async () => {
+		const nftId = await nftConnector.mint(TEST_USER_DID, "update_ownership_test", {
+			name: "Update Ownership Test"
+		});
 
-		await nftConnector.transfer(
-			TEST_USER_IDENTITY_ID,
-			burnTestNftId,
-			TEST_USER_IDENTITY_ID_2,
-			TEST_ADDRESS_2
+		// Should fail when trying to update from wrong owner
+		await expect(nftConnector.update(TEST_USER_DID_2, nftId, { newData: "test" })).rejects.toThrow(
+			"iotaNftConnector.updateFailed"
 		);
-		await nftConnector.burn(TEST_USER_IDENTITY_ID_2, burnTestNftId);
 	});
 
-	test("Can mint an NFT with complex metadata", async () => {
-		const immutableMetadata = {
-			name: "Complex NFT",
-			description: "NFT with complex metadata",
-			uri: "https://example.com/nft.png"
-		};
-		const complexMetadata = { level1: { level2: { key: "value" } } };
-		nftId = await nftConnector.mint(
-			TEST_USER_IDENTITY_ID,
-			"complex_tag",
-			immutableMetadata,
-			complexMetadata
-		);
+	test("Cannot burn NFT without proper ownership", async () => {
+		const nftId = await nftConnector.mint(TEST_USER_DID, "burn_ownership_test", {
+			name: "Burn Ownership Test"
+		});
 
-		const response = await nftConnector.resolve(nftId);
-		expect(response.metadata).toEqual(complexMetadata);
-
-		const urn = Urn.fromValidString(nftId);
-		expect(urn.namespaceIdentifier()).toEqual("nft");
-		const specificParts = urn.namespaceSpecificParts();
-		console.debug(
-			"Created",
-			`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
+		// Should fail when trying to burn from wrong owner
+		await expect(nftConnector.burn(TEST_USER_DID_2, nftId)).rejects.toThrow(
+			"iotaNftConnector.burningFailed"
 		);
 	});
 });

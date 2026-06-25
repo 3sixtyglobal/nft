@@ -1,19 +1,32 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import type { IotaClient, IotaObjectResponse } from "@iota/iota-sdk/client";
-import { Transaction } from "@iota/iota-sdk/transactions";
-import { BaseError, Converter, GeneralError, Guards, Is, StringHelper, Urn } from "@twin.org/core";
-import { Iota } from "@twin.org/dlt-iota";
-import { LoggingConnectorFactory, type ILoggingConnector } from "@twin.org/logging-models";
+import {
+	BaseError,
+	ComponentFactory,
+	GeneralError,
+	Guards,
+	Is,
+	NotFoundError,
+	StringHelper,
+	Urn
+} from "@twin.org/core";
+import {
+	type IContractData,
+	type ISmartContractDeployments,
+	type NetworkTypes,
+	Iota,
+	IotaIdentityUtils,
+	type IIotaClient
+} from "@twin.org/dlt-iota";
+import type { ILoggingComponent } from "@twin.org/logging-models";
 import { nameof } from "@twin.org/nameof";
 import type { INftConnector } from "@twin.org/nft-models";
 import { VaultConnectorFactory, type IVaultConnector } from "@twin.org/vault-models";
-import { WalletConnectorFactory, type IWalletConnector } from "@twin.org/wallet-models";
-import compiledModulesJson from "./contracts/compiledModules/compiled-modules.json";
-import { IotaNftUtils } from "./iotaNftUtils";
-import type { IIotaNftConnectorConfig } from "./models/IIotaNftConnectorConfig";
-import type { IIotaNftConnectorConstructorOptions } from "./models/IIotaNftConnectorConstructorOptions";
-import type { INftFields } from "./models/INftFields";
+import compiledModulesJson from "./contracts/smartContractDeployments/smart-contract-deployments.json" with { type: "json" };
+import { IotaNftUtils } from "./iotaNftUtils.js";
+import type { IIotaNftConnectorConfig } from "./models/IIotaNftConnectorConfig.js";
+import type { IIotaNftConnectorConstructorOptions } from "./models/IIotaNftConnectorConstructorOptions.js";
+import type { INftFields } from "./models/INftFields.js";
 
 /**
  * Class for performing NFT operations on IOTA.
@@ -27,7 +40,7 @@ export class IotaNftConnector implements INftConnector {
 	/**
 	 * Runtime name for the class.
 	 */
-	public readonly CLASS_NAME: string = nameof<IotaNftConnector>();
+	public static readonly CLASS_NAME: string = nameof<IotaNftConnector>();
 
 	/**
 	 * Gas budget for transactions.
@@ -42,12 +55,6 @@ export class IotaNftConnector implements INftConnector {
 	private readonly _vaultConnector: IVaultConnector;
 
 	/**
-	 * Connector for wallet operations.
-	 * @internal
-	 */
-	private readonly _walletConnector: IWalletConnector;
-
-	/**
 	 * The configuration for the connector.
 	 * @internal
 	 */
@@ -57,7 +64,7 @@ export class IotaNftConnector implements INftConnector {
 	 * The IOTA client.
 	 * @internal
 	 */
-	private readonly _client: IotaClient;
+	private readonly _client: IIotaClient;
 
 	/**
 	 * The name of the contract to use.
@@ -72,37 +79,52 @@ export class IotaNftConnector implements INftConnector {
 	private _deployedPackageId?: string;
 
 	/**
-	 * The logging connector.
+	 * The logging component.
 	 * @internal
 	 */
-	private readonly _logging?: ILoggingConnector;
+	private readonly _logging?: ILoggingComponent;
+
+	/**
+	 * The deployment configuration to use for contract interactions.
+	 * @internal
+	 */
+	private readonly _deploymentConfig: ISmartContractDeployments;
 
 	/**
 	 * Create a new instance of IotaNftConnector.
 	 * @param options The options for the connector.
+	 * @throws GuardError If any required options are missing or invalid.
+	 * @throws GeneralError If the gas budget is invalid.
 	 */
 	constructor(options: IIotaNftConnectorConstructorOptions) {
-		Guards.object(this.CLASS_NAME, nameof(options), options);
-		Guards.object<IIotaNftConnectorConfig>(this.CLASS_NAME, nameof(options.config), options.config);
+		Guards.object(IotaNftConnector.CLASS_NAME, nameof(options), options);
+		Guards.object<IIotaNftConnectorConfig>(
+			IotaNftConnector.CLASS_NAME,
+			nameof(options.config),
+			options.config
+		);
 		Guards.object<IIotaNftConnectorConfig["clientOptions"]>(
-			this.CLASS_NAME,
+			IotaNftConnector.CLASS_NAME,
 			nameof(options.config.clientOptions),
 			options.config.clientOptions
 		);
 		this._vaultConnector = VaultConnectorFactory.get(options.vaultConnectorType ?? "vault");
-		this._walletConnector = WalletConnectorFactory.get(options.walletConnectorType ?? "wallet");
 
-		this._logging = LoggingConnectorFactory.getIfExists(options?.loggingConnectorType ?? "logging");
+		this._logging = ComponentFactory.getIfExists(options?.loggingComponentType);
 
 		this._config = options.config;
 
+		this._deploymentConfig = options.config.deploymentConfig ?? compiledModulesJson;
+
 		this._contractName = this._config.contractName ?? "nft";
-		Guards.stringValue(this.CLASS_NAME, nameof(this._contractName), this._contractName);
+		Guards.stringValue(IotaNftConnector.CLASS_NAME, nameof(this._contractName), this._contractName);
 
 		this._gasBudget = this._config.gasBudget ?? 1_000_000_000;
-		Guards.number(this.CLASS_NAME, nameof(this._gasBudget), this._gasBudget);
+		Guards.number(IotaNftConnector.CLASS_NAME, nameof(this._gasBudget), this._gasBudget);
 		if (this._gasBudget <= 0) {
-			throw new GeneralError(this.CLASS_NAME, "invalidGasBudget", { gasBudget: this._gasBudget });
+			throw new GeneralError(IotaNftConnector.CLASS_NAME, "invalidGasBudget", {
+				gasBudget: this._gasBudget
+			});
 		}
 
 		Iota.populateConfig(this._config);
@@ -110,146 +132,81 @@ export class IotaNftConnector implements INftConnector {
 	}
 
 	/**
-	 * Bootstrap the NFT contract.
-	 * @param nodeIdentity The identity of the node.
-	 * @param nodeLoggingConnectorType The node logging connector type, defaults to "node-logging".
-	 * @param componentState The component state.
-	 * @param componentState.contractDeployments The contract deployments.
-	 * @returns void.
+	 * Returns the class name of the component.
+	 * @returns The class name.
 	 */
-	public async start(
-		nodeIdentity: string,
-		nodeLoggingConnectorType?: string,
-		componentState?: { contractDeployments?: { [id: string]: string } }
-	): Promise<void> {
-		const nodeLogging = LoggingConnectorFactory.getIfExists(
-			nodeLoggingConnectorType ?? "node-logging"
-		);
+	public className(): string {
+		return IotaNftConnector.CLASS_NAME;
+	}
+
+	/**
+	 * Bootstrap the NFT contract.
+	 * @param nodeLoggingComponentType The node logging component type.
+	 * @returns A promise that resolves when the contract package is verified and ready.
+	 */
+	public async start(nodeLoggingComponentType?: string): Promise<void> {
+		const nodeLogging = ComponentFactory.getIfExists<ILoggingComponent>(nodeLoggingComponentType);
 
 		try {
-			const contractData =
-				compiledModulesJson[this._contractName as keyof typeof compiledModulesJson];
+			let deploymentPackageId: string | undefined = this._config.deploymentPkgId;
 
-			if (!contractData) {
-				throw new GeneralError(this.CLASS_NAME, "contractDataNotFound", {
-					contractName: this._contractName
+			if (!Is.stringValue(deploymentPackageId)) {
+				const contractData = this._deploymentConfig[this._config.network as NetworkTypes];
+
+				if (!Is.objectValue<IContractData>(contractData)) {
+					throw new GeneralError(IotaNftConnector.CLASS_NAME, "contractDataNotFound", {
+						network: this._config.network,
+						availableNetworks: Object.keys(this._deploymentConfig)
+					});
+				}
+
+				deploymentPackageId = contractData.deployedPackageId;
+			}
+
+			if (!Is.stringValue(deploymentPackageId)) {
+				throw new GeneralError(IotaNftConnector.CLASS_NAME, "deployedPackageIdRequired", {
+					network: this._config.network
 				});
 			}
 
-			// Convert base64 package(s) to bytes
-			let compiledModules: number[][];
+			this._deployedPackageId = deploymentPackageId;
 
-			if (Is.arrayValue<string>(contractData.package)) {
-				compiledModules = contractData.package.map((pkg: string) =>
-					Array.from(Converter.base64ToBytes(pkg))
-				);
-			} else {
-				compiledModules = [Array.from(Converter.base64ToBytes(contractData.package))];
+			if (!this._deployedPackageId) {
+				throw new GeneralError(IotaNftConnector.CLASS_NAME, "packageIdNotFound", {
+					network: this._config.network
+				});
 			}
 
-			const contractDeployments: { [id: string]: string } =
-				(componentState?.contractDeployments as { [id: string]: string }) ?? {};
-
-			if (Is.stringValue(contractDeployments[contractData.packageId])) {
-				this._deployedPackageId = contractDeployments[contractData.packageId];
-
-				// Check if package exists on the network with a deployed package id
-				const packageExists = await Iota.packageExistsOnNetwork(
-					this._client,
-					contractDeployments[contractData.packageId]
-				);
-				if (packageExists) {
-					await nodeLogging?.log({
-						level: "info",
-						source: this.CLASS_NAME,
-						ts: Date.now(),
-						message: "contractAlreadyDeployed",
-						data: {
-							network: this._config.network,
-							nodeIdentity,
-							contractId: contractData.packageId,
-							deployedPackageId: contractDeployments[contractData.packageId]
-						}
-					});
-
-					return;
-				}
-			}
-
-			// Package does not exist, proceed to deploy
-			await nodeLogging?.log({
-				level: "info",
-				source: this.CLASS_NAME,
-				ts: Date.now(),
-				message: "contractDeploymentStarted",
-				data: { network: this._config.network, nodeIdentity, contractId: contractData.packageId }
-			});
-
-			const txb = new Transaction();
-			txb.setGasBudget(this._gasBudget);
-
-			// Publish the compiled modules
-			const [upgradeCap] = txb.publish({ modules: compiledModules, dependencies: ["0x1", "0x2"] });
-
-			const controllerAddress = await this.getPackageControllerAddress(nodeIdentity);
-
-			// Transfer the upgrade capability to the controller
-			txb.transferObjects([upgradeCap], txb.pure.address(controllerAddress));
-
-			const result = await Iota.prepareAndPostTransaction(
-				this._config,
-				this._vaultConnector,
-				nodeLogging,
-				nodeIdentity,
+			const packageExists = await Iota.packageExistsOnNetwork(
 				this._client,
-				controllerAddress,
-				txb,
-				{
-					dryRunLabel: this._config.enableCostLogging ? "deploy" : undefined
-				}
+				this._deployedPackageId
 			);
 
-			if (result.effects?.status?.status !== "success") {
-				throw new GeneralError(this.CLASS_NAME, "deployTransactionFailed", {
-					error: result.effects?.status?.error
+			if (!packageExists) {
+				throw new GeneralError(IotaNftConnector.CLASS_NAME, "packageNotFoundOnNetwork", {
+					network: this._config.network,
+					deployedPackageId: this._deployedPackageId
 				});
-			}
-
-			// Find the package object (owner field will be Immutable)
-			const packageObject = result.effects?.created?.find(obj => obj.owner === "Immutable");
-
-			const deployedPackageId = packageObject?.reference?.objectId;
-			if (!Is.stringValue(deployedPackageId)) {
-				throw new GeneralError(this.CLASS_NAME, "packageIdNotFound", {
-					packageId: deployedPackageId
-				});
-			}
-
-			this._deployedPackageId = deployedPackageId;
-
-			if (componentState) {
-				componentState.contractDeployments ??= {};
-				componentState.contractDeployments[contractData.packageId] = deployedPackageId;
 			}
 
 			await nodeLogging?.log({
 				level: "info",
-				source: this.CLASS_NAME,
+				source: IotaNftConnector.CLASS_NAME,
 				ts: Date.now(),
-				message: "contractDeploymentCompleted",
+				message: "contractReady",
 				data: {
-					contractId: contractData.packageId,
-					deployedPackageId: contractDeployments[contractData.packageId]
+					network: this._config.network,
+					deployedPackageId: this._deployedPackageId
 				}
 			});
 		} catch (error) {
 			await nodeLogging?.log({
 				level: "error",
-				source: this.CLASS_NAME,
+				source: IotaNftConnector.CLASS_NAME,
 				ts: Date.now(),
 				message: "startFailed",
 				error: BaseError.fromError(error),
-				data: { network: this._config.network, nodeIdentity }
+				data: { network: this._config.network }
 			});
 
 			throw error;
@@ -270,39 +227,42 @@ export class IotaNftConnector implements INftConnector {
 		immutableMetadata?: T,
 		metadata?: U
 	): Promise<string> {
-		this.ensureStarted();
-		Guards.stringValue(this.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
-		Guards.stringValue(this.CLASS_NAME, nameof(tag), tag);
+		Guards.stringValue(IotaNftConnector.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
+		Guards.stringValue(IotaNftConnector.CLASS_NAME, nameof(tag), tag);
 
 		try {
-			const txb = new Transaction();
+			const packageId = this.getPackageId();
+
+			const txb = Iota.createTransaction();
 			txb.setGasBudget(this._gasBudget);
 
-			const walletAddressIndex = this._config.walletAddressIndex ?? 0;
-			const addresses = await this._walletConnector.getAddresses(
+			const address = await Iota.getAddress(
+				this._vaultConnector,
+				this._config,
 				controllerIdentity,
-				0,
-				walletAddressIndex,
-				1
+				this._config.accountAddressIndex ?? 0,
+				this._config.walletAddressIndex ?? 0
 			);
-			const address = addresses[0];
 
 			const metadataString = metadata ? JSON.stringify(metadata) : "";
 			const immutableMetadataString = immutableMetadata ? JSON.stringify(immutableMetadata) : "";
 
-			const packageId = this._deployedPackageId;
 			const moduleName = this.getModuleName();
 
-			// Call the mint function from our Move contract
+			const capInfo = await IotaIdentityUtils.getControllerCapInfo(
+				controllerIdentity,
+				address,
+				this._client
+			);
+
 			txb.moveCall({
-				target: `${packageId}::${moduleName}::mint`,
+				target: `${packageId}::${moduleName}::mint_with_identity`,
 				arguments: [
 					txb.pure.string(immutableMetadataString),
 					txb.pure.string(tag),
-					txb.pure.address(address),
 					txb.pure.string(metadataString),
-					txb.pure.string(controllerIdentity),
-					txb.pure.string(controllerIdentity)
+					txb.object(capInfo.identityObjectId),
+					txb.object(capInfo.controllerCapObjectId)
 				]
 			});
 
@@ -322,7 +282,7 @@ export class IotaNftConnector implements INftConnector {
 			const createdObjectId = result.effects?.created?.[0]?.reference?.objectId;
 
 			if (!Is.stringValue(createdObjectId)) {
-				throw new GeneralError(this.CLASS_NAME, "failedToGetNftId", undefined);
+				throw new GeneralError(IotaNftConnector.CLASS_NAME, "failedToGetNftId", undefined);
 			}
 
 			const urn = new Urn(
@@ -333,7 +293,7 @@ export class IotaNftConnector implements INftConnector {
 			return urn.toString();
 		} catch (error) {
 			throw new GeneralError(
-				this.CLASS_NAME,
+				IotaNftConnector.CLASS_NAME,
 				"mintingFailed",
 				undefined,
 				Iota.extractPayloadError(error)
@@ -348,8 +308,14 @@ export class IotaNftConnector implements INftConnector {
 	 */
 	public async resolve<T = unknown, U = unknown>(
 		nftId: string
-	): Promise<{ issuer: string; owner: string; tag: string; immutableMetadata?: T; metadata?: U }> {
-		Guards.stringValue(this.CLASS_NAME, nameof(nftId), nftId);
+	): Promise<{
+		issuer: string;
+		issuerIdentityId: string;
+		tag: string;
+		immutableMetadata?: T;
+		metadata?: U;
+	}> {
+		Guards.stringValue(IotaNftConnector.CLASS_NAME, nameof(nftId), nftId);
 
 		try {
 			const objectId = IotaNftUtils.nftIdToObjectId(nftId);
@@ -359,7 +325,7 @@ export class IotaNftConnector implements INftConnector {
 			});
 
 			if (!object.data?.content) {
-				throw new GeneralError(this.CLASS_NAME, "nftNotFound", { nftId });
+				throw new NotFoundError(IotaNftConnector.CLASS_NAME, "nftNotFound", nftId);
 			}
 
 			// Because object.data.content is of type IotaParsedData
@@ -372,7 +338,12 @@ export class IotaNftConnector implements INftConnector {
 				try {
 					immutableMetadata = JSON.parse(content.immutable_metadata) as T;
 				} catch (error) {
-					throw new GeneralError(this.CLASS_NAME, "invalidImmutableMetadata", { nftId }, error);
+					throw new GeneralError(
+						IotaNftConnector.CLASS_NAME,
+						"invalidImmutableMetadata",
+						{ nftId },
+						error
+					);
 				}
 			}
 
@@ -382,20 +353,20 @@ export class IotaNftConnector implements INftConnector {
 				try {
 					metadata = JSON.parse(content.metadata) as U;
 				} catch (error) {
-					throw new GeneralError(this.CLASS_NAME, "invalidMetadata", { nftId }, error);
+					throw new GeneralError(IotaNftConnector.CLASS_NAME, "invalidMetadata", { nftId }, error);
 				}
 			}
 
 			return {
-				issuer: content.issuerIdentity?.toString(),
-				owner: content.ownerIdentity?.toString(),
+				issuer: content.issuer?.toString(),
+				issuerIdentityId: content.issuerIdentityId?.toString(),
 				tag: content.tag?.toString(),
 				immutableMetadata,
 				metadata
 			};
 		} catch (error) {
 			throw new GeneralError(
-				this.CLASS_NAME,
+				IotaNftConnector.CLASS_NAME,
 				"resolvingFailed",
 				undefined,
 				Iota.extractPayloadError(error)
@@ -407,22 +378,22 @@ export class IotaNftConnector implements INftConnector {
 	 * Burn an NFT.
 	 * @param controllerIdentity The controller of the NFT who can make changes.
 	 * @param id The id of the NFT to burn in urn format.
-	 * @returns void.
+	 * @returns A promise that resolves when the NFT has been permanently destroyed.
 	 */
 	public async burn(controllerIdentity: string, id: string): Promise<void> {
-		Guards.stringValue(this.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
-		Urn.guard(this.CLASS_NAME, nameof(id), id);
+		Guards.stringValue(IotaNftConnector.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
+		Urn.guard(IotaNftConnector.CLASS_NAME, nameof(id), id);
 
 		const urnParsed = Urn.fromValidString(id);
 		if (urnParsed.namespaceMethod() !== IotaNftConnector.NAMESPACE) {
-			throw new GeneralError(this.CLASS_NAME, "namespaceMismatch", {
+			throw new GeneralError(IotaNftConnector.CLASS_NAME, "namespaceMismatch", {
 				namespace: IotaNftConnector.NAMESPACE,
 				id
 			});
 		}
 
 		try {
-			const txb = new Transaction();
+			const txb = Iota.createTransaction();
 			txb.setGasBudget(this._gasBudget);
 
 			const objectId = IotaNftUtils.nftIdToObjectId(id);
@@ -455,13 +426,13 @@ export class IotaNftConnector implements INftConnector {
 			);
 
 			if (result.effects?.status?.status !== "success") {
-				throw new GeneralError(this.CLASS_NAME, "burningFailed", {
+				throw new GeneralError(IotaNftConnector.CLASS_NAME, "burningFailed", {
 					error: result.effects?.status?.error
 				});
 			}
 		} catch (error) {
 			throw new GeneralError(
-				this.CLASS_NAME,
+				IotaNftConnector.CLASS_NAME,
 				"burningFailed",
 				undefined,
 				Iota.extractPayloadError(error)
@@ -473,45 +444,33 @@ export class IotaNftConnector implements INftConnector {
 	 * Transfer an NFT to a new owner.
 	 * @param controller The identity of the user to access the vault keys.
 	 * @param nftId The id of the NFT to transfer.
-	 * @param recipientIdentity The recipient identity for the NFT.
 	 * @param recipientAddress The recipient address for the NFT.
 	 * @param metadata Optional metadata to update during transfer.
-	 * @returns void.
+	 * @returns A promise that resolves when the NFT ownership has been transferred.
 	 */
 	public async transfer<U = unknown>(
 		controller: string,
 		nftId: string,
-		recipientIdentity: string,
 		recipientAddress: string,
 		metadata?: U
 	): Promise<void> {
-		Guards.stringValue(this.CLASS_NAME, nameof(controller), controller);
-		Guards.stringValue(this.CLASS_NAME, nameof(nftId), nftId);
-		Guards.stringValue(this.CLASS_NAME, nameof(recipientIdentity), recipientIdentity);
-		Guards.stringValue(this.CLASS_NAME, nameof(recipientAddress), recipientAddress);
+		Guards.stringValue(IotaNftConnector.CLASS_NAME, nameof(controller), controller);
+		Guards.stringValue(IotaNftConnector.CLASS_NAME, nameof(nftId), nftId);
+		Guards.stringValue(IotaNftConnector.CLASS_NAME, nameof(recipientAddress), recipientAddress);
 		if (!Is.undefined(metadata)) {
-			Guards.object(this.CLASS_NAME, nameof(metadata), metadata);
+			Guards.object(IotaNftConnector.CLASS_NAME, nameof(metadata), metadata);
 		}
 
 		const urnParsed = Urn.fromValidString(nftId);
 		if (urnParsed.namespaceMethod() !== IotaNftConnector.NAMESPACE) {
-			throw new GeneralError(this.CLASS_NAME, "namespaceMismatch", {
+			throw new GeneralError(IotaNftConnector.CLASS_NAME, "namespaceMismatch", {
 				namespace: IotaNftConnector.NAMESPACE,
 				id: nftId
 			});
 		}
 
 		try {
-			// Verify ownership before attempting transfer
-			const currentNft = await this.resolve(nftId);
-			if (currentNft.owner !== controller) {
-				throw new GeneralError(this.CLASS_NAME, "transferFailed", {
-					currentOwner: currentNft.owner,
-					controller
-				});
-			}
-
-			const txb = new Transaction();
+			const txb = Iota.createTransaction();
 			txb.setGasBudget(this._gasBudget);
 
 			const objectId = IotaNftUtils.nftIdToObjectId(nftId);
@@ -525,6 +484,21 @@ export class IotaNftConnector implements INftConnector {
 
 			const ownerAddress = this.getOwnerAddress(nftId, object);
 
+			// Verify ownership — compare on-chain owner address against the controller's wallet address
+			const controllerAddress = await Iota.getAddress(
+				this._vaultConnector,
+				this._config,
+				controller,
+				this._config.accountAddressIndex ?? 0,
+				this._config.walletAddressIndex ?? 0
+			);
+			if (ownerAddress !== controllerAddress) {
+				throw new GeneralError(IotaNftConnector.CLASS_NAME, "transferFailed", {
+					currentOwner: ownerAddress,
+					controller
+				});
+			}
+
 			if (!Is.undefined(metadata)) {
 				// If metadata is provided, use transfer_with_metadata
 				const metadataString = JSON.stringify(metadata);
@@ -533,18 +507,13 @@ export class IotaNftConnector implements INftConnector {
 					arguments: [
 						txb.object(objectId),
 						txb.pure.address(recipientAddress),
-						txb.pure.string(recipientIdentity),
 						txb.pure.string(metadataString)
 					]
 				});
 			} else {
 				txb.moveCall({
 					target: `${packageId}::${moduleName}::transfer`,
-					arguments: [
-						txb.object(objectId),
-						txb.pure.address(recipientAddress),
-						txb.pure.string(recipientIdentity)
-					]
+					arguments: [txb.object(objectId), txb.pure.address(recipientAddress)]
 				});
 			}
 
@@ -562,13 +531,13 @@ export class IotaNftConnector implements INftConnector {
 			);
 
 			if (result.effects?.status?.status !== "success") {
-				throw new GeneralError(this.CLASS_NAME, "transferFailed", {
+				throw new GeneralError(IotaNftConnector.CLASS_NAME, "transferFailed", {
 					error: result.effects?.status?.error
 				});
 			}
 		} catch (error) {
 			throw new GeneralError(
-				this.CLASS_NAME,
+				IotaNftConnector.CLASS_NAME,
 				"transferFailed",
 				undefined,
 				Iota.extractPayloadError(error)
@@ -581,28 +550,29 @@ export class IotaNftConnector implements INftConnector {
 	 * @param controllerIdentity The controller of the NFT who can make changes.
 	 * @param id The id of the NFT to update in urn format.
 	 * @param metadata The new metadata for the NFT.
-	 * @returns void.
+	 * @returns A promise that resolves when the NFT metadata has been updated.
 	 */
 	public async update<U = unknown>(
 		controllerIdentity: string,
 		id: string,
 		metadata: U
 	): Promise<void> {
-		this.ensureStarted();
-		Guards.stringValue(this.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
-		Urn.guard(this.CLASS_NAME, nameof(id), id);
-		Guards.object(this.CLASS_NAME, nameof(metadata), metadata);
+		Guards.stringValue(IotaNftConnector.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
+		Urn.guard(IotaNftConnector.CLASS_NAME, nameof(id), id);
+		Guards.object(IotaNftConnector.CLASS_NAME, nameof(metadata), metadata);
 
 		const urnParsed = Urn.fromValidString(id);
 		if (urnParsed.namespaceMethod() !== IotaNftConnector.NAMESPACE) {
-			throw new GeneralError(this.CLASS_NAME, "namespaceMismatch", {
+			throw new GeneralError(IotaNftConnector.CLASS_NAME, "namespaceMismatch", {
 				namespace: IotaNftConnector.NAMESPACE,
 				id
 			});
 		}
 
 		try {
-			const txb = new Transaction();
+			const packageId = this.getPackageId();
+
+			const txb = Iota.createTransaction();
 			txb.setGasBudget(this._gasBudget);
 
 			const objectId = IotaNftUtils.nftIdToObjectId(id);
@@ -610,7 +580,6 @@ export class IotaNftConnector implements INftConnector {
 			// Convert metadata to string for storage
 			const metadataString = JSON.stringify(metadata);
 
-			const packageId = this._deployedPackageId;
 			const moduleName = this.getModuleName();
 
 			txb.moveCall({
@@ -639,13 +608,13 @@ export class IotaNftConnector implements INftConnector {
 			);
 
 			if (result.effects?.status?.status !== "success") {
-				throw new GeneralError(this.CLASS_NAME, "updateFailed", {
+				throw new GeneralError(IotaNftConnector.CLASS_NAME, "updateFailed", {
 					error: result.effects?.status?.error
 				});
 			}
 		} catch (error) {
 			throw new GeneralError(
-				this.CLASS_NAME,
+				IotaNftConnector.CLASS_NAME,
 				"updateFailed",
 				undefined,
 				Iota.extractPayloadError(error)
@@ -654,28 +623,16 @@ export class IotaNftConnector implements INftConnector {
 	}
 
 	/**
-	 * Get the package controller's address.
-	 * @param identity The identity of the user to access the vault keys.
-	 * @returns The controller's address.
+	 * Get the package ID for the smart contract.
+	 * @returns The package ID.
+	 * @throws GeneralError if the package ID is not initialized.
 	 * @internal
 	 */
-	private async getPackageControllerAddress(identity: string): Promise<string> {
-		const addressIndex = this._config.packageControllerAddressIndex ?? 0;
-		const addresses = await this._walletConnector.getAddresses(identity, 0, addressIndex, 1);
-		return addresses[0];
-	}
-
-	/**
-	 * Ensure that the connector is bootstrapped.
-	 * @throws GeneralError if the connector is not started.
-	 * @internal
-	 */
-	private ensureStarted(): void {
-		if (!this._deployedPackageId) {
-			throw new GeneralError(this.CLASS_NAME, "connectorNotStarted", {
-				packageId: this._deployedPackageId
-			});
+	private getPackageId(): string {
+		if (!Is.stringValue(this._deployedPackageId)) {
+			throw new GeneralError(IotaNftConnector.CLASS_NAME, "packageIdNotInitialised");
 		}
+		return this._deployedPackageId;
 	}
 
 	/**
@@ -692,20 +649,25 @@ export class IotaNftConnector implements INftConnector {
 	 * @param nftId The id of the NFT.
 	 * @param object The object to get the owner from.
 	 * @returns The owner address.
+	 * @throws GeneralError If the owner address cannot be found.
 	 * @internal
 	 */
-	private getOwnerAddress(nftId: string, object?: IotaObjectResponse): string {
-		const owner = object?.data?.owner;
+	private getOwnerAddress(nftId: string, object?: unknown): string {
+		if (
+			Is.object<{ data?: { owner?: { AddressOwner: string } | { ObjectOwner: string } } }>(object)
+		) {
+			const owner = object?.data?.owner;
 
-		if (Is.object(owner)) {
-			if ("AddressOwner" in owner) {
-				return owner.AddressOwner;
-			} else if ("ObjectOwner" in owner) {
-				return owner.ObjectOwner;
+			if (Is.object(owner)) {
+				if ("AddressOwner" in owner) {
+					return owner.AddressOwner;
+				} else if ("ObjectOwner" in owner) {
+					return owner.ObjectOwner;
+				}
+				// Shared ownership is handled as null
 			}
-			// Shared ownership is handled as null
 		}
 
-		throw new GeneralError(this.CLASS_NAME, "nftOwnerNftFound", { nftId });
+		throw new GeneralError(IotaNftConnector.CLASS_NAME, "nftOwnerNotFound", { nftId });
 	}
 }

@@ -12,7 +12,7 @@ export interface INftComponent extends IComponent {
 	 * @param immutableMetadata The immutable metadata for the NFT.
 	 * @param metadata The metadata for the NFT.
 	 * @param namespace The namespace of the connector to use for the NFT, defaults to component configured namespace.
-	 * @param identity The identity to perform the nft operation on.
+	 * @param identity The identity to perform the nft operation with.
 	 * @returns The id of the created NFT in urn format.
 	 */
 	mint<T = unknown, U = unknown>(
@@ -26,7 +26,7 @@ export interface INftComponent extends IComponent {
 	/**
 	 * Resolve an NFT.
 	 * @param id The id of the NFT to resolve.
-	 * @param controllerIdentity The identity to perform the nft operation on.
+	 * @param controllerIdentity The identity to perform the nft operation with.
 	 * @returns The data for the NFT.
 	 */
 	resolve<T = unknown, U = unknown>(
@@ -34,7 +34,7 @@ export interface INftComponent extends IComponent {
 		controllerIdentity?: string
 	): Promise<{
 		issuer: string;
-		owner: string;
+		issuerIdentityId: string;
 		tag: string;
 		immutableMetadata?: T;
 		metadata?: U;
@@ -43,23 +43,21 @@ export interface INftComponent extends IComponent {
 	/**
 	 * Burn an NFT.
 	 * @param id The id of the NFT to burn in urn format.
-	 * @param controllerIdentity The identity to perform the nft operation on.
-	 * @returns Nothing.
+	 * @param controllerIdentity The identity to perform the nft operation with.
+	 * @returns A promise that resolves when the NFT has been permanently destroyed.
 	 */
 	burn(id: string, controllerIdentity?: string): Promise<void>;
 
 	/**
 	 * Transfer an NFT.
 	 * @param id The id of the NFT to transfer in urn format.
-	 * @param recipientIdentity The recipient identity for the NFT.
 	 * @param recipientAddress The recipient address for the NFT.
 	 * @param metadata Optional mutable data to include during the transfer.
-	 * @param controllerIdentity The identity to perform the nft operation on.
-	 * @returns Nothing.
+	 * @param controllerIdentity The identity to perform the nft operation with.
+	 * @returns A promise that resolves when the NFT ownership has been transferred.
 	 */
 	transfer<U = unknown>(
 		id: string,
-		recipientIdentity: string,
 		recipientAddress: string,
 		metadata?: U,
 		controllerIdentity?: string
@@ -69,8 +67,8 @@ export interface INftComponent extends IComponent {
 	 * Update the mutable data of the NFT.
 	 * @param id The id of the NFT to update in urn format.
 	 * @param metadata The mutable data to update.
-	 * @param controllerIdentity The identity to perform the nft operation on.
-	 * @returns Nothing.
+	 * @param controllerIdentity The identity to perform the nft operation with.
+	 * @returns A promise that resolves when the NFT metadata has been updated.
 	 */
 	update<U = unknown>(id: string, metadata: U, controllerIdentity?: string): Promise<void>;
 }

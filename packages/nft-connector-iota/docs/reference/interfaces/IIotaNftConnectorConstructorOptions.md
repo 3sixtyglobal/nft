@@ -4,7 +4,7 @@ Options for the IotaNftConnector.
 
 ## Properties
 
-### config
+### config {#config}
 
 > **config**: [`IIotaNftConnectorConfig`](IIotaNftConnectorConfig.md)
 
@@ -12,9 +12,9 @@ The configuration to use for the connector.
 
 ***
 
-### vaultConnectorType?
+### vaultConnectorType? {#vaultconnectortype}
 
-> `optional` **vaultConnectorType**: `string`
+> `optional` **vaultConnectorType?**: `string`
 
 The vault connector type to use.
 
@@ -26,28 +26,8 @@ The vault connector type to use.
 
 ***
 
-### walletConnectorType?
+### loggingComponentType? {#loggingcomponenttype}
 
-> `optional` **walletConnectorType**: `string`
+> `optional` **loggingComponentType?**: `string`
 
-The wallet connector type to use.
-
-#### Default
-
-```ts
-"wallet"
-```
-
-***
-
-### loggingConnectorType?
-
-> `optional` **loggingConnectorType**: `string`
-
-The logging connector type.
-
-#### Default
-
-```ts
-logging
-```
+The logging component type.

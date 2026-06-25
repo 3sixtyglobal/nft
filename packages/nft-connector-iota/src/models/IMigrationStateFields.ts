@@ -1,0 +1,21 @@
+// Copyright 2024 IOTA Stiftung.
+// SPDX-License-Identifier: Apache-2.0.
+
+/**
+ * Interface representing the storage fields of a MigrationState object.
+ */
+export interface IMigrationStateFields {
+	/**
+	 * The ID of the MigrationState object.
+	 */
+	id: {
+		/**
+		 * The ID of the MigrationState object.
+		 */
+		id: string;
+	};
+	/**
+	 * Whether migration is currently enabled.
+	 */
+	enabled: boolean;
+}

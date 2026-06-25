@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: Apache-2.0.
 
 /**
- * Mint the data and return the NFT id.
+ * Request to mint a new NFT.
  */
 export interface INftMintRequest {
 	/**
-	 * The data to be used in the minting.
+	 * The request body containing minting parameters.
 	 */
 	body: {
 		/**
