@@ -13,7 +13,7 @@ import type {
 	INftTransferRequest,
 	INftUpdateRequest
 } from "@twin.org/nft-models";
-import { HeaderTypes } from "@twin.org/web";
+import { HttpMethod } from "@twin.org/web";
 
 /**
  * Client for performing NFT operations via REST endpoints.
@@ -56,7 +56,7 @@ export class NftRestClient extends BaseRestClient implements INftComponent {
 	): Promise<string> {
 		Guards.stringValue(NftRestClient.CLASS_NAME, nameof(tag), tag);
 
-		const response = await this.fetch<INftMintRequest, ICreatedResponse>("/", "POST", {
+		const response = await this.fetch<INftMintRequest, ICreatedResponse>("/", HttpMethod.POST, {
 			body: {
 				tag,
 				immutableMetadata,
@@ -65,7 +65,7 @@ export class NftRestClient extends BaseRestClient implements INftComponent {
 			}
 		});
 
-		return response.headers[HeaderTypes.Location];
+		return HttpHeaderHelper.extractId(response.headers);
 	}
 
 	/**
@@ -84,11 +84,15 @@ export class NftRestClient extends BaseRestClient implements INftComponent {
 	}> {
 		Guards.stringValue(NftRestClient.CLASS_NAME, nameof(id), id);
 
-		const response = await this.fetch<INftResolveRequest, INftResolveResponse>("/:id", "GET", {
-			pathParams: {
-				id
+		const response = await this.fetch<INftResolveRequest, INftResolveResponse>(
+			"/:id",
+			HttpMethod.GET,
+			{
+				pathParams: {
+					id
+				}
 			}
-		});
+		);
 
 		return response.body as {
 			issuer: string;
@@ -107,7 +111,7 @@ export class NftRestClient extends BaseRestClient implements INftComponent {
 	public async burn(id: string): Promise<void> {
 		Urn.guard(NftRestClient.CLASS_NAME, nameof(id), id);
 
-		await this.fetch<INftBurnRequest, never>("/:id", "DELETE", {
+		await this.fetch<INftBurnRequest, never>("/:id", HttpMethod.DELETE, {
 			pathParams: {
 				id
 			}
@@ -129,7 +133,7 @@ export class NftRestClient extends BaseRestClient implements INftComponent {
 		Guards.stringValue(NftRestClient.CLASS_NAME, nameof(id), id);
 		Guards.stringValue(NftRestClient.CLASS_NAME, nameof(recipientAddress), recipientAddress);
 
-		await this.fetch<INftTransferRequest, never>("/:id/transfer", "POST", {
+		await this.fetch<INftTransferRequest, never>("/:id/transfer", HttpMethod.POST, {
 			pathParams: {
 				id
 			},
@@ -150,7 +154,7 @@ export class NftRestClient extends BaseRestClient implements INftComponent {
 		Guards.stringValue(NftRestClient.CLASS_NAME, nameof(id), id);
 		Guards.object(NftRestClient.CLASS_NAME, nameof(metadata), metadata);
 
-		await this.fetch<INftUpdateRequest, never>("/:id", "PUT", {
+		await this.fetch<INftUpdateRequest, never>("/:id", HttpMethod.PUT, {
 			pathParams: {
 				id
 			},
