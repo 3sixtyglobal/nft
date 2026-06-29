@@ -1,6 +1,6 @@
 {
 	"name": "@twin.org/nft-connector-iota",
-	"version": "0.9.1-next.1",
+	"version": "0.9.1-next.2",
 	"description": "IOTA-backed NFT connector for network operations and on-ledger state.",
 	"repository": {
 		"type": "git",
@@ -39,7 +39,7 @@
 		"@twin.org/dlt-iota": "next",
 		"@twin.org/logging-models": "next",
 		"@twin.org/nameof": "next",
-		"@twin.org/nft-models": "0.9.1-next.1",
+		"@twin.org/nft-models": "0.9.1-next.2",
 		"@twin.org/vault-models": "next"
 	},
 	"devDependencies": {

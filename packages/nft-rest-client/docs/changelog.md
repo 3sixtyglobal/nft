@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.9.1-next.2](https://github.com/iotaledger/twin-nft/compare/nft-rest-client-v0.9.1-next.1...nft-rest-client-v0.9.1-next.2) (2026-06-29)
+
+
+### Features
+
+* enhanced rest testing ([5030a88](https://github.com/iotaledger/twin-nft/commit/5030a88163c2756c64467be36004c1a9ea028779))
+* enhanced rest testing ([#84](https://github.com/iotaledger/twin-nft/issues/84)) ([52065cc](https://github.com/iotaledger/twin-nft/commit/52065cca50e9ca5a6ddd50e155e23e29df33246f))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-models bumped from 0.9.1-next.1 to 0.9.1-next.2
+
 ## [0.9.1-next.1](https://github.com/iotaledger/twin-nft/compare/nft-rest-client-v0.9.1-next.0...nft-rest-client-v0.9.1-next.1) (2026-06-26)
 
 
