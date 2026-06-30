@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.9.1-next.3](https://github.com/iotaledger/twin-nft/compare/nft-service-v0.9.1-next.2...nft-service-v0.9.1-next.3) (2026-06-30)
+
+
+### Features
+
+* rest enhancement ([#86](https://github.com/iotaledger/twin-nft/issues/86)) ([5e5d33a](https://github.com/iotaledger/twin-nft/commit/5e5d33a30de1f548ccdcfdda200a75c92c859ce3))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-models bumped from 0.9.1-next.2 to 0.9.1-next.3
+  * devDependencies
+    * @twin.org/nft-connector-entity-storage bumped from 0.9.1-next.2 to 0.9.1-next.3
+
 ## [0.9.1-next.2](https://github.com/iotaledger/twin-nft/compare/nft-service-v0.9.1-next.1...nft-service-v0.9.1-next.2) (2026-06-29)
 
 
