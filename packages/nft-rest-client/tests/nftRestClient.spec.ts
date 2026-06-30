@@ -118,7 +118,7 @@ describe("NftRestClient", () => {
 
 			const id = await client.mint("test-tag");
 
-			expect(id).toBe(NFT_LOCATION);
+			expect(id).toBe(NFT_URN);
 		});
 	});
 

@@ -1,7 +1,11 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
 import { BaseRestClient } from "@twin.org/api-core";
-import { HttpHeaderHelper, type IBaseRestClientConfig, type ICreatedResponse } from "@twin.org/api-models";
+import {
+	HttpHeaderHelper,
+	type IBaseRestClientConfig,
+	type ICreatedResponse
+} from "@twin.org/api-models";
 import { Guards, Urn } from "@twin.org/core";
 import { nameof } from "@twin.org/nameof";
 import type {
@@ -65,7 +69,7 @@ export class NftRestClient extends BaseRestClient implements INftComponent {
 			}
 		});
 
-		return HttpHeaderHelper.extractId(response.headers);
+		return HttpHeaderHelper.extractId(response.headers, `${this.getPathPrefix()}/:id`);
 	}
 
 	/**
