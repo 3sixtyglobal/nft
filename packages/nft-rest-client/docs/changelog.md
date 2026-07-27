@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.9.1](https://github.com/iotaledger/twin-nft/compare/nft-rest-client-v0.9.1...nft-rest-client-v0.9.1) (2026-07-27)
+
+
+### Features
+
+* release to production ([4d338b3](https://github.com/iotaledger/twin-nft/commit/4d338b3e8a4dbccc61a1d1da3c470ba86cefe535))
+* release to production ([#80](https://github.com/iotaledger/twin-nft/issues/80)) ([b4d903e](https://github.com/iotaledger/twin-nft/commit/b4d903e1459782b30240317a964e787f3b9f957f))
+* release to production ([#91](https://github.com/iotaledger/twin-nft/issues/91)) ([420bc1a](https://github.com/iotaledger/twin-nft/commit/420bc1aa7ee430a6cda3f647c54a0b993990ce0f))
+
 ## [0.9.1-next.3](https://github.com/iotaledger/twin-nft/compare/nft-rest-client-v0.9.1-next.2...nft-rest-client-v0.9.1-next.3) (2026-06-30)
 
 
