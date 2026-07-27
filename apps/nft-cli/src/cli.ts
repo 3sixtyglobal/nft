@@ -32,7 +32,7 @@ export class CLI extends CLIBase {
 			{
 				title: "TWIN NFT",
 				appName: "twin-nft",
-				version: "0.9.0", // x-release-please-version
+				version: "0.9.1-next.3", // x-release-please-version
 				icon: "🌍",
 				supportsEnvFiles: true,
 				overrideOutputWidth: options?.overrideOutputWidth,

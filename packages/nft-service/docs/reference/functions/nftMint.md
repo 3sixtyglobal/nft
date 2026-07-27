@@ -1,6 +1,6 @@
 # Function: nftMint()
 
-> **nftMint**(`httpRequestContext`, `componentName`, `request`): `Promise`\<`ICreatedResponse`\>
+> **nftMint**(`httpRequestContext`, `componentName`, `request`, `baseRouteName`): `Promise`\<`ICreatedResponse`\>
 
 Mint an NFT.
 
@@ -23,6 +23,12 @@ The name of the component to use in the routes.
 `INftMintRequest`
 
 The request.
+
+### baseRouteName
+
+`string`
+
+The base route name for the API.
 
 ## Returns
 

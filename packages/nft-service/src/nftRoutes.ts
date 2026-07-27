@@ -1,11 +1,14 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import type {
-	ICreatedResponse,
-	IHttpRequestContext,
-	INoContentResponse,
-	IRestRoute,
-	ITag
+import {
+	HttpContextIdKeys,
+	HttpHeaderHelper,
+	HttpUrlHelper,
+	type ICreatedResponse,
+	type IHttpRequestContext,
+	type INoContentResponse,
+	type IRestRoute,
+	type ITag
 } from "@twin.org/api-models";
 import { ContextIdHelper, ContextIdKeys, ContextIdStore } from "@twin.org/context";
 import { ComponentFactory, Guards } from "@twin.org/core";
@@ -19,7 +22,7 @@ import type {
 	INftTransferRequest,
 	INftUpdateRequest
 } from "@twin.org/nft-models";
-import { HeaderTypes, HttpStatusCode } from "@twin.org/web";
+import { HeaderTypes, HttpStatusCode, type IHttpHeaders } from "@twin.org/web";
 
 /**
  * The source used when communicating about these routes.
@@ -50,7 +53,7 @@ export function generateRestRoutesNft(baseRouteName: string, componentName: stri
 		method: "POST",
 		path: `${baseRouteName}/`,
 		handler: async (httpRequestContext, request) =>
-			nftMint(httpRequestContext, componentName, request),
+			nftMint(httpRequestContext, componentName, request, baseRouteName),
 		requestType: {
 			type: nameof<INftMintRequest>(),
 			examples: [
@@ -243,12 +246,14 @@ export function generateRestRoutesNft(baseRouteName: string, componentName: stri
  * @param httpRequestContext The request context for the API.
  * @param componentName The name of the component to use in the routes.
  * @param request The request.
+ * @param baseRouteName The base route name for the API.
  * @returns A created response containing the location header with the new NFT id.
  */
 export async function nftMint(
 	httpRequestContext: IHttpRequestContext,
 	componentName: string,
-	request: INftMintRequest
+	request: INftMintRequest,
+	baseRouteName: string
 ): Promise<ICreatedResponse> {
 	Guards.object<INftMintRequest>(ROUTES_SOURCE, nameof(request), request);
 	Guards.object<INftMintRequest["body"]>(ROUTES_SOURCE, nameof(request.body), request.body);
@@ -265,11 +270,19 @@ export async function nftMint(
 		request.body.namespace,
 		contextIds[ContextIdKeys.Organization]
 	);
+
+	const publicOrigin = contextIds?.[HttpContextIdKeys.PublicOrigin];
+
+	const headers: IHttpHeaders = {};
+	HttpHeaderHelper.buildId(
+		headers,
+		id,
+		HttpUrlHelper.combineOriginPath(publicOrigin, `${baseRouteName}/users/:id`)
+	);
+
 	return {
 		statusCode: HttpStatusCode.created,
-		headers: {
-			[HeaderTypes.Location]: id
-		}
+		headers
 	};
 }
 

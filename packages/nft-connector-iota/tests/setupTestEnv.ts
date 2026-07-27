@@ -1,7 +1,8 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
 import path from "node:path";
-import { Guards } from "@twin.org/core";
+import { requestIotaFromFaucetV0 } from "@iota/iota-sdk/faucet";
+import { Guards, Is } from "@twin.org/core";
 import { Bip39 } from "@twin.org/crypto";
 import { Iota, type ISmartContractDeployments } from "@twin.org/dlt-iota";
 import { MemoryEntityStorageConnector } from "@twin.org/entity-storage-connector-memory";
@@ -21,12 +22,11 @@ import compiledDeployments from "../src/contracts/smartContractDeployments/smart
 console.debug("Setting up test environment from .env and .env.dev files");
 
 dotenv.config({
-	path: [path.join(__dirname, ".env"), path.join(__dirname, ".env.dev")],
+	path: [path.join(__dirname, ".env.dev"), path.join(__dirname, ".env")],
 	quiet: true
 });
 
 Guards.stringValue("TestEnv", "TEST_NODE_ENDPOINT", process.env.TEST_NODE_ENDPOINT);
-Guards.stringValue("TestEnv", "TEST_FAUCET_ENDPOINT", process.env.TEST_FAUCET_ENDPOINT);
 Guards.stringValue("TestEnv", "TEST_COIN_TYPE", process.env.TEST_COIN_TYPE);
 Guards.stringValue("TestEnv", "TEST_NETWORK", process.env.TEST_NETWORK);
 Guards.stringValue("TestEnv", "TEST_EXPLORER_URL", process.env.TEST_EXPLORER_URL);
@@ -53,13 +53,13 @@ export const TEST_NODE_MNEMONIC = process.env.TEST_NODE_MNEMONIC ?? Bip39.random
 export const TEST_MNEMONIC = process.env.TEST_MNEMONIC ?? Bip39.randomMnemonic();
 export const TEST_2_MNEMONIC = process.env.TEST_2_MNEMONIC ?? Bip39.randomMnemonic();
 export const TEST_NODE_ENDPOINT = process.env.TEST_NODE_ENDPOINT ?? "https://api.testnet.iota.cafe";
-export const TEST_FAUCET_ENDPOINT =
-	process.env.TEST_FAUCET_ENDPOINT ?? "https://faucet.testnet.iota.cafe/gas";
+export const TEST_FAUCET_ENDPOINT = process.env.TEST_FAUCET_ENDPOINT;
 export const TEST_EXPLORER_URL = process.env.TEST_EXPLORER_URL;
 export const TEST_GAS_STATION_URL = process.env.TEST_GAS_STATION_URL;
 export const TEST_GAS_STATION_AUTH_TOKEN = process.env.TEST_GAS_STATION_AUTH_TOKEN;
 export const TEST_GAS_BUDGET = Number.parseInt(process.env.TEST_GAS_BUDGET ?? "50000000", 10);
 export const TEST_COIN_TYPE = Number.parseInt(process.env.TEST_COIN_TYPE, 10);
+export const TEST_GAS_STATION_ADDRESS = process.env.TEST_GAS_STATION_ADDRESS;
 
 // Minimum balance required for tests (1 IOTA in nano units)
 const MIN_BALANCE_REQUIRED = 1000000000n; // 1 IOTA = 1,000,000,000 nano IOTA
@@ -175,6 +175,8 @@ export function getTestDeploymentConfig(): ISmartContractDeployments {
  * Setup the test environment.
  */
 export async function setupTestEnv(): Promise<void> {
+	await testFundGasStation();
+
 	console.debug(
 		"Test Address",
 		`${TEST_EXPLORER_URL}address/${TEST_ADDRESS}?network=${TEST_NETWORK}`
@@ -237,7 +239,9 @@ async function ensureFundsForAddress(identity: string, address: string): Promise
 		);
 
 		const currentBalance = await Iota.getBalance(TEST_IOTA_CONFIG, address);
-		console.debug(`[ensureFundsForAddress] Address ${address} has balance: ${currentBalance}`);
+		console.debug(
+			`[ensureFundsForAddress] Address ${TEST_EXPLORER_URL}address/${address}?network=${TEST_NETWORK} has balance: ${currentBalance}`
+		);
 
 		if (!success) {
 			console.warn(
@@ -248,6 +252,48 @@ async function ensureFundsForAddress(identity: string, address: string): Promise
 		console.warn(
 			`[setupTestEnv] Ignoring faucet error while funding ${address}. Continuing test setup.`,
 			error
+		);
+	}
+}
+
+/**
+ * Fund the gas station address from the faucet if the address is provided in the environment variables.
+ */
+async function testFundGasStation(): Promise<void> {
+	// Fund the gas station if its address is provided
+	if (Is.stringValue(TEST_GAS_STATION_ADDRESS) && Is.stringValue(TEST_FAUCET_ENDPOINT)) {
+		try {
+			const balance = await Iota.getBalance(
+				{
+					clientOptions: TEST_CLIENT_OPTIONS,
+					network: TEST_NETWORK
+				},
+				TEST_GAS_STATION_ADDRESS
+			);
+
+			if (balance < 2000000000) {
+				console.debug(
+					"Requesting IOTA from faucet to fund gas station address:",
+					`${TEST_EXPLORER_URL}address/${TEST_GAS_STATION_ADDRESS}?network=${TEST_NETWORK}`
+				);
+				const response = await requestIotaFromFaucetV0({
+					host: TEST_FAUCET_ENDPOINT,
+					recipient: TEST_GAS_STATION_ADDRESS
+				});
+				console.debug("Funded gas station address from faucet:", response);
+			}
+		} catch (error) {
+			console.error("Failed to request IOTA from faucet:", error);
+		}
+		console.debug(
+			"Gas station balance",
+			await Iota.getBalance(
+				{
+					clientOptions: TEST_CLIENT_OPTIONS,
+					network: TEST_NETWORK
+				},
+				TEST_GAS_STATION_ADDRESS
+			)
 		);
 	}
 }
