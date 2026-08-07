@@ -54,7 +54,7 @@ The metadata of the NFT.
 
 > **issuer**: `string`
 
-The issuer of the NFT — the wallet address that signed the mint transaction.
+The issuer of the NFT - the wallet address that signed the mint transaction.
 
 ***
 
