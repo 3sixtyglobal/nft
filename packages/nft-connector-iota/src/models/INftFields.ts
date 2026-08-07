@@ -31,7 +31,7 @@ export interface INftFields {
 	 */
 	metadata: string;
 	/**
-	 * The issuer of the NFT — the wallet address that signed the mint transaction.
+	 * The issuer of the NFT - the wallet address that signed the mint transaction.
 	 */
 	issuer: string;
 	/**

@@ -35,7 +35,7 @@
 	},
 	"dependencies": {
 		"@twin.org/core": "next",
-		"@twin.org/crypto": "next",
+		"@twin.org/dlt-account": "next",
 		"@twin.org/dlt-iota": "next",
 		"@twin.org/logging-models": "next",
 		"@twin.org/nameof": "next",
@@ -43,15 +43,18 @@
 		"@twin.org/vault-models": "next"
 	},
 	"devDependencies": {
+		"@iota/iota-sdk": "1.15.0",
+		"@twin.org/crypto": "next",
 		"@twin.org/entity": "next",
 		"@twin.org/entity-storage-connector-memory": "next",
+		"@twin.org/entity-storage-models": "next",
 		"@twin.org/identity-connector-iota": "next",
 		"@twin.org/move-to-json": "next",
 		"@twin.org/nameof-transformer": "next",
 		"@twin.org/nameof-vitest-plugin": "next",
 		"@twin.org/validate-locales": "next",
 		"@twin.org/vault-connector-entity-storage": "next",
-		"@types/node": "26.1.1",
+		"@types/node": "26.1.2",
 		"@vitest/coverage-v8": "4.1.10",
 		"copyfiles": "2.4.1",
 		"dotenv": "17.4.2",

@@ -10,6 +10,7 @@ import {
 	StringHelper,
 	Urn
 } from "@twin.org/core";
+import { AccountHelper } from "@twin.org/dlt-account";
 import {
 	type IContractData,
 	type ISmartContractDeployments,
@@ -236,9 +237,9 @@ export class IotaNftConnector implements INftConnector {
 			const txb = Iota.createTransaction();
 			txb.setGasBudget(this._gasBudget);
 
-			const address = await Iota.getAddress(
-				this._vaultConnector,
+			const address = await AccountHelper.getAddress(
 				this._config,
+				this._vaultConnector,
 				controllerIdentity,
 				this._config.accountAddressIndex ?? 0,
 				this._config.walletAddressIndex ?? 0
@@ -484,10 +485,10 @@ export class IotaNftConnector implements INftConnector {
 
 			const ownerAddress = this.getOwnerAddress(nftId, object);
 
-			// Verify ownership — compare on-chain owner address against the controller's wallet address
-			const controllerAddress = await Iota.getAddress(
-				this._vaultConnector,
+			// Verify ownership - compare on-chain owner address against the controller's wallet address
+			const controllerAddress = await AccountHelper.getAddress(
 				this._config,
+				this._vaultConnector,
 				controller,
 				this._config.accountAddressIndex ?? 0,
 				this._config.walletAddressIndex ?? 0
