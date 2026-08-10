@@ -8,9 +8,16 @@ import {
 	type IHealthProviderComponent
 } from "@twin.org/api-models";
 import { ContextIdKeys, ContextIdStore } from "@twin.org/context";
-import { BaseError, GeneralError, Guards, Is, Urn } from "@twin.org/core";
+import { BaseError, ComponentFactory, GeneralError, Guards, Is, Urn } from "@twin.org/core";
 import { nameof } from "@twin.org/nameof";
-import { NftConnectorFactory, type INftComponent, type INftConnector } from "@twin.org/nft-models";
+import {
+	NftConnectorFactory,
+	NftMetricIds,
+	NftMetrics,
+	type INftComponent,
+	type INftConnector
+} from "@twin.org/nft-models";
+import { MetricHelper, type ITelemetryComponent } from "@twin.org/telemetry-models";
 import type { INftServiceConstructorOptions } from "./models/INftServiceConstructorOptions.js";
 
 /**
@@ -35,6 +42,12 @@ export class NftService implements INftComponent, IHealthProviderComponent {
 	private readonly _defaultNamespace: string;
 
 	/**
+	 * The optional telemetry component for recording metrics.
+	 * @internal
+	 */
+	private readonly _telemetryComponent?: ITelemetryComponent;
+
+	/**
 	 * Create a new instance of NftService.
 	 * @param options The options for the service.
 	 * @throws GeneralError If no NFT connectors are registered.
@@ -46,6 +59,9 @@ export class NftService implements INftComponent, IHealthProviderComponent {
 		}
 
 		this._defaultNamespace = options?.config?.defaultNamespace ?? names[0];
+		this._telemetryComponent = ComponentFactory.getIfExists<ITelemetryComponent>(
+			options?.telemetryComponentType
+		);
 	}
 
 	/**
@@ -54,6 +70,16 @@ export class NftService implements INftComponent, IHealthProviderComponent {
 	 */
 	public className(): string {
 		return NftService.CLASS_NAME;
+	}
+
+	/**
+	 * Registers the NFT metrics with the telemetry component.
+	 */
+	public async start(): Promise<void> {
+		if (Is.undefined(this._telemetryComponent)) {
+			return;
+		}
+		await MetricHelper.createMetrics(this._telemetryComponent, NftMetrics);
 	}
 
 	/**
@@ -126,6 +152,10 @@ export class NftService implements INftComponent, IHealthProviderComponent {
 
 			const nftUrn = await nftConnector.mint(controllerIdentity, tag, immutableMetadata, metadata);
 
+			await MetricHelper.metricIncrement(this._telemetryComponent, NftMetricIds.TokensMinted, {
+				namespace: connectorNamespace
+			});
+
 			return nftUrn;
 		} catch (error) {
 			throw new GeneralError(NftService.CLASS_NAME, "mintFailed", undefined, error);
@@ -153,6 +183,9 @@ export class NftService implements INftComponent, IHealthProviderComponent {
 		try {
 			const nftConnector = this.getConnector(id);
 			const result = await nftConnector.resolve<T, U>(id);
+
+			await MetricHelper.metricIncrement(this._telemetryComponent, NftMetricIds.TokensResolved);
+
 			return result;
 		} catch (error) {
 			throw new GeneralError(NftService.CLASS_NAME, "resolveFailed", undefined, error);
@@ -172,6 +205,8 @@ export class NftService implements INftComponent, IHealthProviderComponent {
 		try {
 			const nftConnector = this.getConnector(id);
 			await nftConnector.burn(controllerIdentity, id);
+
+			await MetricHelper.metricIncrement(this._telemetryComponent, NftMetricIds.TokensBurned);
 		} catch (error) {
 			throw new GeneralError(NftService.CLASS_NAME, "burnFailed", undefined, error);
 		}
@@ -198,6 +233,8 @@ export class NftService implements INftComponent, IHealthProviderComponent {
 		try {
 			const nftConnector = this.getConnector(id);
 			await nftConnector.transfer(controllerIdentity, id, recipientAddress, metadata);
+
+			await MetricHelper.metricIncrement(this._telemetryComponent, NftMetricIds.TokensTransferred);
 		} catch (error) {
 			throw new GeneralError(NftService.CLASS_NAME, "transferFailed", undefined, error);
 		}
@@ -222,6 +259,8 @@ export class NftService implements INftComponent, IHealthProviderComponent {
 		try {
 			const nftConnector = this.getConnector(id);
 			await nftConnector.update(controllerIdentity, id, metadata);
+
+			await MetricHelper.metricIncrement(this._telemetryComponent, NftMetricIds.TokensUpdated);
 		} catch (error) {
 			throw new GeneralError(NftService.CLASS_NAME, "updateFailed", undefined, error);
 		}

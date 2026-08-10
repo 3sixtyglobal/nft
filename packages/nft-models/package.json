@@ -30,6 +30,7 @@
 	"dependencies": {
 		"@twin.org/core": "next",
 		"@twin.org/nameof": "next",
+		"@twin.org/telemetry-models": "next",
 		"@twin.org/web": "next"
 	},
 	"devDependencies": {
