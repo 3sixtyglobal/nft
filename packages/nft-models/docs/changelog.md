@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.2-next.2](https://github.com/iotaledger/twin-nft/compare/nft-models-v0.9.2-next.1...nft-models-v0.9.2-next.2) (2026-08-10)
+
+
+### Features
+
+* telemetry ([#98](https://github.com/iotaledger/twin-nft/issues/98)) ([84a7979](https://github.com/iotaledger/twin-nft/commit/84a7979e18acab7a1431d1f09ca2c045a2f274c8))
+
 ## [0.9.2-next.1](https://github.com/iotaledger/twin-nft/compare/nft-models-v0.9.2-next.0...nft-models-v0.9.2-next.1) (2026-08-07)
 
 
