@@ -59,6 +59,22 @@ The class name.
 
 ***
 
+### start() {#start}
+
+> **start**(): `Promise`\<`void`\>
+
+Registers the NFT metrics with the telemetry component.
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+`INftComponent.start`
+
+***
+
 ### healthApplication() {#healthapplication}
 
 > **healthApplication**(`callback`): `Promise`\<`IHealth`[] \| `undefined`\>

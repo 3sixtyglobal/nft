@@ -12,6 +12,12 @@
 - [INftTransferRequest](interfaces/INftTransferRequest.md)
 - [INftUpdateRequest](interfaces/INftUpdateRequest.md)
 
+## Type Aliases
+
+- [NftMetricIds](type-aliases/NftMetricIds.md)
+
 ## Variables
 
 - [NftConnectorFactory](variables/NftConnectorFactory.md)
+- [NftMetricIds](variables/NftMetricIds.md)
+- [NftMetrics](variables/NftMetrics.md)
