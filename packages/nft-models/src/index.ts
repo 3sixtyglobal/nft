@@ -6,6 +6,8 @@ export * from "./models/INftComponent.js";
 export * from "./models/INftConnector.js";
 export * from "./models/nftMetricIds.js";
 export * from "./models/nftMetrics.js";
+export * from "./models/nftSpanAttributes.js";
+export * from "./models/nftSpanNames.js";
 export * from "./models/api/INftBurnRequest.js";
 export * from "./models/api/INftMintRequest.js";
 export * from "./models/api/INftResolveRequest.js";
