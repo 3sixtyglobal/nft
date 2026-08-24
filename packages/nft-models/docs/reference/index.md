@@ -12,6 +12,16 @@
 - [INftTransferRequest](interfaces/INftTransferRequest.md)
 - [INftUpdateRequest](interfaces/INftUpdateRequest.md)
 
+## Type Aliases
+
+- [NftMetricIds](type-aliases/NftMetricIds.md)
+- [NftSpanAttributes](type-aliases/NftSpanAttributes.md)
+- [NftSpanNames](type-aliases/NftSpanNames.md)
+
 ## Variables
 
 - [NftConnectorFactory](variables/NftConnectorFactory.md)
+- [NftMetricIds](variables/NftMetricIds.md)
+- [NftMetrics](variables/NftMetrics.md)
+- [NftSpanAttributes](variables/NftSpanAttributes.md)
+- [NftSpanNames](variables/NftSpanNames.md)

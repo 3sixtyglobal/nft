@@ -5,6 +5,7 @@ Service for performing NFT operations to a connector.
 ## Implements
 
 - `INftComponent`
+- `IHealthProviderComponent`
 
 ## Constructors
 
@@ -55,6 +56,49 @@ The class name.
 #### Implementation of
 
 `INftComponent.className`
+
+***
+
+### start() {#start}
+
+> **start**(): `Promise`\<`void`\>
+
+Registers the NFT metrics with the telemetry component.
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Implementation of
+
+`INftComponent.start`
+
+***
+
+### healthApplication() {#healthapplication}
+
+> **healthApplication**(`callback`): `Promise`\<`IHealth`[] \| `undefined`\>
+
+Returns the application health status by running a full NFT lifecycle (mint, resolve, burn)
+using the organisation identity from the current context.
+
+#### Parameters
+
+##### callback
+
+`HealthApplicationCallback`
+
+The callback to invoke when a deferred health result is ready.
+
+#### Returns
+
+`Promise`\<`IHealth`[] \| `undefined`\>
+
+The health status of the service.
+
+#### Implementation of
+
+`IHealthProviderComponent.healthApplication`
 
 ***
 

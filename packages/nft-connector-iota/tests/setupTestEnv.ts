@@ -4,6 +4,7 @@ import path from "node:path";
 import { requestIotaFromFaucetV0 } from "@iota/iota-sdk/faucet";
 import { Guards, Is } from "@twin.org/core";
 import { Bip39 } from "@twin.org/crypto";
+import { AccountHelper } from "@twin.org/dlt-account";
 import { Iota, type ISmartContractDeployments } from "@twin.org/dlt-iota";
 import { MemoryEntityStorageConnector } from "@twin.org/entity-storage-connector-memory";
 import { EntityStorageConnectorFactory } from "@twin.org/entity-storage-models";
@@ -86,21 +87,6 @@ EntityStorageConnectorFactory.register("vault-secret", () => secretEntityStorage
 export const TEST_VAULT_CONNECTOR = new EntityStorageVaultConnector();
 VaultConnectorFactory.register("vault", () => TEST_VAULT_CONNECTOR);
 
-// Store mnemonics in vault for node identity
-await TEST_VAULT_CONNECTOR.setSecret(
-	`${TEST_NODE_IDENTITY}/${TEST_MNEMONIC_NAME}`,
-	TEST_NODE_MNEMONIC
-);
-
-// Store mnemonics in vault for user identity
-await TEST_VAULT_CONNECTOR.setSecret(`${TEST_USER_IDENTITY}/${TEST_MNEMONIC_NAME}`, TEST_MNEMONIC);
-
-// Store mnemonics in vault for user identity 2
-await TEST_VAULT_CONNECTOR.setSecret(
-	`${TEST_USER_IDENTITY_2}/${TEST_MNEMONIC_NAME}`,
-	TEST_2_MNEMONIC
-);
-
 // Setup client options
 export const TEST_CLIENT_OPTIONS = {
 	url: TEST_NODE_ENDPOINT
@@ -113,6 +99,30 @@ export const TEST_IOTA_CONFIG = {
 	vaultMnemonicId: TEST_MNEMONIC_NAME
 };
 
+// Store mnemonics in vault for node identity
+await AccountHelper.createAccountKeys(
+	TEST_IOTA_CONFIG,
+	TEST_VAULT_CONNECTOR,
+	TEST_NODE_IDENTITY,
+	TEST_NODE_MNEMONIC
+);
+
+// Store mnemonics in vault for user identity
+await AccountHelper.createAccountKeys(
+	TEST_IOTA_CONFIG,
+	TEST_VAULT_CONNECTOR,
+	TEST_USER_IDENTITY,
+	TEST_MNEMONIC
+);
+
+// Store mnemonics in vault for user identity 2
+await AccountHelper.createAccountKeys(
+	TEST_IOTA_CONFIG,
+	TEST_VAULT_CONNECTOR,
+	TEST_USER_IDENTITY_2,
+	TEST_2_MNEMONIC
+);
+
 export const TEST_IDENTITY_CONNECTOR = new IotaIdentityConnector({
 	config: {
 		clientOptions: TEST_CLIENT_OPTIONS,
@@ -122,34 +132,31 @@ export const TEST_IDENTITY_CONNECTOR = new IotaIdentityConnector({
 	vaultConnectorType: "vault"
 });
 
-const testAddresses = await Iota.getAddresses(
-	TEST_VAULT_CONNECTOR,
+const testAddress = await AccountHelper.getAddress(
 	TEST_IOTA_CONFIG,
+	TEST_VAULT_CONNECTOR,
 	TEST_USER_IDENTITY,
 	0,
-	0,
-	1
+	0
 );
-const testAddresses2 = await Iota.getAddresses(
-	TEST_VAULT_CONNECTOR,
+const testAddress2 = await AccountHelper.getAddress(
 	TEST_IOTA_CONFIG,
+	TEST_VAULT_CONNECTOR,
 	TEST_USER_IDENTITY_2,
 	0,
-	0,
-	1
+	0
 );
-const nodeAddresses = await Iota.getAddresses(
-	TEST_VAULT_CONNECTOR,
+const nodeAddress = await AccountHelper.getAddress(
 	TEST_IOTA_CONFIG,
+	TEST_VAULT_CONNECTOR,
 	TEST_NODE_IDENTITY,
 	0,
-	0,
-	1
+	0
 );
 
-export const TEST_ADDRESS = testAddresses[0];
-export const TEST_ADDRESS_2 = testAddresses2[0];
-export const NODE_ADDRESS = nodeAddresses[0];
+export const TEST_ADDRESS = testAddress;
+export const TEST_ADDRESS_2 = testAddress2;
+export const NODE_ADDRESS = nodeAddress;
 
 /**
  * Global variable to store test deployment configuration.

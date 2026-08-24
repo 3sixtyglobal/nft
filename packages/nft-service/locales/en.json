@@ -9,5 +9,11 @@
 			"transferFailed": "The transfer of the NFT failed",
 			"updateFailed": "The update of the NFT failed"
 		}
+	},
+	"health": {
+		"nftService": {
+			"healthDescription": "NFT service application health check",
+			"resolveNftFailed": "Failed to resolve the health check NFT"
+		}
 	}
 }

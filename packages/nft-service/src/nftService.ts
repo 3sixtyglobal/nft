@@ -1,14 +1,32 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import { GeneralError, Guards, Urn } from "@twin.org/core";
+import {
+	HealthCategory,
+	HealthStatus,
+	type HealthApplicationCallback,
+	type IHealth,
+	type IHealthProviderComponent
+} from "@twin.org/api-models";
+import { ContextIdKeys, ContextIdStore } from "@twin.org/context";
+import { BaseError, ComponentFactory, GeneralError, Guards, Is, Urn } from "@twin.org/core";
 import { nameof } from "@twin.org/nameof";
-import { NftConnectorFactory, type INftComponent, type INftConnector } from "@twin.org/nft-models";
+import {
+	NftConnectorFactory,
+	NftMetricIds,
+	NftSpanAttributes,
+	NftSpanNames,
+	NftMetrics,
+	type INftComponent,
+	type INftConnector
+} from "@twin.org/nft-models";
+import { MetricHelper, type ITelemetryComponent } from "@twin.org/telemetry-models";
+import { TracingHelper, type ITracingComponent } from "@twin.org/tracing-models";
 import type { INftServiceConstructorOptions } from "./models/INftServiceConstructorOptions.js";
 
 /**
  * Service for performing NFT operations to a connector.
  */
-export class NftService implements INftComponent {
+export class NftService implements INftComponent, IHealthProviderComponent {
 	/**
 	 * Runtime name for the class.
 	 */
@@ -27,6 +45,18 @@ export class NftService implements INftComponent {
 	private readonly _defaultNamespace: string;
 
 	/**
+	 * The optional telemetry component for recording metrics.
+	 * @internal
+	 */
+	private readonly _telemetryComponent?: ITelemetryComponent;
+
+	/**
+	 * The optional tracing component for recording spans.
+	 * @internal
+	 */
+	private readonly _tracingComponent?: ITracingComponent;
+
+	/**
 	 * Create a new instance of NftService.
 	 * @param options The options for the service.
 	 * @throws GeneralError If no NFT connectors are registered.
@@ -38,6 +68,12 @@ export class NftService implements INftComponent {
 		}
 
 		this._defaultNamespace = options?.config?.defaultNamespace ?? names[0];
+		this._telemetryComponent = ComponentFactory.getIfExists<ITelemetryComponent>(
+			options?.telemetryComponentType
+		);
+		this._tracingComponent = ComponentFactory.getIfExists<ITracingComponent>(
+			options?.tracingComponentType
+		);
 	}
 
 	/**
@@ -46,6 +82,60 @@ export class NftService implements INftComponent {
 	 */
 	public className(): string {
 		return NftService.CLASS_NAME;
+	}
+
+	/**
+	 * Registers the NFT metrics with the telemetry component.
+	 */
+	public async start(): Promise<void> {
+		if (Is.undefined(this._telemetryComponent)) {
+			return;
+		}
+		await MetricHelper.createMetrics(this._telemetryComponent, NftMetrics);
+	}
+
+	/**
+	 * Returns the application health status by running a full NFT lifecycle (mint, resolve, burn)
+	 * using the organisation identity from the current context.
+	 * @param callback The callback to invoke when a deferred health result is ready.
+	 * @returns The health status of the service.
+	 */
+	public async healthApplication(
+		callback: HealthApplicationCallback
+	): Promise<IHealth[] | undefined> {
+		const contextIds = (await ContextIdStore.getContextIds()) ?? {};
+		const orgId = contextIds[ContextIdKeys.Organization];
+
+		if (!Is.stringValue(orgId)) {
+			return [];
+		}
+
+		try {
+			const connector = NftConnectorFactory.get<INftConnector>(this._defaultNamespace);
+			const nftId = await connector.mint(orgId, "TWIN-HEALTH", { type: "HealthCheck" }, undefined);
+			const resolved = await connector.resolve(nftId);
+			await connector.burn(orgId, nftId);
+			return [
+				{
+					source: NftService.CLASS_NAME,
+					category: HealthCategory.Application,
+					status: Is.object(resolved) ? HealthStatus.Ok : HealthStatus.Error,
+					description: "healthDescription",
+					message: Is.object(resolved) ? undefined : "resolveNftFailed"
+				}
+			];
+		} catch (error) {
+			return [
+				{
+					source: NftService.CLASS_NAME,
+					category: HealthCategory.Application,
+					status: HealthStatus.Error,
+					description: "healthDescription",
+					message: "resolveNftFailed",
+					error: BaseError.fromError(error)
+				}
+			];
+		}
 	}
 
 	/**
@@ -67,17 +157,33 @@ export class NftService implements INftComponent {
 		Guards.stringValue(NftService.CLASS_NAME, nameof(tag), tag);
 		Guards.stringValue(NftService.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
 
-		try {
-			const connectorNamespace = namespace ?? this._defaultNamespace;
+		return TracingHelper.withSpan(
+			this._tracingComponent,
+			NftSpanNames.Mint,
+			{ attributes: { [NftSpanAttributes.Tag]: tag } },
+			async () => {
+				try {
+					const connectorNamespace = namespace ?? this._defaultNamespace;
 
-			const nftConnector = NftConnectorFactory.get<INftConnector>(connectorNamespace);
+					const nftConnector = NftConnectorFactory.get<INftConnector>(connectorNamespace);
 
-			const nftUrn = await nftConnector.mint(controllerIdentity, tag, immutableMetadata, metadata);
+					const nftUrn = await nftConnector.mint(
+						controllerIdentity,
+						tag,
+						immutableMetadata,
+						metadata
+					);
 
-			return nftUrn;
-		} catch (error) {
-			throw new GeneralError(NftService.CLASS_NAME, "mintFailed", undefined, error);
-		}
+					await MetricHelper.metricIncrement(this._telemetryComponent, NftMetricIds.TokensMinted, {
+						namespace: connectorNamespace
+					});
+
+					return nftUrn;
+				} catch (error) {
+					throw new GeneralError(NftService.CLASS_NAME, "mintFailed", undefined, error);
+				}
+			}
+		);
 	}
 
 	/**
@@ -98,13 +204,23 @@ export class NftService implements INftComponent {
 	}> {
 		Urn.guard(NftService.CLASS_NAME, nameof(id), id);
 
-		try {
-			const nftConnector = this.getConnector(id);
-			const result = await nftConnector.resolve<T, U>(id);
-			return result;
-		} catch (error) {
-			throw new GeneralError(NftService.CLASS_NAME, "resolveFailed", undefined, error);
-		}
+		return TracingHelper.withSpan(
+			this._tracingComponent,
+			NftSpanNames.Resolve,
+			{ attributes: { [NftSpanAttributes.Id]: id } },
+			async () => {
+				try {
+					const nftConnector = this.getConnector(id);
+					const result = await nftConnector.resolve<T, U>(id);
+
+					await MetricHelper.metricIncrement(this._telemetryComponent, NftMetricIds.TokensResolved);
+
+					return result;
+				} catch (error) {
+					throw new GeneralError(NftService.CLASS_NAME, "resolveFailed", undefined, error);
+				}
+			}
+		);
 	}
 
 	/**
@@ -117,12 +233,21 @@ export class NftService implements INftComponent {
 		Urn.guard(NftService.CLASS_NAME, nameof(id), id);
 		Guards.stringValue(NftService.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
 
-		try {
-			const nftConnector = this.getConnector(id);
-			await nftConnector.burn(controllerIdentity, id);
-		} catch (error) {
-			throw new GeneralError(NftService.CLASS_NAME, "burnFailed", undefined, error);
-		}
+		await TracingHelper.withSpan(
+			this._tracingComponent,
+			NftSpanNames.Burn,
+			{ attributes: { [NftSpanAttributes.Id]: id } },
+			async () => {
+				try {
+					const nftConnector = this.getConnector(id);
+					await nftConnector.burn(controllerIdentity, id);
+
+					await MetricHelper.metricIncrement(this._telemetryComponent, NftMetricIds.TokensBurned);
+				} catch (error) {
+					throw new GeneralError(NftService.CLASS_NAME, "burnFailed", undefined, error);
+				}
+			}
+		);
 	}
 
 	/**
@@ -143,12 +268,24 @@ export class NftService implements INftComponent {
 		Guards.stringValue(NftService.CLASS_NAME, nameof(recipientAddress), recipientAddress);
 		Guards.stringValue(NftService.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
 
-		try {
-			const nftConnector = this.getConnector(id);
-			await nftConnector.transfer(controllerIdentity, id, recipientAddress, metadata);
-		} catch (error) {
-			throw new GeneralError(NftService.CLASS_NAME, "transferFailed", undefined, error);
-		}
+		await TracingHelper.withSpan(
+			this._tracingComponent,
+			NftSpanNames.Transfer,
+			{ attributes: { [NftSpanAttributes.Id]: id } },
+			async () => {
+				try {
+					const nftConnector = this.getConnector(id);
+					await nftConnector.transfer(controllerIdentity, id, recipientAddress, metadata);
+
+					await MetricHelper.metricIncrement(
+						this._telemetryComponent,
+						NftMetricIds.TokensTransferred
+					);
+				} catch (error) {
+					throw new GeneralError(NftService.CLASS_NAME, "transferFailed", undefined, error);
+				}
+			}
+		);
 	}
 
 	/**
@@ -167,12 +304,21 @@ export class NftService implements INftComponent {
 		Guards.object(NftService.CLASS_NAME, nameof(metadata), metadata);
 		Guards.stringValue(NftService.CLASS_NAME, nameof(controllerIdentity), controllerIdentity);
 
-		try {
-			const nftConnector = this.getConnector(id);
-			await nftConnector.update(controllerIdentity, id, metadata);
-		} catch (error) {
-			throw new GeneralError(NftService.CLASS_NAME, "updateFailed", undefined, error);
-		}
+		await TracingHelper.withSpan(
+			this._tracingComponent,
+			NftSpanNames.Update,
+			{ attributes: { [NftSpanAttributes.Id]: id } },
+			async () => {
+				try {
+					const nftConnector = this.getConnector(id);
+					await nftConnector.update(controllerIdentity, id, metadata);
+
+					await MetricHelper.metricIncrement(this._telemetryComponent, NftMetricIds.TokensUpdated);
+				} catch (error) {
+					throw new GeneralError(NftService.CLASS_NAME, "updateFailed", undefined, error);
+				}
+			}
+		);
 	}
 
 	/**

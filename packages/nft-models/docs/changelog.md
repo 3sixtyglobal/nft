@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.9.2-next.3](https://github.com/iotaledger/twin-nft/compare/nft-models-v0.9.2-next.2...nft-models-v0.9.2-next.3) (2026-08-23)
+
+
+### Features
+
+* tracing ([#101](https://github.com/iotaledger/twin-nft/issues/101)) ([94b6b90](https://github.com/iotaledger/twin-nft/commit/94b6b901e0c1e94e32bf6bc2eb416180492284a9))
+
+## [0.9.2-next.2](https://github.com/iotaledger/twin-nft/compare/nft-models-v0.9.2-next.1...nft-models-v0.9.2-next.2) (2026-08-10)
+
+
+### Features
+
+* telemetry ([#98](https://github.com/iotaledger/twin-nft/issues/98)) ([84a7979](https://github.com/iotaledger/twin-nft/commit/84a7979e18acab7a1431d1f09ca2c045a2f274c8))
+
+## [0.9.2-next.1](https://github.com/iotaledger/twin-nft/compare/nft-models-v0.9.2-next.0...nft-models-v0.9.2-next.1) (2026-08-07)
+
+
+### Features
+
+* add context id features ([#50](https://github.com/iotaledger/twin-nft/issues/50)) ([56c31c7](https://github.com/iotaledger/twin-nft/commit/56c31c7ba10e3ef8ad44f6463153f90888e64711))
+* add on-chain identity binding to NFT minting ([#58](https://github.com/iotaledger/twin-nft/issues/58)) ([730a16d](https://github.com/iotaledger/twin-nft/commit/730a16d70fc026c920dbede0e4dafc96f37b729a))
+* add validate-locales ([0055a56](https://github.com/iotaledger/twin-nft/commit/0055a56ed166946f1db860aa0725ad53248b3427))
+* eslint migration to flat config ([0e6fc12](https://github.com/iotaledger/twin-nft/commit/0e6fc128c3c8f6cd34db793787437dd4af2c9994))
+* health ([#95](https://github.com/iotaledger/twin-nft/issues/95)) ([47981bc](https://github.com/iotaledger/twin-nft/commit/47981bc622896a04662736e009d86614d52da1bc))
+* typescript 6 update ([91b94b8](https://github.com/iotaledger/twin-nft/commit/91b94b846ea081b09b2228681776ce30f104a36e))
+* update dependencies ([2f40b97](https://github.com/iotaledger/twin-nft/commit/2f40b97a7d77d6614d064ad0caf8a0cccc81f1a5))
+* update dependencies ([8660f76](https://github.com/iotaledger/twin-nft/commit/8660f76ca324b0f476e45544cac6bee4b3146c3b))
+* update docs ([75dc85e](https://github.com/iotaledger/twin-nft/commit/75dc85ed0476666d0a1cc5d83ca0a5db29b69992))
+* update framework core ([f3496b6](https://github.com/iotaledger/twin-nft/commit/f3496b61bfebbb3479bb92df39ecfa9ac8d90b9b))
+* use shared store mechanism ([#16](https://github.com/iotaledger/twin-nft/issues/16)) ([897bc78](https://github.com/iotaledger/twin-nft/commit/897bc7805248ba1388b2dd03df24c33f1633f344))
+
 ## [0.9.1](https://github.com/iotaledger/twin-nft/compare/nft-models-v0.9.1...nft-models-v0.9.1) (2026-07-27)
 
 

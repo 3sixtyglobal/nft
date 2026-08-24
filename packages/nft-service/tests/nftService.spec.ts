@@ -1,10 +1,25 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import { EntityStorageNftConnector } from "@twin.org/nft-connector-entity-storage";
+import { HealthCategory, HealthStatus, type IHealth } from "@twin.org/api-models";
+import { ContextIdKeys, ContextIdStore, type IContextIds } from "@twin.org/context";
+import { MemoryEntityStorageConnector } from "@twin.org/entity-storage-connector-memory";
+import { EntityStorageConnectorFactory } from "@twin.org/entity-storage-models";
+import { nameof } from "@twin.org/nameof";
+import {
+	EntityStorageNftConnector,
+	initSchema as initSchemaNft,
+	type Nft
+} from "@twin.org/nft-connector-entity-storage";
 import { NftConnectorFactory } from "@twin.org/nft-models";
 import { NftService } from "../src/nftService.js";
 
+const TEST_ORG_DID = "did:entity-storage:test-org";
+
 describe("NftService", () => {
+	beforeAll(() => {
+		initSchemaNft();
+	});
+
 	test("Can create an instance", async () => {
 		NftConnectorFactory.register(
 			EntityStorageNftConnector.NAMESPACE,
@@ -12,5 +27,50 @@ describe("NftService", () => {
 		);
 		const service = new NftService();
 		expect(service).toBeDefined();
+	});
+
+	describe("health checks", () => {
+		// Each test needs isolated storage because MemoryEntityStorageConnector uses
+		// SharedObjectBuffer keyed by storageKey, so instances sharing a key share data.
+		let healthTestIndex = 0;
+
+		beforeEach(() => {
+			healthTestIndex++;
+			const idx = healthTestIndex;
+
+			const freshNftStorage = new MemoryEntityStorageConnector<Nft>({
+				entitySchema: nameof<Nft>(),
+				config: { storageKey: `nft-health-${idx}` }
+			});
+
+			EntityStorageConnectorFactory.register("nft", () => freshNftStorage);
+			NftConnectorFactory.register("nft", () => new EntityStorageNftConnector());
+		});
+
+		test("healthApplication returns application ok after full lifecycle", async () => {
+			const service = new NftService();
+
+			const contextIds: IContextIds = { [ContextIdKeys.Organization]: TEST_ORG_DID };
+
+			let results: IHealth[] | undefined;
+			await ContextIdStore.run(contextIds, async () => {
+				results = await service.healthApplication(async () => {});
+			});
+
+			expect(results).toHaveLength(1);
+			expect(results?.[0].category).toEqual(HealthCategory.Application);
+			expect(results?.[0].status).toEqual(HealthStatus.Ok);
+		});
+
+		test("healthApplication returns empty array when no organisation context", async () => {
+			const service = new NftService();
+
+			let results: IHealth[] | undefined;
+			await ContextIdStore.run({}, async () => {
+				results = await service.healthApplication(async () => {});
+			});
+
+			expect(results).toHaveLength(0);
+		});
 	});
 });
