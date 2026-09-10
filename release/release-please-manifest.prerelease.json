@@ -1,8 +1,8 @@
 {
-	"packages/nft-models": "0.9.3-next.0",
-	"packages/nft-connector-iota": "0.9.3-next.0",
-	"packages/nft-connector-entity-storage": "0.9.3-next.0",
-	"packages/nft-service": "0.9.3-next.0",
-	"packages/nft-rest-client": "0.9.3-next.0",
-	"apps/nft-cli": "0.9.3-next.0"
+	"packages/nft-models": "0.9.3-next.1",
+	"packages/nft-connector-iota": "0.9.3-next.1",
+	"packages/nft-connector-entity-storage": "0.9.3-next.1",
+	"packages/nft-service": "0.9.3-next.1",
+	"packages/nft-rest-client": "0.9.3-next.1",
+	"apps/nft-cli": "0.9.3-next.1"
 }
