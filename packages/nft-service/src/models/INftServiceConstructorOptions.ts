@@ -12,11 +12,6 @@ export interface INftServiceConstructorOptions {
 	telemetryComponentType?: string;
 
 	/**
-	 * The component type for the optional tracing component used for spans.
-	 */
-	tracingComponentType?: string;
-
-	/**
 	 * The configuration for the service.
 	 */
 	config?: INftServiceConfig;
