@@ -1,6 +1,6 @@
 {
 	"name": "@twin.org/nft-cli",
-	"version": "0.9.3-next.1",
+	"version": "0.10.1-next.0",
 	"description": "Command line application for running end-to-end NFT operations.",
 	"repository": {
 		"type": "git",
@@ -37,8 +37,8 @@
 		"@twin.org/entity-storage-connector-memory": "next",
 		"@twin.org/entity-storage-models": "next",
 		"@twin.org/nameof": "next",
-		"@twin.org/nft-connector-iota": "0.9.3-next.1",
-		"@twin.org/nft-models": "0.9.3-next.1",
+		"@twin.org/nft-connector-iota": "0.10.1-next.0",
+		"@twin.org/nft-models": "0.10.1-next.0",
 		"@twin.org/vault-connector-entity-storage": "next",
 		"@twin.org/vault-models": "next",
 		"@twin.org/wallet-cli": "next",
