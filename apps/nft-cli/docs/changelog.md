@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.10.1-next.1](https://github.com/iotaledger/twin-nft/compare/nft-cli-v0.10.1-next.0...nft-cli-v0.10.1-next.1) (2026-09-18)
+
+
+### Features
+
+* add context id features ([#50](https://github.com/iotaledger/twin-nft/issues/50)) ([56c31c7](https://github.com/iotaledger/twin-nft/commit/56c31c7ba10e3ef8ad44f6463153f90888e64711))
+* add publish workflows ([3f2ae6b](https://github.com/iotaledger/twin-nft/commit/3f2ae6b5c29da8012e01ef719c2d91a6aa80c2ad))
+* add validate-locales ([0055a56](https://github.com/iotaledger/twin-nft/commit/0055a56ed166946f1db860aa0725ad53248b3427))
+* eslint migration to flat config ([0e6fc12](https://github.com/iotaledger/twin-nft/commit/0e6fc128c3c8f6cd34db793787437dd4af2c9994))
+* health ([#95](https://github.com/iotaledger/twin-nft/issues/95)) ([47981bc](https://github.com/iotaledger/twin-nft/commit/47981bc622896a04662736e009d86614d52da1bc))
+* iota rebased release ([8d05d1f](https://github.com/iotaledger/twin-nft/commit/8d05d1f58c1aacac983c100697ab40a314ad34ea))
+* remove connector type from CLI ([59c0faa](https://github.com/iotaledger/twin-nft/commit/59c0faab46caf0def1981aab790238c289ae0e22))
+* typescript 6 update ([91b94b8](https://github.com/iotaledger/twin-nft/commit/91b94b846ea081b09b2228681776ce30f104a36e))
+* update dependencies ([2f40b97](https://github.com/iotaledger/twin-nft/commit/2f40b97a7d77d6614d064ad0caf8a0cccc81f1a5))
+* update dependencies ([8660f76](https://github.com/iotaledger/twin-nft/commit/8660f76ca324b0f476e45544cac6bee4b3146c3b))
+* update dlt packages ([12c4966](https://github.com/iotaledger/twin-nft/commit/12c4966bceb926b7cdcf1449165bee09187a426c))
+* update framework core ([f3496b6](https://github.com/iotaledger/twin-nft/commit/f3496b61bfebbb3479bb92df39ecfa9ac8d90b9b))
+* use shared store mechanism ([#16](https://github.com/iotaledger/twin-nft/issues/16)) ([897bc78](https://github.com/iotaledger/twin-nft/commit/897bc7805248ba1388b2dd03df24c33f1633f344))
+
+
+### Bug Fixes
+
+* contract independent tests ([#35](https://github.com/iotaledger/twin-nft/issues/35)) ([b54ad6e](https://github.com/iotaledger/twin-nft/commit/b54ad6e1727284230f21db0032dc8ff437444812))
+* use async getStore in tests ([ecbd33f](https://github.com/iotaledger/twin-nft/commit/ecbd33f3fdb47d7fa0aceb448adb63e2f662e2cd))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @twin.org/nft-connector-iota bumped from 0.10.1-next.0 to 0.10.1-next.1
+    * @twin.org/nft-models bumped from 0.10.1-next.0 to 0.10.1-next.1
+
 ## [0.10.0](https://github.com/iotaledger/twin-nft/compare/nft-cli-v0.10.0...nft-cli-v0.10.0) (2026-09-16)
 
 
