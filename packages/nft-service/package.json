@@ -1,6 +1,6 @@
 {
 	"name": "@twin.org/nft-service",
-	"version": "0.10.1-next.1",
+	"version": "0.11.1-next.0",
 	"description": "NFT service orchestration with REST route generation.",
 	"repository": {
 		"type": "git",
@@ -34,7 +34,7 @@
 		"@twin.org/core": "next",
 		"@twin.org/entity": "next",
 		"@twin.org/nameof": "next",
-		"@twin.org/nft-models": "0.10.1-next.1",
+		"@twin.org/nft-models": "0.11.1-next.0",
 		"@twin.org/telemetry-models": "next",
 		"@twin.org/web": "next"
 	},
@@ -43,7 +43,7 @@
 		"@twin.org/entity-storage-models": "next",
 		"@twin.org/nameof-transformer": "next",
 		"@twin.org/nameof-vitest-plugin": "next",
-		"@twin.org/nft-connector-entity-storage": "0.10.1-next.1",
+		"@twin.org/nft-connector-entity-storage": "0.11.1-next.0",
 		"@twin.org/ts-to-openapi": "next",
 		"@twin.org/validate-locales": "next",
 		"@vitest/coverage-v8": "5.0.1",
