@@ -10,25 +10,25 @@ export class Nft {
 	/**
 	 * The identity of the NFT.
 	 */
-	@property({ type: "string", isPrimary: true })
+	@property({ type: "string", isPrimary: true, maxLength: 255 })
 	public id!: string;
 
 	/**
 	 * The issuer of the NFT.
 	 */
-	@property({ type: "string" })
+	@property({ type: "string", maxLength: 255 })
 	public issuer!: string;
 
 	/**
 	 * The owner of the NFT.
 	 */
-	@property({ type: "string" })
+	@property({ type: "string", maxLength: 255 })
 	public owner!: string;
 
 	/**
 	 * The tag for the NFT.
 	 */
-	@property({ type: "string" })
+	@property({ type: "string", maxLength: 128 })
 	public tag!: string;
 
 	/**
