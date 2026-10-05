@@ -4,7 +4,7 @@
 	"description": "Command line application for running end-to-end NFT operations.",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/iotaledger/twin-nft.git",
+		"url": "git+https://github.com/3sixtyglobal/twin-nft.git",
 		"directory": "apps/nft-cli"
 	},
 	"author": "martyn.janes@iota.org",
@@ -94,7 +94,7 @@
 		"assets"
 	],
 	"bugs": {
-		"url": "git+https://github.com/iotaledger/twin-nft/issues"
+		"url": "git+https://github.com/3sixtyglobal/twin-nft/issues"
 	},
 	"homepage": "https://twindev.org"
 }

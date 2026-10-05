@@ -4,7 +4,7 @@
 	"description": "Modular NFT connectors, services, and tooling.",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/iotaledger/twin-nft.git"
+		"url": "git+https://github.com/3sixtyglobal/twin-nft.git"
 	},
 	"author": "martyn.janes@iota.org",
 	"license": "Apache-2.0",
@@ -70,7 +70,7 @@
 	},
 	"type": "module",
 	"bugs": {
-		"url": "git+https://github.com/iotaledger/twin-nft/issues"
+		"url": "git+https://github.com/3sixtyglobal/twin-nft/issues"
 	},
 	"homepage": "https://twindev.org"
 }

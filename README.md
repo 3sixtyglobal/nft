@@ -19,3 +19,7 @@ The codebase combines reusable models, connector implementations, service endpoi
 ## Contributing
 
 To contribute to this package see the guidelines for building and publishing in [CONTRIBUTING](./CONTRIBUTING.md)
+
+## Origin
+
+This repository is derived from the original [iotaledger/twin-nft](https://github.com/iotaledger/twin-nft) repository.
