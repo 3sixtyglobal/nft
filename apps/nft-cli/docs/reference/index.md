@@ -1,4 +1,4 @@
-# @twin.org/nft-cli
+# @3sixty/nft-cli
 
 ## Classes
 

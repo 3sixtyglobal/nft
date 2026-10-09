@@ -5,7 +5,7 @@ Use these examples to bootstrap an in-memory NFT flow for local development, int
 ## EntityStorageNftConnector
 
 ```typescript
-import { EntityStorageNftConnector } from '@twin.org/nft-connector-entity-storage';
+import { EntityStorageNftConnector } from '@3sixty/nft-connector-entity-storage';
 
 interface ImmutableProfile {
   standard: 'IRC27';
@@ -52,7 +52,7 @@ console.log(resolved.metadata?.status); // draft
 ```
 
 ```typescript
-import { EntityStorageNftConnector } from '@twin.org/nft-connector-entity-storage';
+import { EntityStorageNftConnector } from '@3sixty/nft-connector-entity-storage';
 
 interface MutableProfile {
   status: 'draft' | 'published';
@@ -89,7 +89,7 @@ console.log(updated.metadata?.views); // 25
 ```
 
 ```typescript
-import { EntityStorageNftConnector } from '@twin.org/nft-connector-entity-storage';
+import { EntityStorageNftConnector } from '@3sixty/nft-connector-entity-storage';
 
 const connector = new EntityStorageNftConnector();
 const controllerIdentity = 'did:example:issuer-1';
@@ -108,7 +108,7 @@ try {
 ## Schema Initialisation
 
 ```typescript
-import { initSchema } from '@twin.org/nft-connector-entity-storage';
+import { initSchema } from '@3sixty/nft-connector-entity-storage';
 
 initSchema();
 ```

@@ -1,6 +1,6 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import { MetricType, type ITelemetryMetric } from "@twin.org/telemetry-models";
+import { MetricType, type ITelemetryMetric } from "@3sixty/telemetry-models";
 import { NftMetricIds } from "./nftMetricIds.js";
 
 /**

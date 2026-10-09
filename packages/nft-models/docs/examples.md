@@ -5,7 +5,7 @@ These examples focus on connector contracts and shared request models so multipl
 ## NftConnectorFactory
 
 ```typescript
-import { NftConnectorFactory, type INftConnector } from '@twin.org/nft-models';
+import { NftConnectorFactory, type INftConnector } from '@3sixty/nft-models';
 
 class MockNftConnector implements INftConnector {
   public className(): string {
@@ -48,7 +48,7 @@ import type {
   INftMintRequest,
   INftTransferRequest,
   INftUpdateRequest
-} from '@twin.org/nft-models';
+} from '@3sixty/nft-models';
 
 const immutableMetadata: IIrc27Metadata = {
   standard: 'IRC27',

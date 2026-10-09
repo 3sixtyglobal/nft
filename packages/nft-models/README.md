@@ -1,11 +1,11 @@
-# TWIN NFT Models
+# 3Sixty NFT Models
 
 This package defines the shared interfaces, factories, and API models used by NFT connectors, services, and clients in this repository. It provides a stable contract layer that keeps implementations interoperable across different runtime environments.
 
 ## Installation
 
 ```shell
-npm install @twin.org/nft-models
+npm install @3sixty/nft-models
 ```
 
 ## Examples

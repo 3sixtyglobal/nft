@@ -9,8 +9,8 @@ import {
 	NotFoundError,
 	StringHelper,
 	Urn
-} from "@twin.org/core";
-import { AccountHelper } from "@twin.org/dlt-account";
+} from "@3sixty/core";
+import { AccountHelper } from "@3sixty/dlt-account";
 import {
 	type IContractData,
 	type ISmartContractDeployments,
@@ -18,11 +18,11 @@ import {
 	Iota,
 	IotaIdentityUtils,
 	type IIotaClient
-} from "@twin.org/dlt-iota";
-import type { ILoggingComponent } from "@twin.org/logging-models";
-import { nameof } from "@twin.org/nameof";
-import type { INftConnector } from "@twin.org/nft-models";
-import { VaultConnectorFactory, type IVaultConnector } from "@twin.org/vault-models";
+} from "@3sixty/dlt-iota";
+import type { ILoggingComponent } from "@3sixty/logging-models";
+import { nameof } from "@3sixty/nameof";
+import type { INftConnector } from "@3sixty/nft-models";
+import { VaultConnectorFactory, type IVaultConnector } from "@3sixty/vault-models";
 import compiledModulesJson from "./contracts/smartContractDeployments/smart-contract-deployments.json" with { type: "json" };
 import { IotaNftUtils } from "./iotaNftUtils.js";
 import type { IIotaNftConnectorConfig } from "./models/IIotaNftConnectorConfig.js";

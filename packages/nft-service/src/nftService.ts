@@ -6,18 +6,18 @@ import {
 	type HealthApplicationCallback,
 	type IHealth,
 	type IHealthProviderComponent
-} from "@twin.org/api-models";
-import { ContextIdKeys, ContextIdStore } from "@twin.org/context";
-import { BaseError, ComponentFactory, GeneralError, Guards, Is, Urn } from "@twin.org/core";
-import { nameof } from "@twin.org/nameof";
+} from "@3sixty/api-models";
+import { ContextIdKeys, ContextIdStore } from "@3sixty/context";
+import { BaseError, ComponentFactory, GeneralError, Guards, Is, Urn } from "@3sixty/core";
+import { nameof } from "@3sixty/nameof";
 import {
 	NftConnectorFactory,
 	NftMetricIds,
 	NftMetrics,
 	type INftComponent,
 	type INftConnector
-} from "@twin.org/nft-models";
-import { MetricHelper, type ITelemetryComponent } from "@twin.org/telemetry-models";
+} from "@3sixty/nft-models";
+import { MetricHelper, type ITelemetryComponent } from "@3sixty/telemetry-models";
 import type { INftServiceConstructorOptions } from "./models/INftServiceConstructorOptions.js";
 
 /**

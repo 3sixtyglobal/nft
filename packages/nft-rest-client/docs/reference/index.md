@@ -1,4 +1,4 @@
-# @twin.org/nft-rest-client
+# @3sixty/nft-rest-client
 
 ## Classes
 

@@ -1,11 +1,11 @@
-# TWIN NFT Connector Entity Storage
+# 3Sixty NFT Connector Entity Storage
 
 This package provides an entity-storage-backed NFT connector for mint, resolve, transfer, update, and burn operations. It is useful for local development and integration testing where a storage abstraction is needed without relying on a live network.
 
 ## Installation
 
 ```shell
-npm install @twin.org/nft-connector-entity-storage
+npm install @3sixty/nft-connector-entity-storage
 ```
 
 ## Examples

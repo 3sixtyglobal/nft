@@ -1,11 +1,11 @@
-# TWIN NFT CLI
+# 3Sixty NFT CLI
 
 This application provides command line workflows for creating, resolving, transferring, and burning NFTs in local and network-backed environments. It is intended for developer tooling, scripted operations, and operational checks.
 
 ## Installation
 
 ```shell
-npm install @twin.org/nft-cli -D
+npm install @3sixty/nft-cli -D
 ```
 
 ## Usage

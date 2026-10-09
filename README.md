@@ -1,4 +1,4 @@
-# TWIN NFT
+# 3Sixty NFT
 
 This repository provides modular components for creating, managing, and integrating non-fungible tokens across application, service, and connector layers. The packages are designed to share a consistent contract model so teams can build tooling, APIs, and command line flows without duplicating core NFT logic.
 

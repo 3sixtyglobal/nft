@@ -8,6 +8,7 @@
 	"release-type": "node",
 	"initial-version": "0.0.1",
 	"versioning": "default",
+	"last-release-sha": "0b9e8947e3cd1064e66ed919e624f8505270a2e1",
 	"packages": {
 		"packages/nft-models": {
 			"package-name": "nft-models",

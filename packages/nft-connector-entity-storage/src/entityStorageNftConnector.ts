@@ -8,13 +8,13 @@ import {
 	NotFoundError,
 	RandomHelper,
 	Urn
-} from "@twin.org/core";
+} from "@3sixty/core";
 import {
 	EntityStorageConnectorFactory,
 	type IEntityStorageConnector
-} from "@twin.org/entity-storage-models";
-import { nameof } from "@twin.org/nameof";
-import type { INftConnector } from "@twin.org/nft-models";
+} from "@3sixty/entity-storage-models";
+import { nameof } from "@3sixty/nameof";
+import type { INftConnector } from "@3sixty/nft-models";
 import type { Nft } from "./entities/nft.js";
 import type { IEntityStorageNftConnectorConstructorOptions } from "./models/IEntityStorageNftConnectorConstructorOptions.js";
 

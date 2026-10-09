@@ -5,7 +5,7 @@ These examples show how to integrate the REST client into application code for c
 ## NftRestClient
 
 ```typescript
-import { NftRestClient } from '@twin.org/nft-rest-client';
+import { NftRestClient } from '@3sixty/nft-rest-client';
 
 interface ImmutableProfile {
   standard: 'IRC27';
@@ -53,7 +53,7 @@ console.log(resolved.metadata?.status); // queued
 ```
 
 ```typescript
-import { NftRestClient } from '@twin.org/nft-rest-client';
+import { NftRestClient } from '@3sixty/nft-rest-client';
 
 interface MutableProfile {
   status: 'queued' | 'published';

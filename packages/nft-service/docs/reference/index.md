@@ -1,4 +1,4 @@
-# @twin.org/nft-service
+# @3sixty/nft-service
 
 ## Classes
 

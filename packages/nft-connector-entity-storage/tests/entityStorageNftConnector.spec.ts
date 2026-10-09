@@ -1,9 +1,9 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import { Urn } from "@twin.org/core";
-import type { MemoryEntityStorageConnector } from "@twin.org/entity-storage-connector-memory";
-import { EntityStorageConnectorFactory } from "@twin.org/entity-storage-models";
-import type { IIrc27Metadata } from "@twin.org/nft-models";
+import { Urn } from "@3sixty/core";
+import type { MemoryEntityStorageConnector } from "@3sixty/entity-storage-connector-memory";
+import { EntityStorageConnectorFactory } from "@3sixty/entity-storage-models";
+import type { IIrc27Metadata } from "@3sixty/nft-models";
 import { TEST_ADDRESS_2, TEST_USER_IDENTITY } from "./setupTestEnv.js";
 import type { Nft } from "../src/entities/nft.js";
 import { EntityStorageNftConnector } from "../src/entityStorageNftConnector.js";

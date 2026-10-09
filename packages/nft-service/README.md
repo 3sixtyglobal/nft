@@ -1,11 +1,11 @@
-# TWIN NFT Service
+# 3Sixty NFT Service
 
 This package provides the service layer for NFT operations and exposes route definitions for API integration. It centralises connector usage behind a consistent interface so applications can invoke NFT actions without coupling to a specific backend.
 
 ## Installation
 
 ```shell
-npm install @twin.org/nft-service
+npm install @3sixty/nft-service
 ```
 
 ## Examples

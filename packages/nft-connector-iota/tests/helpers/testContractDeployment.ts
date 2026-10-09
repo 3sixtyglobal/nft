@@ -4,8 +4,8 @@ import { exec } from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
-import { GeneralError } from "@twin.org/core";
-import type { ISmartContractDeployments } from "@twin.org/dlt-iota";
+import { GeneralError } from "@3sixty/core";
+import type { ISmartContractDeployments } from "@3sixty/dlt-iota";
 
 const execAsync = promisify(exec);
 

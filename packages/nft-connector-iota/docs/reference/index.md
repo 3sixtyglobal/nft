@@ -1,4 +1,4 @@
-# @twin.org/nft-connector-iota
+# @3sixty/nft-connector-iota
 
 ## Classes
 

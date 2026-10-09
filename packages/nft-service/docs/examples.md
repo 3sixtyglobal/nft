@@ -5,9 +5,9 @@ Use these snippets to route NFT operations through a service layer so your appli
 ## NftService
 
 ```typescript
-import { EntityStorageNftConnector } from '@twin.org/nft-connector-entity-storage';
-import { NftConnectorFactory } from '@twin.org/nft-models';
-import { NftService } from '@twin.org/nft-service';
+import { EntityStorageNftConnector } from '@3sixty/nft-connector-entity-storage';
+import { NftConnectorFactory } from '@3sixty/nft-models';
+import { NftService } from '@3sixty/nft-service';
 
 interface ImmutableProfile {
   standard: 'IRC27';
@@ -61,9 +61,9 @@ console.log(resolved.metadata?.revisions); // 1
 ```
 
 ```typescript
-import { EntityStorageNftConnector } from '@twin.org/nft-connector-entity-storage';
-import { NftConnectorFactory } from '@twin.org/nft-models';
-import { NftService } from '@twin.org/nft-service';
+import { EntityStorageNftConnector } from '@3sixty/nft-connector-entity-storage';
+import { NftConnectorFactory } from '@3sixty/nft-models';
+import { NftService } from '@3sixty/nft-service';
 
 interface MutableProfile {
   stage: 'draft' | 'live';

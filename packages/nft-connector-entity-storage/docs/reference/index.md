@@ -1,4 +1,4 @@
-# @twin.org/nft-connector-entity-storage
+# @3sixty/nft-connector-entity-storage
 
 ## Classes
 

@@ -1,6 +1,6 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import type { IIotaConfig, ISmartContractDeployments } from "@twin.org/dlt-iota";
+import type { IIotaConfig, ISmartContractDeployments } from "@3sixty/dlt-iota";
 
 /**
  * Configuration for the IOTA NFT Connector.

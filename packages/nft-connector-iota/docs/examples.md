@@ -5,7 +5,7 @@ These snippets show a practical lifecycle for network-backed NFTs: initialisatio
 ## IotaNftConnector
 
 ```typescript
-import { IotaNftConnector, type IIotaNftConnectorConfig } from '@twin.org/nft-connector-iota';
+import { IotaNftConnector, type IIotaNftConnectorConfig } from '@3sixty/nft-connector-iota';
 
 interface ImmutableProfile {
   standard: 'IRC27';
@@ -59,7 +59,7 @@ console.log(resolved.metadata?.likes); // 0
 ```
 
 ```typescript
-import { IotaNftConnector, type IIotaNftConnectorConfig } from '@twin.org/nft-connector-iota';
+import { IotaNftConnector, type IIotaNftConnectorConfig } from '@3sixty/nft-connector-iota';
 
 interface MutableProfile {
   status: 'draft' | 'published';
@@ -100,7 +100,7 @@ console.log(updated.metadata?.status); // published
 ```
 
 ```typescript
-import { IotaNftConnector, type IIotaNftConnectorConfig } from '@twin.org/nft-connector-iota';
+import { IotaNftConnector, type IIotaNftConnectorConfig } from '@3sixty/nft-connector-iota';
 
 const config: IIotaNftConnectorConfig = {
   network: 'devnet',
@@ -121,7 +121,7 @@ await connector.burn(controller, nftId);
 ## IotaNftUtils
 
 ```typescript
-import { IotaNftUtils } from '@twin.org/nft-connector-iota';
+import { IotaNftUtils } from '@3sixty/nft-connector-iota';
 
 const nftId = 'nft:iota:devnet:0xpackage:0xobject';
 

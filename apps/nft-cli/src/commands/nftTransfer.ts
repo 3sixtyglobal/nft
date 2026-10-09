@@ -1,11 +1,11 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import { CLIDisplay, CLIParam } from "@twin.org/cli-core";
-import { Converter, I18n, Is, StringHelper } from "@twin.org/core";
-import { IotaNftUtils } from "@twin.org/nft-connector-iota";
-import { VaultConnectorFactory } from "@twin.org/vault-models";
-import { setupWalletConnector, WalletConnectorTypes } from "@twin.org/wallet-cli";
-import { WalletConnectorFactory } from "@twin.org/wallet-models";
+import { CLIDisplay, CLIParam } from "@3sixty/cli-core";
+import { Converter, I18n, Is, StringHelper } from "@3sixty/core";
+import { IotaNftUtils } from "@3sixty/nft-connector-iota";
+import { VaultConnectorFactory } from "@3sixty/vault-models";
+import { setupWalletConnector, WalletConnectorTypes } from "@3sixty/wallet-cli";
+import { WalletConnectorFactory } from "@3sixty/wallet-models";
 import { Command } from "commander";
 import { setupNftConnector, setupVault } from "./setupCommands.js";
 

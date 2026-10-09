@@ -1,4 +1,4 @@
-# @twin.org/nft-models
+# @3sixty/nft-models
 
 ## Interfaces
 

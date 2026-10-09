@@ -1,20 +1,20 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import { ComponentFactory, Is } from "@twin.org/core";
-import { MemoryEntityStorageConnector } from "@twin.org/entity-storage-connector-memory";
-import { EntityStorageConnectorFactory } from "@twin.org/entity-storage-models";
-import { nameof } from "@twin.org/nameof";
+import { ComponentFactory, Is } from "@3sixty/core";
+import { MemoryEntityStorageConnector } from "@3sixty/entity-storage-connector-memory";
+import { EntityStorageConnectorFactory } from "@3sixty/entity-storage-models";
+import { nameof } from "@3sixty/nameof";
 import {
 	EntityStorageNftConnector,
 	initSchema as initSchemaNft,
 	type Nft
-} from "@twin.org/nft-connector-entity-storage";
-import { NftConnectorFactory, NftMetricIds } from "@twin.org/nft-models";
+} from "@3sixty/nft-connector-entity-storage";
+import { NftConnectorFactory, NftMetricIds } from "@3sixty/nft-models";
 import {
 	MetricType,
 	type ITelemetryComponent,
 	type ITelemetryMetric
-} from "@twin.org/telemetry-models";
+} from "@3sixty/telemetry-models";
 import { NftService } from "../src/nftService.js";
 
 const TEST_CONTROLLER = "did:entity-storage:test-controller";

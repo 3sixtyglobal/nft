@@ -1,11 +1,11 @@
-# TWIN NFT REST Client
+# 3Sixty NFT REST Client
 
 This package provides a REST client for invoking NFT service endpoints from external applications and automation scripts. It offers a consistent HTTP-facing interface for mint, resolve, transfer, update, and burn operations.
 
 ## Installation
 
 ```shell
-npm install @twin.org/nft-rest-client
+npm install @3sixty/nft-rest-client
 ```
 
 ## Examples

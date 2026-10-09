@@ -7,22 +7,22 @@ Use these commands to run the CLI locally and check available NFT operations bef
 To install and run the CLI locally use the following commands:
 
 ```shell
-npm install @twin.org/nft-cli -g
-twin-nft
+npm install @3sixty/nft-cli -g
+3sixty-nft
 ```
 
 or run directly using NPX:
 
 ```shell
-npx "@twin.org/nft-cli"
+npx "@3sixty/nft-cli"
 ```
 
 You should see output similar to the following:
 
 ```shell
-🌍 TWIN NFT v1.0.0
+🌍 3Sixty NFT v1.0.0
 
-Usage: twin-nft [command]
+Usage: 3sixty-nft [command]
 
 Options:
   -V, --version                             output the version number
@@ -43,15 +43,15 @@ Commands:
 You can get further details on the sub commands by using the help option for the individual commands.
 
 ```shell
-twin-nft nft-mint --help
+3sixty-nft nft-mint --help
 ```
 
 Output
 
 ```shell
-🌍 TWIN NFT v1.0.0
+🌍 3Sixty NFT v1.0.0
 
-Usage: twin-nft nft-mint [options]
+Usage: 3sixty-nft nft-mint [options]
 
 Mint an NFT.
 
@@ -81,9 +81,9 @@ Use this command to mint a new NFT, the issuer address must have sufficient fund
 
 ```shell
 # Generate a seed and mnemonic and store it in the env file
-twin-nft mnemonic --env wallet.env
+3sixty-nft mnemonic --env wallet.env
 # Generate an address and store it in the env file
-twin-nft address --load-env wallet.env --hrp tst --seed !SEED --count 4 --env wallet.env --merge-env
+3sixty-nft address --load-env wallet.env --hrp tst --seed !SEED --count 4 --env wallet.env --merge-env
 ```
 
 To run this on the IOTA devnet you will need an env file with the following settings. Store the following config as config.env
@@ -113,10 +113,10 @@ To request some funds and mint the NFT you can issue the following commands:
 
 ```shell
 # Fund the controller address from the faucet loading the config and wallet env files
-twin-nft faucet --load-env config.env wallet.env --address !ADDRESS_0
+3sixty-nft faucet --load-env config.env wallet.env --address !ADDRESS_0
 
 # Mint the NFT and store the id in the nft.env file
-twin-nft nft-mint --load-env config.env wallet.env --seed !SEED --issuer !ADDRESS_0 --tag MY-NFT --immutable-json immutable.json --env nft.env
+3sixty-nft nft-mint --load-env config.env wallet.env --seed !SEED --issuer !ADDRESS_0 --tag MY-NFT --immutable-json immutable.json --env nft.env
 ```
 
 ### nft-resolve
@@ -124,7 +124,7 @@ twin-nft nft-mint --load-env config.env wallet.env --seed !SEED --issuer !ADDRES
 To resolve the NFT and retrieve its details issue the following command.
 
 ```shell
-twin-nft nft-resolve --load-env config.env nft.env --id !NFT_ID
+3sixty-nft nft-resolve --load-env config.env nft.env --id !NFT_ID
 ```
 
 ### nft-transfer
@@ -132,7 +132,7 @@ twin-nft nft-resolve --load-env config.env nft.env --id !NFT_ID
 You can transfer the NFT to another address using the following command. You must provide the seed from the current issuer/owner so that it can be unlocked and transferred. In this example we read the nft id from the env file and transfer to the second address we created earlier.
 
 ```shell
-twin-nft nft-transfer --load-env config.env wallet.env nft.env --seed !SEED --id !NFT_ID --recipient !ADDRESS_1
+3sixty-nft nft-transfer --load-env config.env wallet.env nft.env --seed !SEED --id !NFT_ID --recipient !ADDRESS_1
 ```
 
 ### nft-burn
@@ -140,5 +140,5 @@ twin-nft nft-transfer --load-env config.env wallet.env nft.env --seed !SEED --id
 To burn the NFT and reclaim the funds we issue the following command. We still require the seed as we need to transfer the deposit funds back to the issuer/owner.
 
 ```shell
-twin-nft nft-burn --load-env config.env wallet.env nft.env --seed !SEED --issuer !ADDRESS_1 --id !NFT_ID
+3sixty-nft nft-burn --load-env config.env wallet.env nft.env --seed !SEED --issuer !ADDRESS_1 --id !NFT_ID
 ```
