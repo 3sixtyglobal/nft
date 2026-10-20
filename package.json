@@ -1,5 +1,5 @@
 {
-	"name": "@3sixty/nft",
+	"name": "3sixty-nft",
 	"version": "0.0.0",
 	"description": "Modular NFT connectors, services, and tooling.",
 	"repository": {
