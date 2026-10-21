@@ -458,8 +458,8 @@ importers:
         specifier: next
         version: 0.20.0-next.0
       '@iota/iota-sdk':
-        specifier: 1.17.0
-        version: 1.17.0(typescript@6.0.3)
+        specifier: 1.15.0
+        version: 1.15.0(typescript@6.0.3)
       '@types/node':
         specifier: 26.6.5
         version: 26.6.5
@@ -743,12 +743,12 @@ packages:
     resolution: {integrity: sha512-Na+2Ze7DtepPfO7RfOm0ztTJsPDBrNx5n+BJfiespJ2+kggDet+FcL+lPilrNNHCQO3k6jzaOa/l01s6p0OVIw==}
     engines: {node: '>=24.0.0'}
 
-  '@3sixty/data-core@0.20.0-next.1':
-    resolution: {integrity: sha512-3d2JAlpU76SXYSch4otLkpzcCzKzZXuy25izAgObgO5FkOSgmnpxB3pSqxwSvUamcpVZLxN2aTGAysPea2Go9w==}
+  '@3sixty/data-core@0.20.0-next.2':
+    resolution: {integrity: sha512-xn/powX6C5rDZs9jl3y4urvzyx07UcUwDFqKv+zoBMr4XKx599n4z3Adb+/gk0bkreEjXHomeo8zkel7HEatJw==}
     engines: {node: '>=24.0.0'}
 
-  '@3sixty/data-json-ld@0.20.0-next.1':
-    resolution: {integrity: sha512-4f2wm0aDX+cgVaqltY2BXS/+6locInHLLGW13sAyYwPXmxotQ8u8+L9s3UaHznGWgs8EpYI5geeLAcFVMXcvNQ==}
+  '@3sixty/data-json-ld@0.20.0-next.2':
+    resolution: {integrity: sha512-1wjE0SrC71K7wk4hH4CLYwnPvLhXnTMpJNNm4/Y760htmf/2to6mE58O5RLsUEQPOPa0okvtwPSZTXj8RkVftw==}
     engines: {node: '>=24.0.0'}
 
   '@3sixty/dlt-account@0.20.0-next.0':
@@ -1367,10 +1367,6 @@ packages:
 
   '@iota/iota-sdk@1.15.0':
     resolution: {integrity: sha512-3srYE00/bNdzkDeW29YjaYQLW4guBfPE5qixt3nHk2et6pWFrAxEajIrE6KSj0hqyi9rIxekuOGNEzqNfzcz7g==}
-    engines: {node: '>=24'}
-
-  '@iota/iota-sdk@1.17.0':
-    resolution: {integrity: sha512-Y2mnA0BQxPXPa043OiAFy7XEq/ZDTFaRmXxka+7+qEWSTRX37WQbXTYKUyDtqjDLUWVnFpkAoi8XDCwEd6Fgyw==}
     engines: {node: '>=24'}
 
   '@iota/notarization@0.1.15':
@@ -4308,7 +4304,7 @@ snapshots:
       '@scure/bip39': 2.4.0
       micro-key-producer: 0.10.2
 
-  '@3sixty/data-core@0.20.0-next.1':
+  '@3sixty/data-core@0.20.0-next.2':
     dependencies:
       '@3sixty/core': 0.20.0-next.1
       '@3sixty/crypto': 0.20.0-next.1
@@ -4318,10 +4314,10 @@ snapshots:
       ajv: 8.20.0
       ajv-formats: 3.0.1(ajv@8.20.0)
 
-  '@3sixty/data-json-ld@0.20.0-next.1':
+  '@3sixty/data-json-ld@0.20.0-next.2':
     dependencies:
       '@3sixty/core': 0.20.0-next.1
-      '@3sixty/data-core': 0.20.0-next.1
+      '@3sixty/data-core': 0.20.0-next.2
       '@3sixty/entity': 0.20.0-next.1
       '@3sixty/nameof': 0.20.0-next.1
       '@3sixty/web': 0.20.0-next.1
@@ -4384,7 +4380,7 @@ snapshots:
     dependencies:
       '@3sixty/api-models': 0.20.0-next.0
       '@3sixty/core': 0.20.0-next.1
-      '@3sixty/data-json-ld': 0.20.0-next.1
+      '@3sixty/data-json-ld': 0.20.0-next.2
       '@3sixty/dlt-account': 0.20.0-next.0
       '@3sixty/dlt-iota': 0.20.0-next.0(typescript@6.0.3)
       '@3sixty/entity': 0.20.0-next.1
@@ -4406,8 +4402,8 @@ snapshots:
     dependencies:
       '@3sixty/context': 0.20.0-next.1
       '@3sixty/core': 0.20.0-next.1
-      '@3sixty/data-core': 0.20.0-next.1
-      '@3sixty/data-json-ld': 0.20.0-next.1
+      '@3sixty/data-core': 0.20.0-next.2
+      '@3sixty/data-json-ld': 0.20.0-next.2
       '@3sixty/entity': 0.20.0-next.1
       '@3sixty/nameof': 0.20.0-next.1
       '@3sixty/standards-w3c-did': 0.20.0-next.1
@@ -4498,8 +4494,8 @@ snapshots:
     dependencies:
       '@3sixty/core': 0.20.0-next.1
       '@3sixty/crypto': 0.20.0-next.1
-      '@3sixty/data-core': 0.20.0-next.1
-      '@3sixty/data-json-ld': 0.20.0-next.1
+      '@3sixty/data-core': 0.20.0-next.2
+      '@3sixty/data-json-ld': 0.20.0-next.2
       '@3sixty/nameof': 0.20.0-next.1
       '@3sixty/web': 0.20.0-next.1
 
@@ -5167,24 +5163,6 @@ snapshots:
       '@iota/iota-sdk': 1.15.0(typescript@6.0.3)
 
   '@iota/iota-sdk@1.15.0(typescript@6.0.3)':
-    dependencies:
-      '@graphql-typed-document-node/core': 3.2.0(graphql@16.14.2)
-      '@iota/bcs': 1.6.0
-      '@noble/curves': 1.9.7
-      '@noble/hashes': 1.8.0
-      '@scure/base': 1.2.6
-      '@scure/bip32': 1.7.0
-      '@scure/bip39': 1.6.0
-      bignumber.js: 9.3.1
-      gql.tada: 1.11.4(graphql@16.14.2)(typescript@6.0.3)
-      graphql: 16.14.2
-      valibot: 1.5.0(typescript@6.0.3)
-    transitivePeerDependencies:
-      - '@gql.tada/svelte-support'
-      - '@gql.tada/vue-support'
-      - typescript
-
-  '@iota/iota-sdk@1.17.0(typescript@6.0.3)':
     dependencies:
       '@graphql-typed-document-node/core': 3.2.0(graphql@16.14.2)
       '@iota/bcs': 1.6.0
