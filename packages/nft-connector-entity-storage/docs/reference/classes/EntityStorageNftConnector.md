@@ -70,11 +70,11 @@ Mint an NFT.
 
 #### Type Parameters
 
-##### T
+##### T {#t}
 
 `T` = `unknown`
 
-##### U
+##### U {#u}
 
 `U` = `unknown`
 
@@ -124,11 +124,11 @@ Resolve an NFT.
 
 #### Type Parameters
 
-##### T
+##### T {#t-1}
 
 `T` = `unknown`
 
-##### U
+##### U {#u-1}
 
 `U` = `unknown`
 
@@ -192,7 +192,7 @@ Transfer an NFT.
 
 #### Type Parameters
 
-##### T
+##### T {#t-2}
 
 `T` = `unknown`
 
@@ -242,7 +242,7 @@ Update the mutable data of the NFT.
 
 #### Type Parameters
 
-##### T
+##### T {#t-3}
 
 `T` = `unknown`
 
