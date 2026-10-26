@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.20.0-next.2](https://github.com/3sixtyglobal/nft/compare/nft-models-v0.20.0-next.1...nft-models-v0.20.0-next.2) (2026-10-26)
+
+
+### Features
+
+* release to next [skip ci] ([#5](https://github.com/3sixtyglobal/nft/issues/5)) ([68e5025](https://github.com/3sixtyglobal/nft/commit/68e502512330ac9c48ba56cc9106704b1687360b))
+
 ## [0.20.0-next.1](https://github.com/3sixtyglobal/nft/compare/nft-models-v0.20.0-next.0...nft-models-v0.20.0-next.1) (2026-10-23)
 
 
