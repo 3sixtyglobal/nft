@@ -1,6 +1,6 @@
 {
 	"name": "@3sixty/nft-cli",
-	"version": "0.20.0-next.1",
+	"version": "0.20.0-next.2",
 	"description": "Command line application for running end-to-end NFT operations.",
 	"repository": {
 		"type": "git",
@@ -37,8 +37,8 @@
 		"@3sixty/entity-storage-connector-memory": "next",
 		"@3sixty/entity-storage-models": "next",
 		"@3sixty/nameof": "next",
-		"@3sixty/nft-connector-iota": "0.20.0-next.1",
-		"@3sixty/nft-models": "0.20.0-next.1",
+		"@3sixty/nft-connector-iota": "0.20.0-next.2",
+		"@3sixty/nft-models": "0.20.0-next.2",
 		"@3sixty/vault-connector-entity-storage": "next",
 		"@3sixty/vault-models": "next",
 		"@3sixty/wallet-cli": "next",
