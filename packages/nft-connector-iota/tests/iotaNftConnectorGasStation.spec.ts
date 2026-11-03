@@ -1,6 +1,6 @@
 // Copyright 2024 IOTA Stiftung.
 // SPDX-License-Identifier: Apache-2.0.
-import { Urn } from "@3sixty/core";
+import { DurationConstants, Urn } from "@3sixty/core";
 import {
 	TEST_CLIENT_OPTIONS,
 	TEST_ADDRESS,
@@ -117,11 +117,15 @@ describe("IotaNftConnector with Gas Station", () => {
 	});
 
 	describe("Gas Station Integration", () => {
-		test("Should test gas station connectivity before attempting NFT operations", async () => {
-			await expect(fetch(TEST_GAS_STATION_URL, { method: "GET" })).resolves.toMatchObject({
-				ok: true
-			});
-		}, 10000);
+		test(
+			"Should test gas station connectivity before attempting NFT operations",
+			async () => {
+				await expect(fetch(TEST_GAS_STATION_URL, { method: "GET" })).resolves.toMatchObject({
+					ok: true
+				});
+			},
+			10 * DurationConstants.MsPerSecond
+		);
 
 		test("Cannot mint an NFT before start (gas station)", async () => {
 			const unstartedConnector = new IotaNftConnector({
@@ -132,91 +136,103 @@ describe("IotaNftConnector with Gas Station", () => {
 			);
 		});
 
-		test("Can mint an NFT with no data using gas station", async () => {
-			const tag = "gas_station_test_tag";
-			const nftId = await gasStationNftConnector.mint(TEST_USER_DID, tag);
-			const urn = Urn.fromValidString(nftId);
-			expect(urn.namespaceIdentifier()).toEqual("nft");
-			const specificParts = urn.namespaceSpecificParts();
-			expect(specificParts[0]).toEqual("iota");
-			expect(specificParts[1]).toEqual(TEST_NETWORK);
-			expect(specificParts[2].length).toBeGreaterThan(0);
-			expect(specificParts[3].length).toBeGreaterThan(0);
-			const response = await gasStationNftConnector.resolve(nftId);
-			expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
-			expect(response.immutableMetadata).toBeUndefined();
+		test(
+			"Can mint an NFT with no data using gas station",
+			async () => {
+				const tag = "gas_station_test_tag";
+				const nftId = await gasStationNftConnector.mint(TEST_USER_DID, tag);
+				const urn = Urn.fromValidString(nftId);
+				expect(urn.namespaceIdentifier()).toEqual("nft");
+				const specificParts = urn.namespaceSpecificParts();
+				expect(specificParts[0]).toEqual("iota");
+				expect(specificParts[1]).toEqual(TEST_NETWORK);
+				expect(specificParts[2].length).toBeGreaterThan(0);
+				expect(specificParts[3].length).toBeGreaterThan(0);
+				const response = await gasStationNftConnector.resolve(nftId);
+				expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
+				expect(response.immutableMetadata).toBeUndefined();
 
-			console.debug(
-				"Created with gas station",
-				`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
-			);
-		}, 30000);
+				console.debug(
+					"Created with gas station",
+					`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
+				);
+			},
+			30 * DurationConstants.MsPerSecond
+		);
 
-		test("Can mint an NFT using gas station", async () => {
-			const immutableMetadata = {
-				name: "Gas Station Test NFT",
-				description: "This is a test NFT created using gas station",
-				uri: "https://example.com/gas-station-nft.png"
-			};
-			const tag = "gas_station_full_test";
-			const nftId = await gasStationNftConnector.mint(TEST_USER_DID, tag, immutableMetadata, {
-				gasStationField: "gasStationValue",
-				sponsoredTransaction: true
-			});
-			const urn = Urn.fromValidString(nftId);
-			expect(urn.namespaceIdentifier()).toEqual("nft");
-			const specificParts = urn.namespaceSpecificParts();
-			expect(specificParts[0]).toEqual("iota");
-			expect(specificParts[1]).toEqual(TEST_NETWORK);
-			expect(specificParts[2].length).toBeGreaterThan(0);
-			expect(specificParts[3].length).toBeGreaterThan(0);
-			const response = await gasStationNftConnector.resolve(nftId);
-			expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
+		test(
+			"Can mint an NFT using gas station",
+			async () => {
+				const immutableMetadata = {
+					name: "Gas Station Test NFT",
+					description: "This is a test NFT created using gas station",
+					uri: "https://example.com/gas-station-nft.png"
+				};
+				const tag = "gas_station_full_test";
+				const nftId = await gasStationNftConnector.mint(TEST_USER_DID, tag, immutableMetadata, {
+					gasStationField: "gasStationValue",
+					sponsoredTransaction: true
+				});
+				const urn = Urn.fromValidString(nftId);
+				expect(urn.namespaceIdentifier()).toEqual("nft");
+				const specificParts = urn.namespaceSpecificParts();
+				expect(specificParts[0]).toEqual("iota");
+				expect(specificParts[1]).toEqual(TEST_NETWORK);
+				expect(specificParts[2].length).toBeGreaterThan(0);
+				expect(specificParts[3].length).toBeGreaterThan(0);
+				const response = await gasStationNftConnector.resolve(nftId);
+				expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
 
-			console.debug(
-				"Created with gas station",
-				`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
-			);
-		}, 30000);
-		test("Should compare regular vs gas station minting", async () => {
-			// Start the regular connector first (no deployment needed with move-to-json pre-deployed packages)
-			await regularNftConnector.start();
+				console.debug(
+					"Created with gas station",
+					`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
+				);
+			},
+			30 * DurationConstants.MsPerSecond
+		);
+		test(
+			"Should compare regular vs gas station minting",
+			async () => {
+				// Start the regular connector first (no deployment needed with move-to-json pre-deployed packages)
+				await regularNftConnector.start();
 
-			// Mint with regular connector
-			const regularNftId = await regularNftConnector.mint(
-				TEST_USER_DID,
-				"regular_comparison",
-				{
-					name: "Regular NFT",
-					description: "NFT minted without gas station",
-					uri: "https://example.com/regular.png"
-				},
-				{ type: "regular" }
-			);
+				// Mint with regular connector
+				const regularNftId = await regularNftConnector.mint(
+					TEST_USER_DID,
+					"regular_comparison",
+					{
+						name: "Regular NFT",
+						description: "NFT minted without gas station",
+						uri: "https://example.com/regular.png"
+					},
+					{ type: "regular" }
+				);
 
-			// Mint with gas station connector
-			const gasStationNftId = await gasStationNftConnector.mint(
-				TEST_USER_DID,
-				"gasstation_comparison",
-				{
-					name: "Gas Station NFT",
-					description: "NFT minted with gas station",
-					uri: "https://example.com/gasstation.png"
-				},
-				{ type: "gasStation" }
-			);
+				// Mint with gas station connector
+				const gasStationNftId = await gasStationNftConnector.mint(
+					TEST_USER_DID,
+					"gasstation_comparison",
+					{
+						name: "Gas Station NFT",
+						description: "NFT minted with gas station",
+						uri: "https://example.com/gasstation.png"
+					},
+					{ type: "gasStation" }
+				);
 
-			expect(regularNftId).toBeDefined();
-			expect(gasStationNftId).toBeDefined();
-			expect(regularNftId).not.toBe(gasStationNftId);
+				expect(regularNftId).toBeDefined();
+				expect(gasStationNftId).toBeDefined();
+				expect(regularNftId).not.toBe(gasStationNftId);
 
-			// Both should resolve successfully
-			const regularNft = await regularNftConnector.resolve(regularNftId);
-			const gasStationNft = await gasStationNftConnector.resolve(gasStationNftId);
+				// Both should resolve successfully
+				const regularNft = await regularNftConnector.resolve(regularNftId);
+				const gasStationNft = await gasStationNftConnector.resolve(gasStationNftId);
 
-			expect((regularNft.metadata as { type: string }).type).toBe("regular");
-			expect((gasStationNft.metadata as { type: string }).type).toBe("gasStation");
-		}, 60000);
+				expect((regularNft.metadata as { type: string }).type).toBe("regular");
+				expect((gasStationNft.metadata as { type: string }).type).toBe("gasStation");
+			},
+			DurationConstants.MsPerMinute
+		);
 	});
 
 	describe("NFT Operations with Gas Station", () => {
@@ -247,307 +263,358 @@ describe("IotaNftConnector with Gas Station", () => {
 			expect(response.immutableMetadata).toEqual(immutableMetadata);
 		});
 
-		test("Can transfer an NFT using gas station", async () => {
-			// Create a new NFT for this test
-			const immutableMetadata = {
-				name: "Gas Station Transfer Test NFT",
-				description: "This is a test NFT for transfer functionality using gas station",
-				uri: "https://example.com/gas-station-transfer-nft.png"
-			};
-			const nftId = await gasStationNftConnector.mint(
-				TEST_USER_DID,
-				"gas_station_transfer_test",
-				immutableMetadata,
-				{
-					transferTestField: "transferTestValue"
-				}
-			);
+		test(
+			"Can transfer an NFT using gas station",
+			async () => {
+				// Create a new NFT for this test
+				const immutableMetadata = {
+					name: "Gas Station Transfer Test NFT",
+					description: "This is a test NFT for transfer functionality using gas station",
+					uri: "https://example.com/gas-station-transfer-nft.png"
+				};
+				const nftId = await gasStationNftConnector.mint(
+					TEST_USER_DID,
+					"gas_station_transfer_test",
+					immutableMetadata,
+					{
+						transferTestField: "transferTestValue"
+					}
+				);
 
-			await gasStationNftConnector.transfer(TEST_USER_DID, nftId, TEST_ADDRESS_2);
+				await gasStationNftConnector.transfer(TEST_USER_DID, nftId, TEST_ADDRESS_2);
 
-			const response = await gasStationNftConnector.resolve(nftId);
-			expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
+				const response = await gasStationNftConnector.resolve(nftId);
+				expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
 
-			const urn = Urn.fromValidString(nftId);
-			expect(urn.namespaceIdentifier()).toEqual("nft");
-			const specificParts = urn.namespaceSpecificParts();
-			console.debug(
-				"Transferred with gas station",
-				`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
-			);
-		}, 30000);
+				const urn = Urn.fromValidString(nftId);
+				expect(urn.namespaceIdentifier()).toEqual("nft");
+				const specificParts = urn.namespaceSpecificParts();
+				console.debug(
+					"Transferred with gas station",
+					`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
+				);
+			},
+			30 * DurationConstants.MsPerSecond
+		);
 
-		test("Can transfer an NFT back to original owner using gas station", async () => {
-			// Create a new NFT for this test
-			const immutableMetadata = {
-				name: "Gas Station Transfer Back Test NFT",
-				description: "This is a test NFT for transfer back functionality using gas station",
-				uri: "https://example.com/gas-station-transfer-back-nft.png"
-			};
-			const nftId = await gasStationNftConnector.mint(
-				TEST_USER_DID,
-				"gas_station_transfer_back_test",
-				immutableMetadata,
-				{
-					transferBackTestField: "transferBackTestValue"
-				}
-			);
+		test(
+			"Can transfer an NFT back to original owner using gas station",
+			async () => {
+				// Create a new NFT for this test
+				const immutableMetadata = {
+					name: "Gas Station Transfer Back Test NFT",
+					description: "This is a test NFT for transfer back functionality using gas station",
+					uri: "https://example.com/gas-station-transfer-back-nft.png"
+				};
+				const nftId = await gasStationNftConnector.mint(
+					TEST_USER_DID,
+					"gas_station_transfer_back_test",
+					immutableMetadata,
+					{
+						transferBackTestField: "transferBackTestValue"
+					}
+				);
 
-			// First transfer: from USER_1 to USER_2
-			await gasStationNftConnector.transfer(TEST_USER_DID, nftId, TEST_ADDRESS_2);
+				// First transfer: from USER_1 to USER_2
+				await gasStationNftConnector.transfer(TEST_USER_DID, nftId, TEST_ADDRESS_2);
 
-			// Verify it's owned by USER_2
-			let response = await gasStationNftConnector.resolve(nftId);
-			expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
+				// Verify it's owned by USER_2
+				let response = await gasStationNftConnector.resolve(nftId);
+				expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
 
-			// Second transfer: back from USER_2 to USER_1
-			await gasStationNftConnector.transfer(TEST_USER_DID_2, nftId, TEST_ADDRESS);
+				// Second transfer: back from USER_2 to USER_1
+				await gasStationNftConnector.transfer(TEST_USER_DID_2, nftId, TEST_ADDRESS);
 
-			// Verify it's back to USER_1
-			response = await gasStationNftConnector.resolve(nftId);
-			expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
+				// Verify it's back to USER_1
+				response = await gasStationNftConnector.resolve(nftId);
+				expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/);
 
-			const urn = Urn.fromValidString(nftId);
-			expect(urn.namespaceIdentifier()).toEqual("nft");
-			const specificParts = urn.namespaceSpecificParts();
-			console.debug(
-				"Transferred back with gas station",
-				`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
-			);
-		}, 30000);
+				const urn = Urn.fromValidString(nftId);
+				expect(urn.namespaceIdentifier()).toEqual("nft");
+				const specificParts = urn.namespaceSpecificParts();
+				console.debug(
+					"Transferred back with gas station",
+					`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
+				);
+			},
+			30 * DurationConstants.MsPerSecond
+		);
 
-		test("Can transfer an NFT with metadata update using gas station", async () => {
-			// Create a new NFT for this test
-			const immutableMetadata = {
-				name: "Gas Station Transfer Test NFT",
-				description: "NFT for testing transfer with metadata using gas station",
-				uri: "https://example.com/gas-station-transfer.png"
-			};
-			const nftId = await gasStationNftConnector.mint(
-				TEST_USER_DID,
-				"gas_station_transfer_test",
-				immutableMetadata,
-				{ initialField: "initialValue", gasStationCreated: true }
-			);
+		test(
+			"Can transfer an NFT with metadata update using gas station",
+			async () => {
+				// Create a new NFT for this test
+				const immutableMetadata = {
+					name: "Gas Station Transfer Test NFT",
+					description: "NFT for testing transfer with metadata using gas station",
+					uri: "https://example.com/gas-station-transfer.png"
+				};
+				const nftId = await gasStationNftConnector.mint(
+					TEST_USER_DID,
+					"gas_station_transfer_test",
+					immutableMetadata,
+					{ initialField: "initialValue", gasStationCreated: true }
+				);
 
-			// Prepare new metadata for transfer
-			const transferMetadata = {
-				updatedField: "gasStationTransferValue",
-				timestamp: Date.now(),
-				transferInfo: {
-					previousOwner: TEST_ADDRESS,
-					transferDate: new Date().toISOString(),
-					sponsoredTransfer: true
-				}
-			};
+				// Prepare new metadata for transfer
+				const transferMetadata = {
+					updatedField: "gasStationTransferValue",
+					timestamp: Date.now(),
+					transferInfo: {
+						previousOwner: TEST_ADDRESS,
+						transferDate: new Date().toISOString(),
+						sponsoredTransfer: true
+					}
+				};
 
-			// Transfer with metadata update using gas station
-			await gasStationNftConnector.transfer(TEST_USER_DID, nftId, TEST_ADDRESS_2, transferMetadata);
+				// Transfer with metadata update using gas station
+				await gasStationNftConnector.transfer(
+					TEST_USER_DID,
+					nftId,
+					TEST_ADDRESS_2,
+					transferMetadata
+				);
 
-			const response = await gasStationNftConnector.resolve(nftId);
-			expect(response.metadata).toEqual(transferMetadata);
-			expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/); // Identity Object ID stays constant across transfers
+				const response = await gasStationNftConnector.resolve(nftId);
+				expect(response.metadata).toEqual(transferMetadata);
+				expect(response.issuerIdentityId).toMatch(/^0x[\da-f]+$/); // Identity Object ID stays constant across transfers
 
-			const urn = Urn.fromValidString(nftId);
-			expect(urn.namespaceIdentifier()).toEqual("nft");
-			const specificParts = urn.namespaceSpecificParts();
-			console.debug(
-				"Transfer with metadata update using gas station",
-				`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
-			);
-		}, 60000);
+				const urn = Urn.fromValidString(nftId);
+				expect(urn.namespaceIdentifier()).toEqual("nft");
+				const specificParts = urn.namespaceSpecificParts();
+				console.debug(
+					"Transfer with metadata update using gas station",
+					`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
+				);
+			},
+			DurationConstants.MsPerMinute
+		);
 
-		test("Can update the mutable data of an NFT using gas station", async () => {
-			// Create a new NFT for this test
-			const immutableMetadata = {
-				name: "Gas Station Update Test NFT",
-				description: "This is a test NFT for update functionality using gas station",
-				uri: "https://example.com/gas-station-update-nft.png"
-			};
-			const nftId = await gasStationNftConnector.mint(
-				TEST_USER_DID,
-				"gas_station_update_test",
-				immutableMetadata,
-				{
-					initialField: "initialValue"
-				}
-			);
+		test(
+			"Can update the mutable data of an NFT using gas station",
+			async () => {
+				// Create a new NFT for this test
+				const immutableMetadata = {
+					name: "Gas Station Update Test NFT",
+					description: "This is a test NFT for update functionality using gas station",
+					uri: "https://example.com/gas-station-update-nft.png"
+				};
+				const nftId = await gasStationNftConnector.mint(
+					TEST_USER_DID,
+					"gas_station_update_test",
+					immutableMetadata,
+					{
+						initialField: "initialValue"
+					}
+				);
 
-			await gasStationNftConnector.update(TEST_USER_DID, nftId, {
-				updatedField: "gasStationNewValue",
-				anotherField: "anotherGasStationValue",
-				gasStationUpdate: true,
-				updateTimestamp: Date.now()
-			});
+				await gasStationNftConnector.update(TEST_USER_DID, nftId, {
+					updatedField: "gasStationNewValue",
+					anotherField: "anotherGasStationValue",
+					gasStationUpdate: true,
+					updateTimestamp: Date.now()
+				});
 
-			const response = await gasStationNftConnector.resolve(nftId);
-			expect(response.metadata).toEqual({
-				updatedField: "gasStationNewValue",
-				anotherField: "anotherGasStationValue",
-				gasStationUpdate: true,
-				updateTimestamp: expect.any(Number)
-			});
+				const response = await gasStationNftConnector.resolve(nftId);
+				expect(response.metadata).toEqual({
+					updatedField: "gasStationNewValue",
+					anotherField: "anotherGasStationValue",
+					gasStationUpdate: true,
+					updateTimestamp: expect.any(Number)
+				});
 
-			const urn = Urn.fromValidString(nftId);
-			expect(urn.namespaceIdentifier()).toEqual("nft");
-			const specificParts = urn.namespaceSpecificParts();
-			console.debug(
-				"Updated with gas station",
-				`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
-			);
-		}, 30000);
+				const urn = Urn.fromValidString(nftId);
+				expect(urn.namespaceIdentifier()).toEqual("nft");
+				const specificParts = urn.namespaceSpecificParts();
+				console.debug(
+					"Updated with gas station",
+					`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
+				);
+			},
+			30 * DurationConstants.MsPerSecond
+		);
 
-		test("Can burn an NFT using gas station", async () => {
-			// Create a new NFT for this test
-			const immutableMetadata = {
-				name: "Gas Station Burn Test NFT",
-				description: "This is a test NFT for burn functionality using gas station",
-				uri: "https://example.com/gas-station-burn-nft.png"
-			};
-			const nftId = await gasStationNftConnector.mint(
-				TEST_USER_DID,
-				"gas_station_burn_test",
-				immutableMetadata,
-				{
-					burnTestField: "burnTestValue"
-				}
-			);
+		test(
+			"Can burn an NFT using gas station",
+			async () => {
+				// Create a new NFT for this test
+				const immutableMetadata = {
+					name: "Gas Station Burn Test NFT",
+					description: "This is a test NFT for burn functionality using gas station",
+					uri: "https://example.com/gas-station-burn-nft.png"
+				};
+				const nftId = await gasStationNftConnector.mint(
+					TEST_USER_DID,
+					"gas_station_burn_test",
+					immutableMetadata,
+					{
+						burnTestField: "burnTestValue"
+					}
+				);
 
-			await gasStationNftConnector.burn(TEST_USER_DID, nftId);
-			await expect(gasStationNftConnector.resolve(nftId)).rejects.toThrow();
-		}, 30000);
+				await gasStationNftConnector.burn(TEST_USER_DID, nftId);
+				await expect(gasStationNftConnector.resolve(nftId)).rejects.toThrow();
+			},
+			30 * DurationConstants.MsPerSecond
+		);
 
-		test("Can burn an NFT on a transferred address using gas station", async () => {
-			const burnTestNftId = await gasStationNftConnector.mint(
-				TEST_USER_DID,
-				"gas_station_burn_test"
-			);
+		test(
+			"Can burn an NFT on a transferred address using gas station",
+			async () => {
+				const burnTestNftId = await gasStationNftConnector.mint(
+					TEST_USER_DID,
+					"gas_station_burn_test"
+				);
 
-			await gasStationNftConnector.transfer(TEST_USER_DID, burnTestNftId, TEST_ADDRESS_2);
-			await gasStationNftConnector.burn(TEST_USER_DID_2, burnTestNftId);
-		}, 60000);
+				await gasStationNftConnector.transfer(TEST_USER_DID, burnTestNftId, TEST_ADDRESS_2);
+				await gasStationNftConnector.burn(TEST_USER_DID_2, burnTestNftId);
+			},
+			DurationConstants.MsPerMinute
+		);
 
-		test("Can mint an NFT with complex metadata using gas station", async () => {
-			const immutableMetadata = {
-				name: "Complex Gas Station NFT",
-				description: "NFT with complex metadata using gas station",
-				uri: "https://example.com/complex-gas-station-nft.png"
-			};
-			const complexMetadata = {
-				level1: {
-					level2: {
-						key: "gasStationValue",
-						sponsoredTransaction: true,
-						gasStationComplexData: {
-							array: [1, 2, 3],
-							nested: { deep: "value" }
+		test(
+			"Can mint an NFT with complex metadata using gas station",
+			async () => {
+				const immutableMetadata = {
+					name: "Complex Gas Station NFT",
+					description: "NFT with complex metadata using gas station",
+					uri: "https://example.com/complex-gas-station-nft.png"
+				};
+				const complexMetadata = {
+					level1: {
+						level2: {
+							key: "gasStationValue",
+							sponsoredTransaction: true,
+							gasStationComplexData: {
+								array: [1, 2, 3],
+								nested: { deep: "value" }
+							}
 						}
 					}
-				}
-			};
-			const complexNftId = await gasStationNftConnector.mint(
-				TEST_USER_DID,
-				"gas_station_complex_tag",
-				immutableMetadata,
-				complexMetadata
-			);
+				};
+				const complexNftId = await gasStationNftConnector.mint(
+					TEST_USER_DID,
+					"gas_station_complex_tag",
+					immutableMetadata,
+					complexMetadata
+				);
 
-			const response = await gasStationNftConnector.resolve(complexNftId);
-			expect(response.metadata).toEqual(complexMetadata);
+				const response = await gasStationNftConnector.resolve(complexNftId);
+				expect(response.metadata).toEqual(complexMetadata);
 
-			const urn = Urn.fromValidString(complexNftId);
-			expect(urn.namespaceIdentifier()).toEqual("nft");
-			const specificParts = urn.namespaceSpecificParts();
-			console.debug(
-				"Complex NFT created with gas station",
-				`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
-			);
-		}, 30000);
+				const urn = Urn.fromValidString(complexNftId);
+				expect(urn.namespaceIdentifier()).toEqual("nft");
+				const specificParts = urn.namespaceSpecificParts();
+				console.debug(
+					"Complex NFT created with gas station",
+					`${TEST_EXPLORER_URL}object/${specificParts[3]}?network=${TEST_NETWORK}`
+				);
+			},
+			30 * DurationConstants.MsPerSecond
+		);
 	});
 
 	describe("Gas Station Error Handling", () => {
-		test("Should handle gas station unavailable gracefully", async () => {
-			const invalidGasStationConfig: IIotaNftConnectorConfig = {
-				clientOptions: TEST_CLIENT_OPTIONS,
-				vaultMnemonicId: TEST_MNEMONIC_NAME,
-				network: TEST_NETWORK,
-				gasStation: {
-					gasStationUrl: "http://localhost:9999", // Invalid port
-					gasStationAuthToken: TEST_GAS_STATION_AUTH_TOKEN
-				},
-				deploymentConfig: getTestDeploymentConfig()
-			};
+		test(
+			"Should handle gas station unavailable gracefully",
+			async () => {
+				const invalidGasStationConfig: IIotaNftConnectorConfig = {
+					clientOptions: TEST_CLIENT_OPTIONS,
+					vaultMnemonicId: TEST_MNEMONIC_NAME,
+					network: TEST_NETWORK,
+					gasStation: {
+						gasStationUrl: "http://localhost:9999", // Invalid port
+						gasStationAuthToken: TEST_GAS_STATION_AUTH_TOKEN
+					},
+					deploymentConfig: getTestDeploymentConfig()
+				};
 
-			const connector = new IotaNftConnector({
-				config: invalidGasStationConfig
-			});
+				const connector = new IotaNftConnector({
+					config: invalidGasStationConfig
+				});
 
-			// Start the connector (this should succeed since it uses pre-deployed packages)
-			await connector.start();
+				// Start the connector (this should succeed since it uses pre-deployed packages)
+				await connector.start();
 
-			// The gas station unavailability should be detected during NFT operations
-			await expect(connector.mint(TEST_USER_DID, "test_gas_station_unavailable")).rejects.toThrow();
-		}, 20000);
+				// The gas station unavailability should be detected during NFT operations
+				await expect(
+					connector.mint(TEST_USER_DID, "test_gas_station_unavailable")
+				).rejects.toThrow();
+			},
+			20 * DurationConstants.MsPerSecond
+		);
 
-		test("Should handle invalid gas station auth token", async () => {
-			const invalidAuthConfig: IIotaNftConnectorConfig = {
-				clientOptions: TEST_CLIENT_OPTIONS,
-				vaultMnemonicId: TEST_MNEMONIC_NAME,
-				network: TEST_NETWORK,
-				gasStation: {
-					gasStationUrl: TEST_GAS_STATION_URL,
-					gasStationAuthToken: "invalid-token"
-				},
-				deploymentConfig: getTestDeploymentConfig()
-			};
+		test(
+			"Should handle invalid gas station auth token",
+			async () => {
+				const invalidAuthConfig: IIotaNftConnectorConfig = {
+					clientOptions: TEST_CLIENT_OPTIONS,
+					vaultMnemonicId: TEST_MNEMONIC_NAME,
+					network: TEST_NETWORK,
+					gasStation: {
+						gasStationUrl: TEST_GAS_STATION_URL,
+						gasStationAuthToken: "invalid-token"
+					},
+					deploymentConfig: getTestDeploymentConfig()
+				};
 
-			const connector = new IotaNftConnector({
-				config: invalidAuthConfig
-			});
+				const connector = new IotaNftConnector({
+					config: invalidAuthConfig
+				});
 
-			// Start the connector (this should succeed since it uses pre-deployed packages)
-			await connector.start();
+				// Start the connector (this should succeed since it uses pre-deployed packages)
+				await connector.start();
 
-			// The invalid auth token should be detected during NFT operations
-			await expect(connector.mint(TEST_USER_DID, "test_invalid_auth")).rejects.toThrow();
-		}, 20000);
+				// The invalid auth token should be detected during NFT operations
+				await expect(connector.mint(TEST_USER_DID, "test_invalid_auth")).rejects.toThrow();
+			},
+			20 * DurationConstants.MsPerSecond
+		);
 
-		test("Throws error when unauthorized user attempts to transfer NFT using gas station", async () => {
-			// Create a new NFT for this test
-			const immutableMetadata = {
-				name: "Gas Station Unauthorized Test NFT",
-				description: "This is a test NFT for unauthorized transfer test using gas station",
-				uri: "https://example.com/gas-station-unauthorized-nft.png"
-			};
-			const nftId = await gasStationNftConnector.mint(
-				TEST_USER_DID,
-				"gas_station_unauthorized_test",
-				immutableMetadata,
-				{
-					unauthorizedTestField: "unauthorizedTestValue"
-				}
-			);
+		test(
+			"Throws error when unauthorized user attempts to transfer NFT using gas station",
+			async () => {
+				// Create a new NFT for this test
+				const immutableMetadata = {
+					name: "Gas Station Unauthorized Test NFT",
+					description: "This is a test NFT for unauthorized transfer test using gas station",
+					uri: "https://example.com/gas-station-unauthorized-nft.png"
+				};
+				const nftId = await gasStationNftConnector.mint(
+					TEST_USER_DID,
+					"gas_station_unauthorized_test",
+					immutableMetadata,
+					{
+						unauthorizedTestField: "unauthorizedTestValue"
+					}
+				);
 
-			await TEST_VAULT_CONNECTOR.setSecret(
-				`unauthorizedController/${TEST_MNEMONIC_NAME}`,
-				TEST_NODE_MNEMONIC
-			);
+				await TEST_VAULT_CONNECTOR.setSecret(
+					`unauthorizedController/${TEST_MNEMONIC_NAME}`,
+					TEST_NODE_MNEMONIC
+				);
 
-			await expect(
-				gasStationNftConnector.transfer("unauthorizedController", nftId, TEST_ADDRESS_2)
-			).rejects.toThrow("transferFailed");
-		}, 30000);
+				await expect(
+					gasStationNftConnector.transfer("unauthorizedController", nftId, TEST_ADDRESS_2)
+				).rejects.toThrow("transferFailed");
+			},
+			30 * DurationConstants.MsPerSecond
+		);
 
-		test("Cannot transfer a burned NFT using gas station", async () => {
-			const burnTestNftId = await gasStationNftConnector.mint(
-				TEST_USER_DID,
-				"gas_station_burn_transfer_test"
-			);
+		test(
+			"Cannot transfer a burned NFT using gas station",
+			async () => {
+				const burnTestNftId = await gasStationNftConnector.mint(
+					TEST_USER_DID,
+					"gas_station_burn_transfer_test"
+				);
 
-			await gasStationNftConnector.burn(TEST_USER_DID, burnTestNftId);
-			await expect(
-				gasStationNftConnector.transfer(TEST_USER_DID, burnTestNftId, TEST_ADDRESS_2)
-			).rejects.toThrow("transferFailed");
-		}, 30000);
+				await gasStationNftConnector.burn(TEST_USER_DID, burnTestNftId);
+				await expect(
+					gasStationNftConnector.transfer(TEST_USER_DID, burnTestNftId, TEST_ADDRESS_2)
+				).rejects.toThrow("transferFailed");
+			},
+			30 * DurationConstants.MsPerSecond
+		);
 	});
 });

@@ -4,7 +4,7 @@ import { exec } from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
-import { GeneralError } from "@3sixty/core";
+import { DurationConstants, GeneralError } from "@3sixty/core";
 import type { ISmartContractDeployments } from "@3sixty/dlt-iota";
 
 const execAsync = promisify(exec);
@@ -85,7 +85,7 @@ export async function buildTestContracts(network: string, tempConfigPath: string
 		const timeoutPromise = new Promise<never>((resolve, reject) => {
 			setTimeout(
 				() => reject(new GeneralError("testContractDeployment", "buildTimeoutReached")),
-				600000 // 10 minutes
+				10 * DurationConstants.MsPerMinute // 10 minutes
 			);
 		});
 
@@ -124,7 +124,7 @@ export async function deployTestContracts(
 		const timeoutPromise = new Promise<never>((resolve, reject) => {
 			setTimeout(
 				() => reject(new GeneralError("testContractDeployment", "deployTimeoutReached")),
-				600000 // 10 minutes
+				10 * DurationConstants.MsPerMinute // 10 minutes
 			);
 		});
 
