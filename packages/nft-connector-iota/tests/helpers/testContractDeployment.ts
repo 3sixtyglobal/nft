@@ -44,7 +44,7 @@ export interface ITestDeploymentConfig {
 /**
  * Create temporary environment configuration file for test contract deployment.
  * @param config The test deployment configuration.
- * @returns Promise that resolves to the path of the temporary config file.
+ * @returns A promise that resolves to the path of the temporary config file.
  */
 export async function createTestEnvConfig(config: ITestDeploymentConfig): Promise<string> {
 	console.log("[createTestEnvConfig] Creating temporary test environment config");
@@ -71,7 +71,7 @@ export async function createTestEnvConfig(config: ITestDeploymentConfig): Promis
  * Build test contracts using move-to-json.
  * @param network The network to build for.
  * @param tempConfigPath Path to the temporary config file.
- * @returns Promise that resolves when build is complete.
+ * @returns A promise that resolves when build is complete.
  */
 export async function buildTestContracts(network: string, tempConfigPath: string): Promise<void> {
 	try {
@@ -110,7 +110,7 @@ export async function buildTestContracts(network: string, tempConfigPath: string
  * Deploy test contracts and return deployment configuration.
  * @param network The network to deploy to.
  * @param tempConfigPath Path to the temporary config file.
- * @returns Promise that resolves to deployment configuration.
+ * @returns A promise that resolves to deployment configuration.
  */
 export async function deployTestContracts(
 	network: string,
@@ -163,7 +163,7 @@ export async function deployTestContracts(
 
 /**
  * Load test deployment configuration from temporary JSON file.
- * @returns Promise that resolves to smart contract deployments configuration.
+ * @returns A promise that resolves to smart contract deployments configuration.
  */
 export async function loadTestDeploymentConfig(): Promise<ISmartContractDeployments> {
 	try {
@@ -177,7 +177,7 @@ export async function loadTestDeploymentConfig(): Promise<ISmartContractDeployme
 
 /**
  * Clean all build artifacts and temporary files.
- * @returns Promise that resolves when cleanup is complete.
+ * @returns A promise that resolves when cleanup is complete.
  */
 async function cleanBuildArtifacts(): Promise<void> {
 	const contractPath = path.join(__dirname, "../../src/contracts/nft");
@@ -201,7 +201,7 @@ async function cleanBuildArtifacts(): Promise<void> {
 
 /**
  * Clean up all temporary test files and artifacts.
- * @returns Promise that resolves when cleanup is complete.
+ * @returns A promise that resolves when cleanup is complete.
  */
 export async function cleanupTestDeployment(): Promise<void> {
 	try {
@@ -232,7 +232,7 @@ export async function cleanupTestDeployment(): Promise<void> {
 /**
  * Complete test contract deployment process.
  * @param config The test deployment configuration.
- * @returns Promise that resolves to deployment configuration.
+ * @returns A promise that resolves to deployment configuration.
  */
 export async function deployTestContractsComplete(
 	config: ITestDeploymentConfig

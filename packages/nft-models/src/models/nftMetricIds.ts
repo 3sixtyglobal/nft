@@ -4,7 +4,6 @@
 /**
  * The metric IDs for the NFT domain.
  */
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const NftMetricIds = {
 	/**
 	 * Number of NFT tokens minted.

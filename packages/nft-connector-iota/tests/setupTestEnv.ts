@@ -231,7 +231,7 @@ export async function cleanupTestEnv(): Promise<void> {
  * Only requests from faucet if current balance is below minimum required.
  * @param identity The identity to use for wallet operations.
  * @param address The address to ensure funds for.
- * @returns Promise that resolves when funds are ensured.
+ * @returns A promise that resolves when funds are ensured.
  */
 async function ensureFundsForAddress(identity: string, address: string): Promise<void> {
 	try {

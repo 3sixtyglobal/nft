@@ -6,7 +6,6 @@ import { NftMetricIds } from "./nftMetricIds.js";
 /**
  * Metrics registered by the NFT service.
  */
-// eslint-disable-next-line @typescript-eslint/naming-convention
 export const NftMetrics: ITelemetryMetric[] = [
 	{ id: NftMetricIds.TokensMinted, label: "NFT tokens minted", type: MetricType.Counter },
 	{ id: NftMetricIds.TokensBurned, label: "NFT tokens burned", type: MetricType.Counter },

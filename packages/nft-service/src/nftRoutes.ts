@@ -22,7 +22,7 @@ import type {
 	INftTransferRequest,
 	INftUpdateRequest
 } from "@3sixty/nft-models";
-import { HeaderTypes, HttpStatusCode, type IHttpHeaders } from "@3sixty/web";
+import { HeaderTypes, HttpStatusCode, type IHttpHeaders, MimeTypes } from "@3sixty/web";
 
 /**
  * The source used when communicating about these routes.
@@ -64,7 +64,7 @@ export function generateRestRoutesNft(baseRouteName: string, componentName: stri
 							tag: "MY-NFT",
 							immutableMetadata: {
 								docName: "bill-of-lading",
-								mimeType: "application/pdf",
+								mimeType: MimeTypes.Pdf,
 								fingerprint: "0xf0b95a98b3dbc5ce1c9ce59d70af95a97599f100a7296ecdd1eb108bebfa047f"
 							},
 							metadata: {
@@ -129,7 +129,7 @@ export function generateRestRoutesNft(baseRouteName: string, componentName: stri
 								tag: "MY-NFT",
 								immutableMetadata: {
 									docName: "bill-of-lading",
-									mimeType: "application/pdf",
+									mimeType: MimeTypes.Pdf,
 									fingerprint: "0xf0b95a98b3dbc5ce1c9ce59d70af95a97599f100a7296ecdd1eb108bebfa047f"
 								},
 								metadata: {

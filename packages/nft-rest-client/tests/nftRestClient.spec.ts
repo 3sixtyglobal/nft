@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0.
 import { GuardError } from "@3sixty/core";
 import type { IIrc27Metadata } from "@3sixty/nft-models";
-import { HttpMethod } from "@3sixty/web";
+import { HttpMethod, MimeTypes } from "@3sixty/web";
 import { NftRestClient } from "../src/nftRestClient.js";
 import {
 	createdResponse,
@@ -22,7 +22,7 @@ const NFT_LOCATION = `${ENDPOINT}/${PREFIX}/${NFT_URN}`;
 const TEST_IRC27_METADATA: IIrc27Metadata = {
 	standard: "IRC27",
 	version: "v1.0",
-	type: "image/png",
+	type: MimeTypes.Png,
 	uri: "https://example.com/nft-image.png",
 	name: "Test NFT"
 };
